@@ -175,6 +175,20 @@
   .item .detail { display: none; padding: 4px 8px 26px 64px; }
   .item.open .detail { display: block; }
 
+  .from { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .from h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; }
+  .from .dl { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
+  .chain { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+  .chain .grp { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; position: relative; padding-right: 22px; }
+  .chain .grp:last-child { padding-right: 0; }
+  .chain .grp:not(:last-child)::after { content: "→"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--ink-3); }
+  .chain .gl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-right: 2px; }
+  .chain .node { display: inline-flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 8px; padding: 5px 9px; font-size: 12.5px; line-height: 1.3; background: var(--ground); }
+  .chain .node b { font-weight: 500; }
+  .chain .node small { color: var(--ink-2); font-size: 11px; }
+  .chain .node.p { border-style: solid; }
+  .chain .node.gone { border-style: dashed; color: var(--ink-2); }
+  .chain .node.d { border-color: var(--ink); }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .side h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .side h4 .who { text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; color: var(--ink-2); }
@@ -216,7 +230,18 @@
   .log .when { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 3px; }
   .log .what b { font-weight: 500; }
   .log .what p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
-  .sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .sources { display: flex; flex-direction: column; gap: 12px; }
+  .tablewrap { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; }
+  .tablewrap table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
+  .tablewrap th, .tablewrap td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: top; }
+  .tablewrap th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); background: var(--ground-2); font-weight: 500; }
+  .tablewrap tr:last-child td { border-bottom: 0; }
+  .tablewrap td:first-child { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+  .found { display: grid; grid-template-columns: 22px 1fr; gap: 6px 10px; margin-top: 10px; font-size: 12.5px; }
+  .found .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+  .found b { font-weight: 500; display: block; }
+  .found small { color: var(--ink-2); display: block; }
+  .addall { margin-top: 12px; }
   .source { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
   .source .name { font-family: var(--mono); font-size: 12px; display: flex; align-items: center; gap: 8px; }
   .source p { margin: 6px 0 0; color: var(--ink-2); font-size: 13px; }
@@ -397,7 +422,7 @@
   const interviewee = M.stakeholders.find(p => p.interviewed);
   const num = id => M.node_fields.findIndex(f => f.id === id) + 1;
 
-  const state = { synthesized: false, working: false, view: 'map', scope: null, open: new Set(), selected: null, log: [],
+  const state = { found: false, synthesized: false, working: false, view: 'map', scope: null, open: new Set(), selected: null, log: [],
     items: Object.fromEntries(M.node_fields.map(f => [f.id, { verdict: 'none', out: null, decision: null }])) };
   const outFor = id => OUT.fields.find(f => f.field_id === id);
   const tsFor = quote => { const i = T.indexOf(quote.slice(0, 40)); if (i < 0) return null; const m = T.slice(0, i).match(/\[(\d\d:\d\d)\](?![\s\S]*\[\d\d:\d\d\])/); return m ? m[1] : null; };
@@ -443,15 +468,18 @@
       people.appendChild(b);
     });
     const add = el('button', 'person add', '+ Add stakeholder'); add.title = 'Add a person from the client side or the project team'; people.appendChild(add);
-    $('#c-items').textContent = total; $('#c-src').textContent = D.sources.length + (state.synthesized ? 1 : 0); $('#c-log').textContent = state.log.length;
+    $('#c-items').textContent = state.found ? total : 0; $('#c-src').textContent = D.sources.length + (state.synthesized ? 1 : 0); $('#c-log').textContent = state.log.length;
     const h = $('#hint');
-    if (!state.synthesized) { h.style.display = ''; h.innerHTML = `<span>The six items below come from the system extract. <b>No interview has been checked against them yet.</b> Drop a transcript in the agent panel to start.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
+    if (!state.found) { h.style.display = ''; h.innerHTML = `<span><b>No configuration items yet.</b> Ask the agent to find them in the sources: people, product, discount, and how they connect.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
+    else if (!state.synthesized) { h.style.display = ''; h.innerHTML = `<span>${total} items found in the data. <b>No interview has been checked against them yet.</b> Add a transcript in the agent panel.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
     else h.style.display = 'none';
+    $('#drop').hidden = !state.found;
   }
   document.addEventListener('click', () => document.querySelectorAll('.pop').forEach(x => x.remove()));
 
   function renderItems() {
     const wrap = $('#items'); wrap.innerHTML = '';
+    if (!state.found) { wrap.innerHTML = '<div class="empty">Items appear here once the agent has derived them from the sources.</div>'; renderBanner(); return; }
     M.node_fields.forEach((f, idx) => {
       const st = state.items[f.id];
       const it = el('div', 'item' + (state.open.has(f.id) ? ' open' : '') + (state.selected === f.id ? ' selected' : '')); it.dataset.id = f.id;
@@ -469,8 +497,21 @@
   }
   const srcLink = ref => { const a = el('a', null, esc(ref.split('#')[1] || ref)); a.href = '#'; a.title = ref; a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); showTab('sources'); }); return a; };
 
+  const lookup = (t, id) => (D.db[t] || []).find(r => r.id === id) || {};
+  function chain(f) {
+    const dv = f.derived_from; const c = el('div', 'chain');
+    const grp = (title, nodes) => { const g = el('div', 'grp', `<span class="gl">${title}</span>`); nodes.forEach(n => g.appendChild(n)); return g; };
+    const ppl = dv.people.map(id => { const r = lookup('people', id); return el('span', 'node p' + (/left/.test(r.status) ? ' gone' : ''), `<b>${esc(r.name)}</b><small>${esc(r.title)}${/left/.test(r.status) ? ' · ' + esc(r.status) : ''}</small>`); });
+    const dis = dv.discounts.map(id => { const r = lookup('discount', id); return el('span', 'node d', `<b>${esc(r.name)}</b><small>${esc(r.percent)}% · since ${esc(r.since).slice(0, 4)}</small>`); });
+    const prd = dv.products.map(id => { const r = lookup('product', id); return el('span', 'node r', `<b>${esc(r.name)}</b><small>${esc(r.range)} · $${esc(r.list_price_usd_per_case)}/case</small>`); });
+    c.appendChild(grp(dv.discounts.length ? 'Set by' : 'Maintained by', ppl));
+    if (dis.length) c.appendChild(grp('Discount', dis));
+    if (prd.length) c.appendChild(grp(dv.discounts.length ? 'Applies to' : 'Product price', prd));
+    const w = el('div', 'from'); w.innerHTML = '<h4>Where it comes from</h4>'; w.appendChild(c); w.appendChild(el('p', 'dl', esc(dv.line))); return w;
+  }
   function renderDetail(f, st) {
     const d = el('div', 'detail'); const o = st.out;
+    d.appendChild(chain(f));
     // evidence pair
     const pair = el('div', 'pair');
     if (!o) {
@@ -530,7 +571,14 @@
   function renderSources() {
     const s = $('#sources'); s.innerHTML = '';
     if (state.synthesized) s.appendChild(el('div', 'source', `<div class="name"><span class="pill match plain">Interview</span>01-sales-manager.md</div><p>18 Sep, Dana Ruiz, Head of Retail Sales. 50 minutes, transcribed. Synthesized against Step 2.</p>`));
-    D.sources.forEach(src => s.appendChild(el('div', 'source', `<div class="name">${esc(src.file)}</div><p>${esc(src.what)}</p><p class="mono" style="margin-top:8px">${esc(src.source)}</p>`)));
+    D.sources.forEach(src => {
+      const rows = D.db[src.table] || D.extract[src.table] || [];
+      const card = el('div', 'source', `<div class="name">${esc(src.file)}<span class="mono muted">${rows.length} rows</span></div><p>${esc(src.what)}</p><p class="mono" style="margin-top:8px">${esc(src.source)}</p>`);
+      const btn = el('button', 'btn secondary small', 'View table'); btn.style.marginTop = '10px';
+      const tw = el('div', 'tablewrap'); tw.hidden = true;
+      btn.addEventListener('click', () => { if (!tw.innerHTML) { const cols = Object.keys(rows[0] || {}); tw.innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c.replace(/_/g, ' '))}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`; } tw.hidden = !tw.hidden; btn.textContent = tw.hidden ? 'View table' : 'Hide table'; });
+      card.appendChild(btn); card.appendChild(tw); s.appendChild(card);
+    });
   }
   function showTab(name) { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.tab === name)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name)); }
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
@@ -564,6 +612,25 @@
     M.node_fields.forEach((f, i) => { const o = outFor(f.id); grid.appendChild(el('span', 'vid', String(i + 1))); grid.appendChild(el('span', null, `<span class="pill ${o.state}">${VERDICT[o.state]}</span>`)); const b = el('button', 'vname', esc(f.label)); b.addEventListener('click', () => { if (state.view !== 'step') showStep(); state.open.add(f.id); state.selected = f.id; setScope(f.id); renderItems(); document.querySelector(`.item[data-id="${f.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }); grid.appendChild(b); });
     await typeSay(`Checked all ${total} items. ${counts.map(([s, n]) => `${n} ${VERDICT[s].toLowerCase()}`).join(', ')}. <b>${needs()} need your judgment.</b>`, grid);
     tour.emit('synthesized');
+  }
+  async function findItems() {
+    if (state.found || state.working) return;
+    state.working = true; setDot('working', 'working'); tour.emit('find-started');
+    document.querySelectorAll('.prompts button[data-find]').forEach(b => b.closest('.prompts').remove());
+    userSay('Find the configuration items for this step in the sources.');
+    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Reading the pricing data<span class="sh"></span></div><ol>${D.find.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
+    thread.appendChild(run); scrollThread();
+    const lis = run.querySelectorAll('li');
+    for (let i = 0; i < lis.length; i++) { lis[i].classList.add('on'); await sleep(850); lis[i].classList.remove('on'); lis[i].classList.add('ok'); }
+    run.querySelector('.title').classList.add('done'); run.querySelector('.title .dot').className = 'dot ready';
+    const list = el('div', 'found');
+    D.find.items.forEach((it, i) => { const f = M.node_fields.find(x => x.id === it.field_id); list.appendChild(el('span', 'n', String(i + 1))); list.appendChild(el('span', null, `<b>${esc(f.label)}</b><small>${esc(it.derivation)}</small>`)); });
+    const add = el('button', 'btn small addall', `Add all ${total} to Step 2`);
+    add.addEventListener('click', () => { add.disabled = true; add.textContent = 'Added'; state.found = true; refresh(); tour.emit('added'); agentSay(`${total} items are on Step 2, all awaiting interview evidence. Next, add an interview transcript and I'll check each one.`); });
+    const wrap = el('div'); wrap.appendChild(list); wrap.appendChild(add);
+    state.working = false; setDot('ready', 'ready');
+    await typeSay(esc(D.find.summary), wrap);
+    tour.emit('found');
   }
   async function typeSay(html, extra) {
     const m = el('div', 'msg', '<div class="who">Agent</div><span class="tw"></span>'); thread.appendChild(m);
@@ -613,7 +680,10 @@
     const veil = $('#tour-veil'), spot = $('#tour-spot'), card = $('#tour-card');
     const steps = [
       { key: 'Locate', target: () => $('.step.current'), text: 'Open Step 2.', on: 'step-open' },
-      { key: 'Add the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'uploaded', pre: () => openAgent() },
+      { key: 'Find items', target: () => $('.prompts button[data-find]'), text: 'Ask the agent to find the configuration items.', on: 'find-started', pre: () => openAgent() },
+      { key: 'Reading', target: () => $('#thread .run'), text: 'Reading the three tables and their connections.', on: 'found', wait: 600 },
+      { key: 'Add', target: () => $('#thread .addall'), text: 'Add them to the step.', on: 'added', wait: 400 },
+      { key: 'Add the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'uploaded', wait: 400 },
       { key: 'Synthesize', target: () => $('#synth'), text: 'Synthesize.', on: 'started', wait: 350 },
       { key: 'The agent works', target: () => $('#thread .run'), text: 'Checking the interview against the six items.', on: 'synthesized', wait: 700 },
       { key: 'Verdicts', target: () => $('#items'), text: 'Every item has a verdict. Four need you.', next: true, pre: () => document.querySelector('.stage').scrollTo({ top: 0 }) },
@@ -659,7 +729,8 @@
   })();
   $('#tour-restart').addEventListener('click', () => { location.reload(); });
 
-  agentSay(`Step 2 has ${total} configuration items from the system extract and no interview evidence yet. Drop a transcript above and I'll check each item against what the client said and what the data shows.`);
+  const findChip = el('div', 'prompts'); const fb = el('button', null, 'Find the configuration items in the sources'); fb.dataset.find = '1'; fb.addEventListener('click', findItems); findChip.appendChild(fb);
+  agentSay(`Step 2 has no configuration items yet. I can derive them from the sources: ${D.db.people.length} people, ${D.db.product.length} products, ${D.db.discount.length} discounts, and ${D.db.connections.length} connections between them.`, findChip);
   renderStrip(); refresh();
   setTimeout(() => tour.start(), 600);
 })();

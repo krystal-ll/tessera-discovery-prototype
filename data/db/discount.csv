@@ -1,0 +1,8 @@
+id,name,percent,applies_to,kind,since
+D-01,Chain trade discount,8,Every product on every supermarket-chain order,Automatic,2011-06-01
+D-02,Manual discount cap,20,Any product; the most a rep can type in,Hard limit,2011-06-01
+D-03,Manual discount approval,15,Any product; above this the sales manager must approve,Approval rule,2019-03-04
+D-04,Citrus summer promotion,12,Citrus range for Northgate and FreshMart; 15 Jun to 31 Jul 2026,Time-boxed,2026-06-15
+D-05,Volume discount,3 to 6,Orders of 500 / 1000 / 2500 cases,Quantity scale,2011-06-01
+D-06,Classic free case,1 free per 10,Classic range for every customer; no end date,Free goods,2016-04-02
+D-07,Marketplace discount,0,Marketplace orders; no manual discount allowed,Hard limit,2018-02-12

@@ -135,12 +135,12 @@ def build_user_message(model, transcript):
             f"- {f['id']}: {f['label']}",
             f"    system value: {f['system_value']}",
             f"    in plain words: {f['plain']}",
-            f"    technical note: {f['sap_note']}",
+            f"    derived from: {f['derived_from']['line']}",
             f"    source rows: {', '.join(f['source_rows'])}",
         ]
     lines += [
         "",
-        "RAW SYSTEM EXTRACT (the rows the fields above were derived from):",
+        "SOURCE TABLES (people, product, discount, the connections between them, and measured facts):",
     ]
     for rel in model["node"]["system_extract_files"]:
         lines += [f"--- {rel} ---", (ROOT / rel).read_text().strip()]

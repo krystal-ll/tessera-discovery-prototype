@@ -1,0 +1,35 @@
+{
+  "working_lines": [
+    "Reading people (6 rows), product (6 rows), discount (7 rows).",
+    "Following 30 connections: who set what, what applies to which products.",
+    "Grouping rules that act on the same decision into one configuration item.",
+    "Checking each item has an owner, a value, and the products it touches."
+  ],
+  "summary": "Found 6 configuration items in the pricing data for Step 2. Each one is a rule with a value, the person who set it, and the products it touches.",
+  "items": [
+    {
+      "field_id": "F1",
+      "derivation": "Discount D-01, Chain trade discount, 8%. Set by Jo Hoffman at the 2011 go-live. Applies to all six products on chain orders."
+    },
+    {
+      "field_id": "F2",
+      "derivation": "Discounts D-02 and D-03: a 20% cap on what a rep can type, and approval above 15%. The cap was set at go-live; the 15% approval rule was set by Marco Ferreira in 2019."
+    },
+    {
+      "field_id": "F3",
+      "derivation": "Discounts D-04 (Citrus promotion, 12%, set by Sam Okafor) and D-05 (volume, 3 to 6%, set at go-live) both apply to the Citrus products. Nothing in the tables says one excludes the other."
+    },
+    {
+      "field_id": "F4",
+      "derivation": "Discount D-06, Classic free case, 1 free per 10. Set by Martin Brandt in 2016, who left in 2020. Applies to both Classic products for every customer, no end date."
+    },
+    {
+      "field_id": "F5",
+      "derivation": "Product table: Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 Jul 2025. Lena Park maintains them. Nothing renews them automatically."
+    },
+    {
+      "field_id": "F6",
+      "derivation": "Discount D-07, Marketplace discount, 0%. Set by Lena Park in 2018. No manual discount is possible on marketplace orders."
+    }
+  ]
+}

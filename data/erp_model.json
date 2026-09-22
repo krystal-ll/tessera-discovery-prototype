@@ -63,76 +63,147 @@
       "label": "Automatic trade discount for supermarket chains",
       "system_value": "8% off list price, applied automatically to every order from customer group 'Chains'",
       "plain": "Every chain order gets 8% off before anyone touches it.",
-      "sap_note": "Pricing procedure ZHALO01, condition type K007 (customer group discount), record for customer group 01 Chains = 8%",
       "source_rows": [
-        "condition_records.csv#0000411203",
+        "discount.csv#D-01",
+        "connections.csv#P-06 set D-01",
         "process_mining_o2c_metrics.csv#M-02"
-      ]
+      ],
+      "derived_from": {
+        "discounts": [
+          "D-01"
+        ],
+        "people": [
+          "P-06"
+        ],
+        "products": [
+          "PR-01",
+          "PR-02",
+          "PR-03",
+          "PR-04",
+          "PR-05",
+          "PR-06"
+        ],
+        "line": "Discount D-01, Chain trade discount, 8%. Set by Jo Hoffman at the 2011 go-live. Applies to all six products on chain orders."
+      }
     },
     {
       "id": "F2",
       "label": "Manual discount that triggers manager approval",
       "system_value": "Reps can enter a manual discount up to 20%. Approval workflow to the sales manager triggers only when the manual discount exceeds 15%.",
       "plain": "A rep can give up to 15% extra without anyone being asked. Between 15% and 20% the order waits for the sales manager.",
-      "sap_note": "Condition type RA01 (manual % discount), upper limit 20%. Order block 'Z1 discount approval' set by user exit when RA01 > 15%; released via workflow ZDISC_APPR.",
       "source_rows": [
-        "order_controls.csv#C-01",
-        "order_controls.csv#C-03",
-        "order_controls.csv#C-04",
+        "discount.csv#D-02",
+        "discount.csv#D-03",
+        "connections.csv#P-02 set D-03",
         "process_mining_o2c_metrics.csv#M-09",
-        "process_mining_o2c_metrics.csv#M-10",
-        "readiness_check_summary.csv#MV45AFZZ"
-      ]
+        "process_mining_o2c_metrics.csv#M-10"
+      ],
+      "derived_from": {
+        "discounts": [
+          "D-02",
+          "D-03"
+        ],
+        "people": [
+          "P-06",
+          "P-02"
+        ],
+        "products": [],
+        "line": "Discounts D-02 and D-03: a 20% cap on what a rep can type, and approval above 15%. The cap was set at go-live; the 15% approval rule was set by Marco Ferreira in 2019."
+      }
     },
     {
       "id": "F3",
       "label": "Stacking a promotion discount on top of the volume discount",
       "system_value": "No exclusion configured. Promotion discount (up to 12%) and volume discount (3% to 6%) both apply on the same line when both are valid.",
       "plain": "If a product is on promotion and the order is large, the customer gets both discounts added together.",
-      "sap_note": "Condition types K005 (promotion) and K029 (volume scale) both active in ZHALO01, no condition exclusion group defined",
       "source_rows": [
-        "order_controls.csv#C-05",
-        "condition_records.csv#0000602118",
-        "condition_records.csv#0000398003",
+        "discount.csv#D-04",
+        "discount.csv#D-05",
         "process_mining_o2c_metrics.csv#M-11",
         "process_mining_o2c_metrics.csv#M-12"
-      ]
+      ],
+      "derived_from": {
+        "discounts": [
+          "D-04",
+          "D-05"
+        ],
+        "people": [
+          "P-04",
+          "P-06"
+        ],
+        "products": [
+          "PR-03",
+          "PR-04"
+        ],
+        "line": "Discounts D-04 (Citrus promotion, 12%, set by Sam Okafor) and D-05 (volume, 3 to 6%, set at go-live) both apply to the Citrus products. Nothing in the tables says one excludes the other."
+      }
     },
     {
       "id": "F4",
       "label": "Free goods on the Classic range",
       "system_value": "Buy 10 cases of any Classic-range product, get 1 case free. Active since 2016-04-02, created by user MBRANDT (left the company in 2020). Applies to all customer groups.",
       "plain": "The system adds a free case for every 10 cases of Classic ordered, for every customer, and has done since 2016.",
-      "sap_note": "Free goods condition NA00, inclusive, 10 + 1, material group CLASSIC, no validity end date",
       "source_rows": [
-        "condition_records.csv#0000455610",
-        "order_controls.csv#C-06",
+        "discount.csv#D-06",
+        "connections.csv#P-05 set D-06",
         "process_mining_o2c_metrics.csv#M-13"
-      ]
+      ],
+      "derived_from": {
+        "discounts": [
+          "D-06"
+        ],
+        "people": [
+          "P-05"
+        ],
+        "products": [
+          "PR-01",
+          "PR-02"
+        ],
+        "line": "Discount D-06, Classic free case, 1 free per 10. Set by Martin Brandt in 2016, who left in 2020. Applies to both Classic products for every customer, no end date."
+      }
     },
     {
       "id": "F5",
       "label": "How long a negotiated chain price list stays valid",
       "system_value": "Chain price lists are valid 12 months from creation. After expiry the line falls back to list price minus the 8% trade discount.",
       "plain": "A negotiated price for a chain quietly expires after a year unless someone renews it.",
-      "sap_note": "Condition type PR00 records per customer / material with validity period 12 months, no expiry warning configured",
       "source_rows": [
-        "condition_records.csv#0000587731",
-        "condition_records.csv#0000587790",
-        "order_controls.csv#C-07",
+        "product.csv#PR-01",
+        "product.csv#PR-03",
+        "connections.csv#P-03 maintains price of PR-01",
         "process_mining_o2c_metrics.csv#M-14"
-      ]
+      ],
+      "derived_from": {
+        "discounts": [],
+        "people": [
+          "P-03"
+        ],
+        "products": [
+          "PR-01",
+          "PR-03"
+        ],
+        "line": "Product table: Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 Jul 2025. Lena Park maintains them. Nothing renews them automatically."
+      }
     },
     {
       "id": "F6",
       "label": "Discounts on marketplace orders",
       "system_value": "Manual discounts not allowed for customer group 'Marketplace'. Upper limit 0%.",
       "plain": "Nobody can discount a marketplace order. The price is the price.",
-      "sap_note": "RA01 upper limit 0% for customer group 03 Marketplace via condition record on customer group",
       "source_rows": [
-        "order_controls.csv#C-02",
-        "condition_records.csv#0000411205"
-      ]
+        "discount.csv#D-07",
+        "connections.csv#P-03 set D-07"
+      ],
+      "derived_from": {
+        "discounts": [
+          "D-07"
+        ],
+        "people": [
+          "P-03"
+        ],
+        "products": [],
+        "line": "Discount D-07, Marketplace discount, 0%. Set by Lena Park in 2018. No manual discount is possible on marketplace orders."
+      }
     }
   ],
   "connections": [
@@ -181,11 +252,11 @@
     "step_id": "S02",
     "why_this_node": "Pricing is where the client's commercial rules live. It feeds credit exposure, the pick list (free goods), the invoice, and most short-pay disputes.",
     "system_extract_files": [
-      "data/system_extract/pricing_procedure_ZHALO01.csv",
-      "data/system_extract/condition_records.csv",
-      "data/system_extract/order_controls.csv",
-      "data/system_extract/process_mining_o2c_metrics.csv",
-      "data/system_extract/readiness_check_summary.csv"
+      "data/db/people.csv",
+      "data/db/product.csv",
+      "data/db/discount.csv",
+      "data/db/connections.csv",
+      "data/system_extract/process_mining_o2c_metrics.csv"
     ]
   },
   "stakeholders": [

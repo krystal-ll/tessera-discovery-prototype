@@ -1,4 +1,9 @@
-# System extract, Halo Beverages ECC 6.0, pulled 15 Sep 2026 by the consultant (read-only)
+# System extract (detailed SAP-style version, kept for reference)
+
+The prototype now reads the simplified database in `data/db/` (people, product, discount, connections)
+plus the process-mining metrics below. The SAP-style files here are the fuller version of the same facts.
+
+# Original notes
 
 These files mimic what a consultant pulls from the client's ERP before a pricing workshop.
 Column names follow the SAP tables they came from so an SAP person recognises them; the

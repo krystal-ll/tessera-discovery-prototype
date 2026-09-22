@@ -23,7 +23,7 @@
       "system_evidence": [
         {
           "text": "Every order from a supermarket chain gets 8% off list price automatically, before anyone touches it. The rule has been in place since June 2011 and has never changed.",
-          "source": "condition_records.csv#0000411203"
+          "source": "discount.csv#D-01"
         },
         {
           "text": "71% of orders are created with no person involved, and the 8% applied on all of them in the last 12 months.",
@@ -53,8 +53,8 @@
       "ask_who": "Dana Ruiz (Head of Retail Sales) and the finance controller who set the 2019 rule",
       "system_evidence": [
         {
-          "text": "A rep can enter a manual discount up to 20%. The order only goes to the sales manager for approval when the discount is above 15%. Both settings were last changed on 4 Mar 2019 by Marco Ferreira.",
-          "source": "order_controls.csv#C-03"
+          "text": "A rep can enter a manual discount up to 20%. The order only goes to the sales manager for approval when the discount is above 15%. Marco Ferreira set the 15% rule in March 2019.",
+          "source": "discount.csv#D-03"
         },
         {
           "text": "412 orders in the last 12 months carried a discount between 10% and 15%, worth USD 1.93M. None of them were sent for approval.",
@@ -88,8 +88,8 @@
       "ask_who": "Finance controller, then Dana Ruiz",
       "system_evidence": [
         {
-          "text": "Nothing in the system stops a promotion discount and a volume discount from applying to the same line. No exclusion rule exists between the two.",
-          "source": "order_controls.csv#C-05"
+          "text": "The Citrus promotion (12%) and the volume discount (3 to 6%) both apply to the Citrus products, and nothing in the tables says one excludes the other.",
+          "source": "discount.csv#D-04"
         },
         {
           "text": "1,340 chain order lines received both discounts together in the last 12 months, averaging 15.8% off, worth USD 4.1M.",
@@ -127,8 +127,8 @@
       "ask_who": "Finance controller and marketing (promotions owner)",
       "system_evidence": [
         {
-          "text": "For every 10 cases of any Classic-range product, the system adds 1 free case, for every customer. The rule was created on 2 Apr 2016 by a user who left in 2020, with no end date.",
-          "source": "condition_records.csv#0000455610"
+          "text": "For every 10 cases of a Classic product the system adds 1 free case, for every customer. Martin Brandt set it in April 2016 and left in 2020. It has no end date.",
+          "source": "discount.csv#D-06"
         },
         {
           "text": "2,210 order lines had free cases added in the last 12 months: 22,100 free cases across 96 customers, all on the Classic range.",
@@ -149,8 +149,8 @@
       "ask_who": null,
       "system_evidence": [
         {
-          "text": "A negotiated chain price stays valid for 12 months. When it expires the line silently falls back to list price minus 8%, with no warning to anyone.",
-          "source": "order_controls.csv#C-07"
+          "text": "Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 July 2025. When a negotiated price expires the line silently falls back to list price minus 8%, and nothing warns anyone.",
+          "source": "product.csv#PR-01"
         },
         {
           "text": "Two Northgate prices expired on 31 Jul 2025 and were never renewed. 318 lines since then have been billed at the fallback price.",
@@ -176,8 +176,8 @@
       "ask_who": null,
       "system_evidence": [
         {
-          "text": "Manual discounts are not possible on marketplace orders: the limit for that customer group is 0%, set in Feb 2018.",
-          "source": "order_controls.csv#C-02"
+          "text": "Manual discounts are not possible on marketplace orders. Lena Park set the limit to 0% in February 2018.",
+          "source": "discount.csv#D-07"
         }
       ],
       "missing_side": null,

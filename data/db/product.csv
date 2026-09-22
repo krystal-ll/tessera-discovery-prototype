@@ -1,0 +1,7 @@
+id,name,range,list_price_usd_per_case,negotiated_price_northgate,northgate_price_valid_until
+PR-01,Classic Cola 330ml x24,Classic,16.00,14.60,2025-07-31
+PR-02,Classic Lemon 330ml x24,Classic,16.00,,
+PR-03,Citrus Sparkle 330ml x24,Citrus,16.80,15.10,2025-07-31
+PR-04,Citrus Zero 330ml x24,Citrus,16.80,,
+PR-05,Halo Zero Cola 330ml x24,Zero,16.40,,
+PR-06,Halo Ginger 330ml x24,Seasonal,17.20,,
