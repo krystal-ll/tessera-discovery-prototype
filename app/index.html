@@ -234,13 +234,19 @@
   .drop svg { width: 36px; height: 36px; stroke: var(--ink-3); fill: none; stroke-width: 1.4; margin-bottom: 8px; }
   .drop .t { font-weight: 500; color: var(--ink); }
   .drop .s { font-size: 12.5px; margin-top: 2px; }
+  .drop .pick { color: var(--ink-3); margin-top: 8px; text-decoration: underline; text-underline-offset: 3px; }
+  .drop:not(.done) { cursor: pointer; }
+  .drop.has .pick { display: none; }
+  .drop.has .tfile { animation: rise .25s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
   .drop .tfile { margin-top: 14px; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--ground); color: var(--ink); }
   .drop .tfile .fi { width: 28px; height: 34px; border: 1px solid var(--line-2); border-radius: 4px; position: relative; flex: none; background: var(--ground-2); }
-  .drop .tfile .fi::after { content: "MD"; position: absolute; left: 0; right: 0; bottom: 4px; font-family: var(--mono); font-size: 8px; text-align: center; color: var(--ink-3); }
+  .drop .tfile .fi::after { content: "DOC"; position: absolute; left: 0; right: 0; bottom: 4px; font-family: var(--mono); font-size: 8px; text-align: center; color: var(--ink-3); }
   .drop .tfile small { display: block; color: var(--ink-2); font-size: 12px; }
   .drop .tfile .btn { margin-left: auto; }
   .drop.done { border-style: solid; border-color: var(--line); padding: 12px 16px; }
   .drop.done svg, .drop.done .t, .drop.done .s { display: none; }
+  .drop.done { cursor: default; }
   .drop.done .tfile { margin-top: 0; border: 0; padding: 0; }
 
   .thread { flex: 1; overflow: auto; padding: 4px 16px 14px; display: flex; flex-direction: column; gap: 14px; }
@@ -360,7 +366,8 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
       <div class="t">Drag an interview transcript here</div>
       <div class="s">Notes, minutes or a recording transcript. The agent checks it against every item in this step.</div>
-      <div class="tfile"><span class="fi"></span><div><b>18 Sep · Dana Ruiz</b><small>Head of Retail Sales · 50 min</small></div><button class="btn small" id="synth">Synthesize</button></div>
+      <div class="s pick">or click to choose a file</div>
+      <div class="tfile" id="tfile" hidden><span class="fi"></span><div><b>Dana Ruiz · 18 Sep.docx</b><small>Head of Retail Sales · 50 min · 48 KB · Uploaded</small></div><button class="btn small" id="synth">Synthesize</button></div>
     </div>
     <div class="thread" id="thread"></div>
     <div class="compose">
@@ -569,10 +576,12 @@
     (CHAT.prompts[id] || []).forEach(t => { const b = el('button', null, esc(t)); b.addEventListener('click', () => { wrap.remove(); ask(t); tour.emit('prompted'); }); wrap.appendChild(b); });
     return wrap;
   }
-  $('#synth').addEventListener('click', synthesize);
+  $('#synth').addEventListener('click', e => { e.stopPropagation(); synthesize(); });
   const drop = $('#drop');
+  function uploaded() { if (drop.classList.contains('has')) return; drop.classList.add('has'); $('#tfile').hidden = false; $('#drop .t').textContent = 'Transcript added'; $('#drop .s:not(.pick)').textContent = 'Synthesize to check it against every item in this step.'; tour.emit('uploaded'); }
+  drop.addEventListener('click', () => { if (!state.synthesized) uploaded(); });
   ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); if (ev === 'drop') synthesize(); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); if (ev === 'drop') uploaded(); }));
 
   function setScope(id) { state.scope = id; const s = $('#scope'); if (!id) { s.className = 'scope'; s.innerHTML = ''; return; } const f = M.node_fields.find(x => x.id === id); s.className = 'scope show'; s.innerHTML = `About <b>${num(id)} · ${esc(f.label)}</b><button class="x" aria-label="Clear">×</button>`; s.querySelector('.x').addEventListener('click', () => { state.selected = null; setScope(null); renderItems(); }); }
   function answerFor(text) {
@@ -604,10 +613,11 @@
     const veil = $('#tour-veil'), spot = $('#tour-spot'), card = $('#tour-card');
     const steps = [
       { key: 'Locate', target: () => $('.step.current'), text: 'Open Step 2.', on: 'step-open' },
-      { key: 'Start with the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'started', pre: () => openAgent() },
+      { key: 'Add the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'uploaded', pre: () => openAgent() },
+      { key: 'Synthesize', target: () => $('#synth'), text: 'Synthesize.', on: 'started', wait: 350 },
       { key: 'The agent works', target: () => $('#thread .run'), text: 'Checking the interview against the six items.', on: 'synthesized', wait: 700 },
       { key: 'Verdicts', target: () => $('#items'), text: 'Every item has a verdict. Four need you.', next: true, pre: () => document.querySelector('.stage').scrollTo({ top: 0 }) },
-      { key: 'A match', target: () => $('.item[data-id="F1"] .row'), text: 'Open item 1, a match.', on: 'open-1' },
+      { key: 'A match', target: () => $('.item[data-id="F1"] .row'), text: 'Open item 1, a match.', on: 'open-1', hold: 'Look around, then Next.' },
       { key: 'A gap', target: () => $('.item[data-id="F3"] .row'), text: 'Open item 3, a gap.', on: 'open-3', pre: () => { state.open.delete('F1'); renderItems(); } },
       { key: 'Ask why', target: () => $('button[data-ask="F3"]'), text: 'Ask why.', on: 'asked', pre: () => document.querySelector('.item[data-id="F3"]')?.scrollIntoView({ block: 'start', behavior: 'smooth' }) },
       { key: 'Dig in', target: () => $('#thread .prompts'), text: 'Pick a question.', on: 'prompted', wait: 300 },
@@ -630,7 +640,7 @@
     const tick = () => { if (active) { place(); raf = requestAnimationFrame(tick); } };
     const clear = () => { document.querySelectorAll('.tour-target').forEach(x => x.classList.remove('tour-target')); };
     const show = () => {
-      current = steps[i]; clear(); current.pre?.();
+      current = steps[i]; current.held = false; clear(); current.pre?.();
       setTimeout(() => {
         const t = current.target(); if (!t) { return next(); }
         t.classList.add('tour-target'); t.closest('.agent')?.classList.add('tour-target'); t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -645,7 +655,7 @@
     card.querySelector('.skip').textContent = 'Skip'; card.querySelector('.skip').addEventListener('click', stop);
     card.querySelector('.next').addEventListener('click', next);
     veil.addEventListener('click', e => e.stopPropagation());
-    return { start, stop, emit: ev => { if (active && current && current.on === ev) next(); } };
+    return { start, stop, emit: ev => { if (!(active && current && current.on === ev)) return; if (current.hold && !current.held) { current.held = true; card.querySelector('p').textContent = current.hold; card.querySelector('.next').hidden = false; place(); return; } next(); } };
   })();
   $('#tour-restart').addEventListener('click', () => { location.reload(); });
 
