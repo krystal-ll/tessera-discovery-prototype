@@ -5,13 +5,13 @@ when it derives configuration items for the pricing step.
 
 | Table | Columns | Rows |
 |---|---|---|
-| people | id, name, title, status | 6 |
-| product | id, name, range, list price per case, negotiated price (Northgate), valid until | 6 |
-| discount | id, name, percent, applies to, kind, since | 7 |
-| connections | from, relation, to, since, note | 30 |
+| people | id, name, title, status | 4 |
+| product | id, name, range, list price per case | 4 |
+| discount | id, name, percent, applies to, since | 5 |
+| connections | from, relation, to, since, note | 18 |
 
 Relations: a person is **in charge of** products; a person **set** a discount; a discount
-**applies to** products; a person **maintains price of** a product.
+**applies to** products.
 
-A configuration item is one discount row (or one price rule on the product table) together with
-who set it and which products it touches. Everything is fictional.
+A configuration item is one pricing rule (one or two discount rows) together with who set it and
+which products it touches. Three items for the prototype. Everything is fictional.

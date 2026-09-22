@@ -43,12 +43,13 @@ Rules:
 - Quote the stakeholder verbatim. Never paraphrase inside a quote. Every quote must appear in the transcript.
 - A stakeholder saying "I don't know" or "maybe I'm wrong" about a field is still evidence; reflect it in confidence.
 - confidence is your confidence in the STATE you assigned, 0 to 1.
-- For contradiction, gap_no_data and gap_no_explanation write a one-sentence conflict_summary a consultant
-  can read in five seconds, a follow_up_question the consultant should ask next, and ask_who: the role or
-  named person best placed to answer. For match and not_discussed set those three to null.
+- For contradiction, gap_no_data and gap_no_explanation write a follow_up_question the consultant should
+  ask next, and ask_who: the named person best placed to answer. For match and not_discussed set both to null.
 - The consultant makes the judgment, not you. Do not recommend which side is right. Surface the evidence.
-- system_evidence: two or three plain-language sentences stating what the configuration and the measured
-  facts show for this field, each with the source row it came from. No table or column names.
+- why: ONE sentence a consultant can read in five seconds saying why you gave this verdict.
+- related_rows: the table rows that carry the evidence (table name and row id from the source tables),
+  each with a three-to-six-word reason. Point at rows, do not restate them.
+- quotes: at most two short verbatim quotes.
 - missing_side: for gap_no_data set "system" (the client described it, no data produces it); for
   gap_no_explanation and not_discussed set "client" (data exists, no one explained it); else null.
   missing_note: one sentence saying what is missing, else null.
@@ -80,24 +81,23 @@ SCHEMA = {
                             "additionalProperties": False,
                         },
                     },
-                    "system_evidence": {
+                    "why": {"type": "string"},
+                    "related_rows": {
                         "type": "array",
                         "items": {
                             "type": "object",
-                            "properties": {"text": {"type": "string"}, "source": {"type": "string"}},
-                            "required": ["text", "source"],
+                            "properties": {"table": {"type": "string"}, "id": {"type": "string"}, "why": {"type": "string"}},
+                            "required": ["table", "id", "why"],
                             "additionalProperties": False,
                         },
                     },
                     "missing_side": {"type": ["string", "null"], "enum": ["system", "client", None]},
                     "missing_note": {"type": ["string", "null"]},
-                    "reasoning": {"type": "string"},
-                    "conflict_summary": {"type": ["string", "null"]},
                     "follow_up_question": {"type": ["string", "null"]},
                     "ask_who": {"type": ["string", "null"]},
                 },
-                "required": ["field_id", "state", "confidence", "quotes", "system_evidence", "missing_side", "missing_note", "reasoning",
-                             "conflict_summary", "follow_up_question", "ask_who"],
+                "required": ["field_id", "state", "confidence", "quotes", "why", "related_rows", "missing_side", "missing_note",
+                             "follow_up_question", "ask_who"],
                 "additionalProperties": False,
             },
         },

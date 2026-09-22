@@ -2,30 +2,18 @@ from,relation,to,since,note
 P-01,in charge of,PR-01,2021,Retail sales owns the Classic and Citrus ranges
 P-01,in charge of,PR-02,2021,
 P-01,in charge of,PR-03,2021,
-P-01,in charge of,PR-04,2021,
-P-04,in charge of,PR-03,2024,Promotions on the Citrus range
-P-04,in charge of,PR-04,2024,
-P-03,maintains price of,PR-01,2023,Keys negotiated prices sent by the key account managers
-P-03,maintains price of,PR-03,2023,
-P-06,set,D-01,2011,Configured at go-live
-P-06,set,D-02,2011,Configured at go-live
+P-03,in charge of,PR-04,2023,Order desk owns the Zero range listing
+P-04,set,D-01,2011,Configured at go-live
+P-04,set,D-02,2011,Configured at go-live
 P-02,set,D-03,2019,Tightened after margin loss on two listings
-P-04,set,D-04,2026,
-P-06,set,D-05,2011,Configured at go-live
-P-05,set,D-06,2016,Creator left the company in 2020; no one has touched it since
-P-03,set,D-07,2018,
+P-03,set,D-04,2026,Keyed from the promotion sheet sent by marketing
+P-04,set,D-05,2011,Configured at go-live
 D-01,applies to,PR-01,2011,
 D-01,applies to,PR-02,2011,
 D-01,applies to,PR-03,2011,
 D-01,applies to,PR-04,2011,
-D-01,applies to,PR-05,2011,
-D-01,applies to,PR-06,2011,
 D-04,applies to,PR-03,2026,
-D-04,applies to,PR-04,2026,
 D-05,applies to,PR-01,2011,
 D-05,applies to,PR-02,2011,
 D-05,applies to,PR-03,2011,
 D-05,applies to,PR-04,2011,
-D-05,applies to,PR-05,2011,
-D-06,applies to,PR-01,2016,
-D-06,applies to,PR-02,2016,

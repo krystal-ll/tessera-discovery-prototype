@@ -12,10 +12,10 @@
     --match-ink: #166534; --match-bg: #ecfdf3; --match-line: #bbf7d0;
     --contra-ink: #991b1b; --contra-bg: #fef2f2; --contra-line: #fecaca;
     --gap-ink: #9a3412; --gap-bg: #fff7ed; --gap-line: #fed7aa;
-    --resolved-ink: #1e40af; --resolved-bg: #eff6ff; --resolved-line: #bfdbfe;
+    --resolved-ink: #09090b; --resolved-bg: #f4f4f5; --resolved-line: #d4d4d8;
     --none-ink: #52525b; --none-bg: #f4f4f5; --none-line: #e4e4e7;
     --review-ink: #ffffff; --review-bg: #09090b; --review-line: #09090b;
-    --work: #09090b;
+    --flash: #fff3bf;
     --sans: "Geist", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
     --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     color-scheme: light;
@@ -29,10 +29,10 @@
       --match-ink: #86efac; --match-bg: #0a2416; --match-line: #14532d;
       --contra-ink: #fca5a5; --contra-bg: #2a0f0f; --contra-line: #7f1d1d;
       --gap-ink: #fdba74; --gap-bg: #2a170a; --gap-line: #7c2d12;
-      --resolved-ink: #93c5fd; --resolved-bg: #0c1a33; --resolved-line: #1e3a8a;
+      --resolved-ink: #f4f4f5; --resolved-bg: #18181b; --resolved-line: #3f3f46;
       --none-ink: #a1a1aa; --none-bg: #18181b; --none-line: #27272a;
       --review-ink: #0b0b0d; --review-bg: #f4f4f5; --review-line: #f4f4f5;
-      --work: #f4f4f5;
+      --flash: #3b3410;
       color-scheme: dark;
     }
   }
@@ -44,14 +44,15 @@
     --match-ink: #86efac; --match-bg: #0a2416; --match-line: #14532d;
     --contra-ink: #fca5a5; --contra-bg: #2a0f0f; --contra-line: #7f1d1d;
     --gap-ink: #fdba74; --gap-bg: #2a170a; --gap-line: #7c2d12;
-    --resolved-ink: #93c5fd; --resolved-bg: #0c1a33; --resolved-line: #1e3a8a;
+    --resolved-ink: #f4f4f5; --resolved-bg: #18181b; --resolved-line: #3f3f46;
     --none-ink: #a1a1aa; --none-bg: #18181b; --none-line: #27272a;
     --review-ink: #0b0b0d; --review-bg: #f4f4f5; --review-line: #f4f4f5;
-    --work: #f4f4f5;
+    --flash: #3b3410;
     color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.5; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
   button, input, textarea, select { font: inherit; color: inherit; letter-spacing: inherit; }
@@ -61,15 +62,19 @@
   .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
   .mono { font-family: var(--mono); font-size: 12px; }
   .muted { color: var(--ink-2); }
-  .num { font-variant-numeric: tabular-nums; }
+  h4.lbl { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; }
 
-  .topbar { height: 52px; display: flex; align-items: center; gap: 24px; padding: 0 24px; border-bottom: 1px solid var(--line); background: var(--ground); flex: none; }
-  .wordmark { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -0.02em; }
-  .wordmark svg { width: 18px; height: 18px; }
-  .wordmark span { color: var(--ink-2); font-weight: 400; }
-  .topbar .project { margin-left: auto; display: flex; align-items: center; gap: 12px; color: var(--ink-2); }
-  .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--ground); font-size: 11px; font-weight: 600; display: grid; place-items: center; flex: none; }
-
+  .topbar { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--line); background: var(--ground); flex: none; }
+  .topbar .brand { font-weight: 600; letter-spacing: -0.02em; font-size: 15px; }
+  .tb-right { display: flex; align-items: center; gap: 14px; }
+  .iconbtn { position: relative; width: 32px; height: 32px; border-radius: 8px; border: 0; background: transparent; color: var(--ink-2); display: grid; place-items: center; }
+  .iconbtn:hover { background: var(--ground-3); color: var(--ink); }
+  .iconbtn.active { color: var(--ink); }
+  .iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  .iconbtn .dot { position: absolute; right: 5px; top: 5px; width: 6px; height: 6px; display: none; }
+  .iconbtn .dot.working { display: block; }
+  .iconbtn .badge { position: absolute; right: 2px; bottom: 2px; font-family: var(--mono); font-size: 9px; border-radius: 999px; background: var(--ink); color: var(--ground); padding: 0 4px; line-height: 13px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--ground); font-size: 11px; font-weight: 600; display: grid; place-items: center; }
   .frame { flex: 1; display: flex; min-height: 0; }
   .stage { flex: 1; min-width: 0; overflow: auto; position: relative; }
 
@@ -94,7 +99,7 @@
   /* ---------- map ---------- */
   #map { padding: 40px 48px 64px; background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 22px 22px; min-height: 100%; }
   #map header { max-width: 760px; margin-bottom: 36px; }
-  #map h1 { font-size: 30px; letter-spacing: -0.03em; margin-top: 10px; }
+  #map h1 { font-size: 30px; letter-spacing: -0.03em; }
   #map header p { color: var(--ink-2); font-size: 15px; max-width: 60ch; margin: 10px 0 0; }
   .level-label { margin: 0 0 14px; }
   .procs { display: grid; grid-template-columns: repeat(5, minmax(140px, 1fr)); gap: 12px; overflow-x: auto; }
@@ -122,7 +127,7 @@
   .strip { display: flex; align-items: center; gap: 6px; padding: 12px 32px; border-bottom: 1px solid var(--line); background: var(--ground); position: sticky; top: 0; z-index: 5; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .strip::-webkit-scrollbar { display: none; }
   .chip { flex: none; height: 26px; padding: 0 10px; border-radius: 999px; border: 1px dashed var(--line-2); background: transparent; color: var(--ink-3); font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .chip.scoped { border-style: solid; color: var(--ink-2); }
+  .chip.scoped { border-style: solid; color: var(--ink); font-weight: 500; }
   .chip.active { border: 1px solid var(--ink); color: var(--ink); background: var(--ground-3); font-weight: 500; }
   .chip .n { font-family: var(--mono); font-size: 11px; opacity: .8; }
   .strip .sep { color: var(--ink-3); padding: 0 4px; }
@@ -134,21 +139,6 @@
   .step-head .sub { color: var(--ink-2); margin-top: 4px; font-size: 15px; }
   .status { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
   .status .lbl { font-size: 12px; color: var(--ink-3); }
-  .people { display: flex; align-items: center; gap: 6px; margin-top: 18px; position: relative; }
-  .people .lbl { font-size: 12px; color: var(--ink-3); margin-right: 4px; }
-  .person { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 10px 0 3px; border-radius: 999px; border: 1px solid var(--line); background: var(--ground); font-size: 13px; position: relative; white-space: nowrap; }
-  .person.add { border-style: dashed; color: var(--ink-2); padding: 0 12px; }
-  .pop .iv { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
-  .pop .iv svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
-  .person:hover { border-color: var(--ink); }
-  .person .avatar { width: 24px; height: 24px; font-size: 10px; background: var(--ground-3); color: var(--ink); border: 1px solid var(--line-2); }
-  .person.interviewed .avatar { background: var(--ink); color: var(--ground); border-color: var(--ink); }
-  .person .role { color: var(--ink-3); font-size: 12px; }
-  .pop { position: absolute; top: 36px; left: 0; z-index: 12; width: 280px; background: var(--ground); border: 1px solid var(--line-2); border-radius: 12px; padding: 14px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.08); text-align: left; font-size: 13px; }
-  .pop b { font-weight: 600; display: block; }
-  .pop .r { color: var(--ink-2); }
-  .pop p { margin: 8px 0 0; color: var(--ink-2); }
-  .pop .tag { margin-top: 10px; }
 
   .tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); margin-top: 26px; }
   .tab { background: none; border: 0; padding: 10px 0; color: var(--ink-2); border-bottom: 1.5px solid transparent; margin-bottom: -1px; font-weight: 500; }
@@ -172,112 +162,86 @@
   .item .chev { color: var(--ink-3); transition: transform .15s; text-align: center; }
   .item.open .chev { transform: rotate(90deg); }
   .item.selected .row { box-shadow: inset 3px 0 0 var(--ink); }
-  .item .detail { display: none; padding: 4px 8px 26px 64px; }
+  .item .detail { display: none; padding: 6px 8px 26px 64px; }
   .item.open .detail { display: block; }
 
-  .from { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-  .from h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; }
-  .from .dl { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
-  .chain { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
-  .chain .grp { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; position: relative; padding-right: 22px; }
-  .chain .grp:last-child { padding-right: 0; }
-  .chain .grp:not(:last-child)::after { content: "→"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--ink-3); }
-  .chain .gl { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-right: 2px; }
-  .chain .node { display: inline-flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 8px; padding: 5px 9px; font-size: 12.5px; line-height: 1.3; background: var(--ground); }
-  .chain .node b { font-weight: 500; }
-  .chain .node small { color: var(--ink-2); font-size: 11px; }
-  .chain .node.p { border-style: solid; }
-  .chain .node.gone { border-style: dashed; color: var(--ink-2); }
-  .chain .node.d { border-color: var(--ink); }
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .side h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-  .side h4 .who { text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; color: var(--ink-2); }
-  .ev { display: flex; flex-direction: column; gap: 10px; }
-  .ev .e { position: relative; padding-left: 14px; font-size: 13.5px; line-height: 1.5; }
-  .ev .e::before { content: ""; position: absolute; left: 0; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); }
-  .ev .e a { color: var(--ink-3); font-family: var(--mono); font-size: 11px; text-decoration: none; margin-left: 6px; border-bottom: 1px dotted var(--line-2); }
-  .ev .e a:hover { color: var(--ink); }
-  .q { border-left: 2px solid var(--ink); padding: 2px 0 2px 12px; font-size: 13.5px; }
-  .q .by { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
-  .missing { border: 1px dashed var(--gap-line); background: var(--gap-bg); color: var(--gap-ink); border-radius: 10px; padding: 12px 14px; font-size: 13px; }
-  .missing b { display: block; font-weight: 600; margin-bottom: 2px; }
-  .missing.neutral { border-color: var(--line-2); background: var(--ground-2); color: var(--ink-2); }
-
-  .verdict-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
-  .agentsays { font-size: 13.5px; }
-  .agentsays .top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .agentsays .top .c { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
-  .agentsays p { margin: 0; color: var(--ink-2); }
-  .agentsays .ask { margin-top: 12px; }
-  .judge h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; }
-  .judge .todo { font-size: 13px; color: var(--ink-2); margin-bottom: 10px; }
-  .judge .todo b { color: var(--ink); font-weight: 500; }
+  .why { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; line-height: 1.45; margin-bottom: 14px; }
+  .why .pill { margin-top: 2px; flex: none; }
+  .why .c { font-family: var(--mono); font-size: 11px; color: var(--ink-3); white-space: nowrap; margin-top: 4px; }
+  .ev { display: flex; flex-direction: column; gap: 6px; }
+  .evl { display: grid; grid-template-columns: 190px 1fr; gap: 12px; align-items: baseline; font-size: 13.5px; }
+  .evl .ref { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); white-space: nowrap; }
+  .evl .ref:hover { text-decoration-color: var(--ink); }
+  .evl .ref.plain { text-decoration: none; color: var(--ink-3); }
+  .evl.miss span:last-child { color: var(--gap-ink); }
+  .act { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .linkbtn { background: none; border: 0; padding: 0; color: var(--ink); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+  .linkbtn:hover { text-decoration-color: var(--ink); }
   .field { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .field:first-child { margin-top: 0; }
   .field label { font-size: 12px; color: var(--ink-2); }
   .field select, .field textarea, .field input { border: 1px solid var(--line-2); border-radius: 8px; background: var(--ground); padding: 8px 10px; width: 100%; }
-  .field textarea { min-height: 72px; resize: vertical; line-height: 1.45; }
+  .field textarea { min-height: 64px; resize: vertical; line-height: 1.45; }
   .field-row { display: flex; justify-content: flex-end; margin-top: 12px; }
   .decided { padding: 12px 14px; border-radius: 10px; background: var(--resolved-bg); border: 1px solid var(--resolved-line); font-size: 13px; }
   .decided .who { color: var(--ink-2); font-size: 12px; margin-top: 6px; }
   .empty { color: var(--ink-3); padding: 28px 0; text-align: center; }
 
-  .banner { display: none; margin-top: 18px; border: 1px solid var(--match-line); background: var(--match-bg); color: var(--match-ink); border-radius: 12px; padding: 14px 18px; align-items: center; gap: 14px; }
-  .banner.show { display: flex; }
-  .banner.open-items { border-color: var(--line); background: var(--ground-2); color: var(--ink); }
-  .banner b { font-weight: 600; }
-
-  .log .entry { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--line); }
-  .log .when { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 3px; }
-  .log .what b { font-weight: 500; }
-  .log .what p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
   .sources { display: flex; flex-direction: column; gap: 12px; }
+  .source { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .source .name { font-family: var(--mono); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .source p { margin: 6px 0 0; color: var(--ink-2); font-size: 13px; }
+  .source[draggable] { cursor: grab; }
+  .source.dragging { opacity: .5; }
+  .source .drag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); margin-left: auto; font-family: var(--sans); }
+  .source.sent .drag { color: var(--ink); }
   .tablewrap { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; }
   .tablewrap table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
   .tablewrap th, .tablewrap td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: top; }
   .tablewrap th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); background: var(--ground-2); font-weight: 500; }
   .tablewrap tr:last-child td { border-bottom: 0; }
   .tablewrap td:first-child { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
-  .found { display: grid; grid-template-columns: 22px 1fr; gap: 6px 10px; margin-top: 10px; font-size: 12.5px; }
-  .found .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
-  .found b { font-weight: 500; display: block; }
-  .found small { color: var(--ink-2); display: block; }
-  .addall { margin-top: 12px; }
-  .source { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
-  .source .name { font-family: var(--mono); font-size: 12px; display: flex; align-items: center; gap: 8px; }
-  .source p { margin: 6px 0 0; color: var(--ink-2); font-size: 13px; }
+  .tablewrap tr.flash td { background: var(--flash); }
 
   /* ---------- agent ---------- */
   .agent { width: 400px; flex: none; border-left: 1px solid var(--line); background: var(--ground); display: flex; flex-direction: column; min-height: 0; transition: width .2s; }
   .agent.closed { width: 0; border-left: 0; overflow: hidden; }
   .agent-head { height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--line); flex: none; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); flex: none; }
-  .dot.working { background: var(--work); animation: pulse 1s infinite; }
-  .dot.ready { background: var(--match-ink); }
+  .dot.working { background: var(--ink); animation: pulse 1s infinite; }
+  .dot.ready { background: var(--ink); }
   .agent-head .close { margin-left: auto; background: none; border: 0; color: var(--ink-2); font-size: 18px; line-height: 1; }
-  .drop { margin: 16px; border: 1.5px dashed var(--line-2); border-radius: 14px; padding: 22px 18px 18px; text-align: center; color: var(--ink-2); transition: border-color .15s, background .15s; }
+  .dropwrap { flex: none; padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--ground); }
+  .drop { margin: 0; border: 1.5px dashed var(--line-2); border-radius: 14px; padding: 22px 18px 18px; text-align: center; color: var(--ink-2); transition: border-color .15s, background .15s; }
   .drop.over { border-color: var(--ink); background: var(--ground-3); }
   .drop svg { width: 36px; height: 36px; stroke: var(--ink-3); fill: none; stroke-width: 1.4; margin-bottom: 8px; }
   .drop .t { font-weight: 500; color: var(--ink); }
   .drop .s { font-size: 12.5px; margin-top: 2px; }
   .drop .pick { color: var(--ink-3); margin-top: 8px; text-decoration: underline; text-underline-offset: 3px; }
   .drop:not(.done) { cursor: pointer; }
-  .drop.has .pick { display: none; }
-  .drop.has .tfile { animation: rise .25s ease; }
-  @keyframes rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
-  .drop .tfile { margin-top: 14px; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--ground); color: var(--ink); }
+  .drop.has svg, .drop.has .t, .drop.has .s { display: none; }
+  .drop .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+  .drop .chips:empty { display: none; }
+  .drop .chips .sc { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 10px 3px 6px; font-size: 12px; color: var(--ink); background: var(--ground); animation: rise .2s ease; }
+  .drop .chips .sc::before { content: ""; width: 10px; height: 10px; border: 1px solid var(--ink-2); border-radius: 2px; }
+  .drop #configure { margin-top: 12px; }
+  .drop.has { padding: 12px 14px; border-style: solid; border-color: var(--line); }
+  .drop .tfile { margin-top: 14px; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--ground); color: var(--ink); animation: rise .25s ease; }
   .drop .tfile .fi { width: 28px; height: 34px; border: 1px solid var(--line-2); border-radius: 4px; position: relative; flex: none; background: var(--ground-2); }
   .drop .tfile .fi::after { content: "DOC"; position: absolute; left: 0; right: 0; bottom: 4px; font-family: var(--mono); font-size: 8px; text-align: center; color: var(--ink-3); }
   .drop .tfile small { display: block; color: var(--ink-2); font-size: 12px; }
   .drop .tfile .btn { margin-left: auto; }
-  .drop.done { border-style: solid; border-color: var(--line); padding: 12px 16px; }
-  .drop.done svg, .drop.done .t, .drop.done .s { display: none; }
-  .drop.done { cursor: default; }
+  .drop.done { border-style: solid; border-color: var(--line); padding: 12px 16px; cursor: default; }
+  .drop.done svg, .drop.done .t, .drop.done .s, .drop.done #configure { display: none; }
   .drop.done .tfile { margin-top: 0; border: 0; padding: 0; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
 
-  .thread { flex: 1; overflow: auto; padding: 4px 16px 14px; display: flex; flex-direction: column; gap: 14px; }
+  .thread { flex: 1; overflow: auto; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 14px; }
   .msg { font-size: 13.5px; line-height: 1.5; }
   .msg .who { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 4px; }
   .msg.user { align-self: flex-end; background: var(--ground-3); border-radius: 12px 12px 2px 12px; padding: 8px 12px; max-width: 88%; }
+  .loc { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line-2); border-radius: 6px; padding: 0 6px; font-family: var(--mono); font-size: 11px; color: var(--ink); background: var(--ground); cursor: pointer; vertical-align: baseline; }
+  .loc:hover { border-color: var(--ink); background: var(--ground-3); }
   .run { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
   .run .title { display: flex; align-items: center; gap: 10px; font-weight: 500; margin-bottom: 8px; }
   .run .title .sh { flex: 1; height: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--line) 0%, var(--ink-3) 50%, var(--line) 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
@@ -288,12 +252,33 @@
   .run li.on { color: var(--ink); }
   .run li.on::before { content: "●"; color: var(--ink); animation: pulse 1s infinite; }
   .run li.ok { color: var(--ink-2); }
-  .run li.ok::before { content: "✓"; color: var(--match-ink); }
+  .run li.ok::before { content: "✓"; color: var(--ink); }
+  .erd { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 8px; margin-bottom: 4px; }
+  .erd .erd-t { font-weight: 500; margin-bottom: 8px; display: flex; gap: 10px; align-items: baseline; }
+  .erd .erd-t .muted { font-size: 12px; font-weight: 400; }
+  .erd svg { width: 100%; max-width: 780px; height: auto; display: block; font-family: var(--sans); }
+  .erd rect { fill: var(--ground); stroke: var(--line-2); }
+  .erd rect.hd { fill: var(--ground-3); stroke: var(--line-2); }
+  .erd .tn { font-family: var(--mono); font-size: 11px; font-weight: 500; fill: var(--ink); }
+  .erd .rc { font-family: var(--mono); font-size: 9.5px; fill: var(--ink-3); }
+  .erd .col { font-size: 10.5px; fill: var(--ink-2); }
+  .erd .col.pk { fill: var(--ink); font-weight: 500; }
+  .erd line, .erd path { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+  .erd .rl { font-size: 10.5px; fill: var(--ink-2); }
   .verdicts { display: grid; grid-template-columns: 30px 150px 1fr; gap: 6px 10px; align-items: center; margin-top: 10px; }
   .verdicts .vid { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
   .verdicts .vname { font-size: 12.5px; color: var(--ink-2); text-align: left; background: none; border: 0; padding: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .verdicts .vname:hover { color: var(--ink); text-decoration: underline; }
+  .found { display: grid; grid-template-columns: 22px 1fr; gap: 6px 10px; margin-top: 10px; font-size: 12.5px; }
+  .found .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+  .found b { font-weight: 500; display: block; }
+  .found small { color: var(--ink-2); display: block; }
+  .addall { margin-top: 12px; }
+  .prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .prompts button { border: 1px solid var(--line-2); background: var(--ground); border-radius: 999px; padding: 4px 11px; font-size: 12.5px; color: var(--ink); }
+  .prompts button:hover { border-color: var(--ink); background: var(--ground-3); }
   .msg .use { margin-top: 8px; }
+  .tw { white-space: pre-wrap; }
   .compose { border-top: 1px solid var(--line); padding: 10px 16px 14px; flex: none; }
   .scope { display: none; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--ink-2); }
   .scope.show { display: flex; }
@@ -301,16 +286,6 @@
   .compose form { display: flex; gap: 8px; }
   .compose input { flex: 1; border: 1px solid var(--line-2); border-radius: 999px; padding: 8px 14px; background: var(--ground); }
   .compose button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ink); background: var(--ink); color: var(--ground); display: grid; place-items: center; }
-
-  .edge { position: fixed; right: 0; top: 50%; transform: translateY(-50%); display: none; flex-direction: column; align-items: center; gap: 8px; padding: 12px 8px; border: 1px solid var(--line); border-right: 0; border-radius: 10px 0 0 10px; background: var(--ground); z-index: 20; }
-  .edge.show { display: flex; }
-  .edge .vt { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; font-weight: 500; }
-  .edge .badge { font-family: var(--mono); font-size: 10px; border-radius: 999px; background: var(--ink); color: var(--ground); padding: 1px 6px; }
-
-  .prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .prompts button { border: 1px solid var(--line-2); background: var(--ground); border-radius: 999px; padding: 4px 11px; font-size: 12.5px; color: var(--ink); }
-  .prompts button:hover { border-color: var(--ink); background: var(--ground-3); }
-  .tw { white-space: pre-wrap; }
 
   /* tour */
   .tour-veil { position: fixed; inset: 0; z-index: 900; background: transparent; display: none; }
@@ -326,30 +301,23 @@
   .tour-card .skip { background: none; border: 0; color: var(--ground); opacity: .55; font-size: 11.5px; padding: 0; }
   .tour-card .next { background: var(--ground); color: var(--ink); border: 0; border-radius: 999px; height: 24px; padding: 0 10px; font-size: 12px; font-weight: 500; }
   .tour-card .next[hidden] { display: none; }
-  .tour-restart { background: none; border: 1px solid var(--line-2); border-radius: 999px; height: 28px; padding: 0 11px; font-size: 12.5px; color: var(--ink-2); }
-  .tour-restart:hover { border-color: var(--ink); color: var(--ink); }
 
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
   @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   @media (max-width: 1180px) {
     .agent { position: fixed; right: 0; top: 52px; bottom: 0; width: min(400px, 92vw); box-shadow: -12px 0 32px rgba(0,0,0,.08); z-index: 30; }
-    .pair, .verdict-row { grid-template-columns: 1fr; }
+    .act { grid-template-columns: 1fr; }
     #map { padding: 28px 24px 48px; } .step-body { padding: 22px 20px 80px; } .strip { padding: 10px 20px; }
   }
-  @media (max-width: 760px) { .item .row { grid-template-columns: 32px 1fr 130px 20px; } .item .detail { padding-left: 8px; } .topbar .project span:first-child { display: none; } }
+  @media (max-width: 760px) { .item .row { grid-template-columns: 32px 1fr 130px 20px; } .item .detail { padding-left: 8px; } }
 </style>
 
-<div class="topbar">
-  <div class="wordmark"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5 18.5 10 10 18.5 1.5 10z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 6 14 10l-4 4-4-4z" fill="currentColor"/></svg>Tessera <span>Discovery</span></div>
-  <div class="project"><button class="tour-restart" id="tour-restart">Restart walkthrough</button><span id="proj-name"></span><span class="mono muted">ECC → S/4HANA · Discovery</span><div class="avatar">PR</div></div>
-</div>
-
+<div class="topbar"><span class="brand">Tessera</span><span class="tb-right"><button class="iconbtn" id="agent-toggle" aria-label="Toggle agent panel" title="Agent"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5"/><path d="M12.5 3.5v13"/></svg><span class="dot" id="edge-dot"></span><span class="badge" id="edge-badge" hidden></span></button><span class="avatar">PR</span></span></div>
 <div class="frame">
   <div class="stage">
     <section id="map">
       <header>
-        <div class="eyebrow" id="map-eyebrow"></div>
         <h1>Where discovery stands</h1>
         <p>Every process in scope, every step inside it, and how much of its configuration the business has explained so far. Pick a step to review it.</p>
       </header>
@@ -368,18 +336,14 @@
           <div><h1 id="step-title"></h1><div class="sub" id="step-sub"></div></div>
           <div class="status"><span class="lbl">Step status</span><span id="step-status"></span></div>
         </div>
-        <div class="people" id="people"></div>
         <div class="tabs">
           <button class="tab active" data-tab="items">Configuration items<span class="count" id="c-items"></span></button>
-          <button class="tab" data-tab="log">Decision log<span class="count" id="c-log">0</span></button>
           <button class="tab" data-tab="sources">Sources<span class="count" id="c-src"></span></button>
         </div>
         <div class="panel active" id="panel-items">
           <div class="hint" id="hint"></div>
           <div class="items" id="items"></div>
-          <div class="banner" id="banner"></div>
         </div>
-        <div class="panel" id="panel-log"><div class="log" id="log"></div></div>
         <div class="panel" id="panel-sources"><div class="sources" id="sources"></div></div>
       </div>
     </section>
@@ -387,12 +351,20 @@
 
   <aside class="agent" id="agent">
     <div class="agent-head"><span class="dot" id="dot"></span><b>Agent</b><span class="muted" id="agent-state">idle</span><button class="close" id="agent-close" aria-label="Close agent panel">×</button></div>
-    <div class="drop" id="drop">
+    <div class="dropwrap">
+    <div class="drop srcdrop" id="srcdrop">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
+      <div class="t">Drag tables from Sources here</div>
+      <div class="s" id="srcs">people, product, discount, connections</div>
+      <button class="btn small" id="configure" hidden>Configure the rules</button>
+    </div>
+    <div class="drop" id="drop" hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
       <div class="t">Drag an interview transcript here</div>
-      <div class="s">Notes, minutes or a recording transcript. The agent checks it against every item in this step.</div>
+      <div class="s">Notes, minutes or a transcript.</div>
       <div class="s pick">or click to choose a file</div>
-      <div class="tfile" id="tfile" hidden><span class="fi"></span><div><b>Dana Ruiz · 18 Sep.docx</b><small>Head of Retail Sales · 50 min · 48 KB · Uploaded</small></div><button class="btn small" id="synth">Synthesize</button></div>
+      <div class="tfile" id="tfile" hidden><span class="fi"></span><div><b>Interview with Dana.docx</b><small>Uploaded</small></div><button class="btn small" id="synth">Synthesize</button></div>
+    </div>
     </div>
     <div class="thread" id="thread"></div>
     <div class="compose">
@@ -400,12 +372,11 @@
       <form id="form"><input id="q" placeholder="Ask about an item" autocomplete="off"><button type="submit" aria-label="Send">→</button></form>
     </div>
   </aside>
-  <button class="edge" id="edge" aria-label="Open agent panel"><span class="dot" id="edge-dot"></span><span class="vt">Agent</span><span class="badge" id="edge-badge" hidden></span></button>
 </div>
-
 <div class="tour-veil" id="tour-veil"></div><div class="tour-spot" id="tour-spot"></div>
-<div class="tour-card" id="tour-card"><div class="k"></div><p></p><div class="row"><button class="skip">Skip walkthrough</button><button class="next">Next</button></div></div>
-<script id="data" type="application/json">{"model": {"client": {"name": "Halo Beverages", "profile": "Mid-size sparkling drinks brand. ~600 employees, USD 220M revenue. Sells to supermarket chains (FreshMart, Northgate Grocers), convenience-store distributors (QuickStop Distribution), and an online marketplace. SAP ECC live since 2011.", "project": "ECC to S/4HANA migration, discovery phase"}, "process": {"id": "O2C", "name": "Order-to-Cash", "scope": "Retail sales, North America", "process_owner": "VP Sales Operations", "status": "In discovery"}, "steps": [{"id": "S01", "name": "Receive order", "lane": "Order desk", "plain": "Orders arrive by EDI from chains, by portal from distributors, by feed from the marketplace."}, {"id": "S02", "name": "Price the order", "lane": "Sales rep / Sales manager", "plain": "The system prices each line, applies discounts, and decides whether someone has to approve.", "focus": "Discounts and approvals"}, {"id": "S03", "name": "Check customer credit", "lane": "Credit team", "plain": "Is the customer allowed to buy this much on account?"}, {"id": "S04", "name": "Confirm delivery date and stock", "lane": "Order desk / Planning", "plain": "Can we ship what they asked for, when they asked for it?"}, {"id": "S05", "name": "Pick, pack and ship", "lane": "Warehouse", "plain": "Goods leave the warehouse."}, {"id": "S06", "name": "Invoice the customer", "lane": "Billing", "plain": "The invoice is created and sent."}, {"id": "S07", "name": "Collect payment and handle deductions", "lane": "Accounts receivable", "plain": "Payment comes in, short-pays and chargebacks are resolved."}], "node_step_id": "S02", "node_fields": [{"id": "F1", "label": "Automatic trade discount for supermarket chains", "system_value": "8% off list price, applied automatically to every order from customer group 'Chains'", "plain": "Every chain order gets 8% off before anyone touches it.", "source_rows": ["discount.csv#D-01", "connections.csv#P-06 set D-01", "process_mining_o2c_metrics.csv#M-02"], "derived_from": {"discounts": ["D-01"], "people": ["P-06"], "products": ["PR-01", "PR-02", "PR-03", "PR-04", "PR-05", "PR-06"], "line": "Discount D-01, Chain trade discount, 8%. Set by Jo Hoffman at the 2011 go-live. Applies to all six products on chain orders."}}, {"id": "F2", "label": "Manual discount that triggers manager approval", "system_value": "Reps can enter a manual discount up to 20%. Approval workflow to the sales manager triggers only when the manual discount exceeds 15%.", "plain": "A rep can give up to 15% extra without anyone being asked. Between 15% and 20% the order waits for the sales manager.", "source_rows": ["discount.csv#D-02", "discount.csv#D-03", "connections.csv#P-02 set D-03", "process_mining_o2c_metrics.csv#M-09", "process_mining_o2c_metrics.csv#M-10"], "derived_from": {"discounts": ["D-02", "D-03"], "people": ["P-06", "P-02"], "products": [], "line": "Discounts D-02 and D-03: a 20% cap on what a rep can type, and approval above 15%. The cap was set at go-live; the 15% approval rule was set by Marco Ferreira in 2019."}}, {"id": "F3", "label": "Stacking a promotion discount on top of the volume discount", "system_value": "No exclusion configured. Promotion discount (up to 12%) and volume discount (3% to 6%) both apply on the same line when both are valid.", "plain": "If a product is on promotion and the order is large, the customer gets both discounts added together.", "source_rows": ["discount.csv#D-04", "discount.csv#D-05", "process_mining_o2c_metrics.csv#M-11", "process_mining_o2c_metrics.csv#M-12"], "derived_from": {"discounts": ["D-04", "D-05"], "people": ["P-04", "P-06"], "products": ["PR-03", "PR-04"], "line": "Discounts D-04 (Citrus promotion, 12%, set by Sam Okafor) and D-05 (volume, 3 to 6%, set at go-live) both apply to the Citrus products. Nothing in the tables says one excludes the other."}}, {"id": "F4", "label": "Free goods on the Classic range", "system_value": "Buy 10 cases of any Classic-range product, get 1 case free. Active since 2016-04-02, created by user MBRANDT (left the company in 2020). Applies to all customer groups.", "plain": "The system adds a free case for every 10 cases of Classic ordered, for every customer, and has done since 2016.", "source_rows": ["discount.csv#D-06", "connections.csv#P-05 set D-06", "process_mining_o2c_metrics.csv#M-13"], "derived_from": {"discounts": ["D-06"], "people": ["P-05"], "products": ["PR-01", "PR-02"], "line": "Discount D-06, Classic free case, 1 free per 10. Set by Martin Brandt in 2016, who left in 2020. Applies to both Classic products for every customer, no end date."}}, {"id": "F5", "label": "How long a negotiated chain price list stays valid", "system_value": "Chain price lists are valid 12 months from creation. After expiry the line falls back to list price minus the 8% trade discount.", "plain": "A negotiated price for a chain quietly expires after a year unless someone renews it.", "source_rows": ["product.csv#PR-01", "product.csv#PR-03", "connections.csv#P-03 maintains price of PR-01", "process_mining_o2c_metrics.csv#M-14"], "derived_from": {"discounts": [], "people": ["P-03"], "products": ["PR-01", "PR-03"], "line": "Product table: Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 Jul 2025. Lena Park maintains them. Nothing renews them automatically."}}, {"id": "F6", "label": "Discounts on marketplace orders", "system_value": "Manual discounts not allowed for customer group 'Marketplace'. Upper limit 0%.", "plain": "Nobody can discount a marketplace order. The price is the price.", "source_rows": ["discount.csv#D-07", "connections.csv#P-03 set D-07"], "derived_from": {"discounts": ["D-07"], "people": ["P-03"], "products": [], "line": "Discount D-07, Marketplace discount, 0%. Set by Lena Park in 2018. No manual discount is possible on marketplace orders."}}], "connections": [{"from": "S01", "to": "S02", "carries": "order lines with customer, products, quantities"}, {"from": "S02", "to": "S03", "carries": "net order value after discounts (credit exposure)"}, {"from": "S02", "to": "S05", "carries": "free-goods quantities added to the pick list"}, {"from": "S02", "to": "S06", "carries": "final line prices and discounts printed on the invoice"}, {"from": "S03", "to": "S04", "carries": "released order"}, {"from": "S04", "to": "S05", "carries": "confirmed quantities and dates"}, {"from": "S05", "to": "S06", "carries": "shipped quantities"}, {"from": "S06", "to": "S07", "carries": "invoice amount; disputes over promo pricing arrive here as short-pays"}], "node": {"step_id": "S02", "why_this_node": "Pricing is where the client's commercial rules live. It feeds credit exposure, the pick list (free goods), the invoice, and most short-pay disputes.", "system_extract_files": ["data/db/people.csv", "data/db/product.csv", "data/db/discount.csv", "data/db/connections.csv", "data/system_extract/process_mining_o2c_metrics.csv"]}, "stakeholders": [{"id": "dana", "name": "Dana Ruiz", "role": "Head of Retail Sales", "side": "Halo Beverages", "note": "Interviewed 18 Sep. Owns the discount rule as sales applies it.", "interviewed": true, "added": true}, {"id": "marco", "name": "Marco Ferreira", "role": "Finance Controller", "side": "Halo Beverages", "note": "Owns discount policy. Set the 2019 approval rule.", "interviewed": false, "added": false}, {"id": "lena", "name": "Lena Park", "role": "Order Desk Lead", "side": "Halo Beverages", "note": "Keys negotiated prices and promotions into the system.", "interviewed": false, "added": false}, {"id": "sam", "name": "Sam Okafor", "role": "Marketing, Promotions", "side": "Halo Beverages", "note": "Owns promotions and free-goods offers.", "interviewed": false, "added": false}, {"id": "priya", "name": "Priya Raman", "role": "SD Consultant", "side": "Consulting team", "note": "Leads the Order-to-Cash workstream.", "interviewed": false, "added": false}]}, "output": {"interview_id": "01-sales-manager", "step_id": "S02", "fields": [{"field_id": "F1", "state": "match", "confidence": 0.95, "quotes": [{"speaker": "Dana Ruiz", "text": "All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account."}, {"speaker": "Dana Ruiz", "text": "Every chain, yes. Distributors are different, they buy on a different price list, no percentage."}], "reasoning": "An automatic 8% for every chain customer, with distributors on a separate price list, is exactly what is configured.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "Every order from a supermarket chain gets 8% off list price automatically, before anyone touches it. The rule has been in place since June 2011 and has never changed.", "source": "discount.csv#D-01"}, {"text": "71% of orders are created with no person involved, and the 8% applied on all of them in the last 12 months.", "source": "process_mining_o2c_metrics.csv#M-02"}], "missing_side": null, "missing_note": null}, {"field_id": "F2", "state": "contradiction", "confidence": 0.9, "quotes": [{"speaker": "Dana Ruiz", "text": "The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it."}, {"speaker": "Dana Ruiz", "text": "They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty."}], "reasoning": "She believes approval starts above 10%. The system only routes an order to her above 15%, so discounts between 10% and 15% go through with no approval at all. The 20% hard cap she is unsure about does exist.", "conflict_summary": "Sales believes any discount above 10% needs her approval; the system only asks her above 15%, so 10% to 15% discounts pass unseen.", "follow_up_question": "Was the approval threshold meant to be 10%? Pull the last quarter's orders with manual discounts between 10% and 15% to see how much margin went through without sign-off.", "ask_who": "Dana Ruiz (Head of Retail Sales) and the finance controller who set the 2019 rule", "system_evidence": [{"text": "A rep can enter a manual discount up to 20%. The order only goes to the sales manager for approval when the discount is above 15%. Marco Ferreira set the 15% rule in March 2019.", "source": "discount.csv#D-03"}, {"text": "412 orders in the last 12 months carried a discount between 10% and 15%, worth USD 1.93M. None of them were sent for approval.", "source": "process_mining_o2c_metrics.csv#M-09"}, {"text": "131 orders were above 15% and all of them were blocked and released from the manager's worklist.", "source": "process_mining_o2c_metrics.csv#M-10"}], "missing_side": null, "missing_note": null}, {"field_id": "F3", "state": "gap_no_data", "confidence": 0.85, "quotes": [{"speaker": "Dana Ruiz", "text": "No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here."}, {"speaker": "Dana Ruiz", "text": "I assume the system does it. The reps do not touch it. I have never had to check."}], "reasoning": "She describes a firm rule that promotion and volume discounts never combine. Nothing in the configuration enforces it: both discount types are active with no exclusion, so a line that qualifies for both gets both.", "conflict_summary": "Sales says promo and volume discounts never stack; nothing in the system prevents it, so customers who qualify for both are getting both.", "follow_up_question": "Check recent Northgate promo orders: did lines carry both the promotion and the volume discount? Does finance want the exclusion enforced in S/4HANA?", "ask_who": "Finance controller, then Dana Ruiz", "system_evidence": [{"text": "The Citrus promotion (12%) and the volume discount (3 to 6%) both apply to the Citrus products, and nothing in the tables says one excludes the other.", "source": "discount.csv#D-04"}, {"text": "1,340 chain order lines received both discounts together in the last 12 months, averaging 15.8% off, worth USD 4.1M.", "source": "process_mining_o2c_metrics.csv#M-11"}, {"text": "58 short-payments in the year cited a promotion price, several from buyers who expected the combined amount.", "source": "process_mining_o2c_metrics.csv#M-12"}], "missing_side": "system", "missing_note": "Nothing in the system produces the rule she describes."}, {"field_id": "F4", "state": "gap_no_explanation", "confidence": 0.75, "quotes": [{"speaker": "Dana Ruiz", "text": "Free cases, no, we do not do that on chain orders. Not that I know of."}, {"speaker": "Dana Ruiz", "text": "Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list."}, {"speaker": "Dana Ruiz", "text": "Always the Classic range, I think. Never the new stuff."}], "reasoning": "She says Halo does not give free cases on chain orders. A buy-10-get-1 free goods rule on the Classic range has been active for every customer group since 2016, created by someone who has left. Fifty cases ordered and fifty-five shipped is exactly 10+1. Nobody in the interview knows the rule exists, so it is unexplained rather than confirmed.", "conflict_summary": "A 2016 free-goods rule adds one free case per ten on the Classic range for every customer; nobody knows it exists, and it matches the mystery extra cases the warehouse reports.", "follow_up_question": "Was the Classic 10+1 offer meant to be permanent and for all customers? Who owns it now, and should it survive the migration?", "ask_who": "Finance controller and marketing (promotions owner)", "system_evidence": [{"text": "For every 10 cases of a Classic product the system adds 1 free case, for every customer. Martin Brandt set it in April 2016 and left in 2020. It has no end date.", "source": "discount.csv#D-06"}, {"text": "2,210 order lines had free cases added in the last 12 months: 22,100 free cases across 96 customers, all on the Classic range.", "source": "process_mining_o2c_metrics.csv#M-13"}], "missing_side": "client", "missing_note": "Nobody in the interview explained this rule, or knew it existed."}, {"field_id": "F5", "state": "not_discussed", "confidence": 0.95, "quotes": [], "reasoning": "How long negotiated chain prices stay valid, and what happens on expiry, was in the consultant's question guide but the session never got to it. Two Northgate prices expired in July 2025 and fell back to list minus 8% with no warning.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 July 2025. When a negotiated price expires the line silently falls back to list price minus 8%, and nothing warns anyone.", "source": "product.csv#PR-01"}, {"text": "Two Northgate prices expired on 31 Jul 2025 and were never renewed. 318 lines since then have been billed at the fallback price.", "source": "process_mining_o2c_metrics.csv#M-14"}], "missing_side": "client", "missing_note": "This item was not discussed. It was on the question guide; the session ran out of time."}, {"field_id": "F6", "state": "match", "confidence": 0.95, "quotes": [{"speaker": "Dana Ruiz", "text": "No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm."}], "reasoning": "No manual discounts on marketplace orders matches the 0% upper limit configured for that customer group.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "Manual discounts are not possible on marketplace orders. Lena Park set the limit to 0% in February 2018.", "source": "discount.csv#D-07"}], "missing_side": null, "missing_note": null}], "unmapped_claims": [{"speaker": "Dana Ruiz", "text": "2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.", "note": "Gives the business reason and date for the approval rule. Useful context for F2 but not a field value."}, {"speaker": "Dana Ruiz", "text": "Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.", "note": "Samples are a separate order type. She also says there are no free cases on chain orders, which contradicts the free-goods rule under F4 without her knowing it."}, {"speaker": "Dana Ruiz", "text": "The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system.", "note": "Negotiated prices live in spreadsheets outside the system. Relevant to F5 (price validity) and to data migration scope; raise with the order desk."}], "_meta": {"model": "hand-authored fallback", "generated_by": "written by hand to the same schema; replace by running agent/synthesize.py"}}, "chat": {"working_lines": ["Reading transcript: 18 Sep, Dana Ruiz, 50 minutes, 2 consultants.", "Pulling 31 claims about pricing out of the conversation.", "Matching claims to the 6 configuration items in Step 2.", "Checking 18 process-mining facts and 14 readiness-check rows.", "Writing one verdict per item."], "summary": "Checked 6 items against Dana's interview. 2 match, 1 contradiction, 2 gaps, 1 not discussed. 4 need your judgment.", "generic": ["I can only speak to the evidence on this step: the six items, the extract rows, the process-mining facts, and Dana's transcript. Pick an item and I'll show what I have.", "That's outside what the interview or the extract covers. It would make a good follow-up question. Want me to draft it?"], "items": {"F1": [{"keys": ["exact", "say", "quote", "dana"], "answer": "At 02:30 Dana said: \"All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account.\" The record on file is condition K007 for customer group Chains at -8.00%, created 2011 and unchanged."}, {"keys": ["fact", "data", "number", "mining"], "answer": "71.4% of orders are created without a person touching them, and the 8% applies on every one of them. Nothing in the last 12 months contradicts her."}, {"keys": ["draft", "reason"], "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. Automatic 8% trade discount for supermarket chains, in place since 2011, still the intended rule. Keep in S/4HANA."}], "F2": [{"keys": ["412", "orders", "show", "list", "between"], "answer": "412 orders in the last 12 months carried a manual discount between 10% and 15%, worth USD 1.93M net. Approval block Z1 was set on none of them. The 131 orders above 15% were all blocked and released from the worklist, which is the 2 to 3 a week Dana described."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 04:30: \"The rep can knock off up to ten percent on their own. Anything above ten comes to me.\" And at 05:50 she noticed it herself: \"Most are under ten, yes. Reps stay under ten if they can.\""}, {"keys": ["who", "set", "2019", "marco", "why"], "answer": "The 15% trigger and the 20% cap were both last changed on 4 Mar 2019 by user MARCOF, which matches Dana's memory that finance tightened the rule in 2019. The threshold she remembers is 10%. Either the intent was 10% and it was keyed as 15%, or it was 15% and the rule drifted in people's heads. Marco can answer that in one sentence."}, {"keys": ["standard", "s/4", "s4", "hana"], "answer": "S/4HANA has no approval workflow for discounts in the standard. The usual options are a condition upper limit, a workflow like the one Halo built, or Situation Handling. Whatever the threshold is meant to be, it will have to be rebuilt deliberately, so this is the moment to decide it."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Marco (finance): \"The discount approval trigger is configured at 15% but sales operates as if it were 10%. 412 orders last year sat between the two with no approval. Which threshold is the policy, and should S/4HANA enforce it at order entry?\""}], "F3": [{"keys": ["show", "lines", "1340", "stack", "example"], "answer": "1,340 chain order lines carried both the promotion discount and the volume discount in the last 12 months, average combined 15.8%, net value USD 4.1M. The Northgate Citrus promo in June is the clearest case: 12% promo plus 4.5% volume on the same lines."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 06:40: \"No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance.\" And at 07:10: \"I assume the system does it. The reps do not touch it. I have never had to check.\""}, {"keys": ["chargeback", "short", "dispute", "58"], "answer": "58 short-pays in the year cite a promotion price. Several are buyers who expected the stacked amount because that is what previous invoices showed. So the missing rule is already costing money on both sides."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Marco (finance): \"Sales believes promo and volume discounts never combine. The system has no exclusion, and 1,340 lines got both last year. Is the finance rule 'one or the other'? If so, S/4HANA needs a condition exclusion between the two.\""}], "F4": [{"keys": ["show", "2210", "cases", "customers", "how many"], "answer": "2,210 order lines had free cases added by the system in 12 months: 22,100 free cases across 96 customers, every one on the Classic range. That is the warehouse's extra-cases mystery, and it is not once a month, it is about six times a week."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 07:30: \"Free cases, no, we do not do that on chain orders. Not that I know of.\" Then at 07:55: \"the customer ordered fifty cases of Classic Cola and fifty-five went out... the warehouse says the system had it on the pick list.\" Fifty plus five is exactly buy 10 get 1."}, {"keys": ["who", "2016", "brandt", "created", "why"], "answer": "The rule was created on 2 Apr 2016 by user MBRANDT with no end date. That person left in 2020. Nobody in sales, and as far as the interview shows nobody at all, knows it is running. Marketing (Sam) owns promotions today and would know if it was ever a launch offer."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Sam (marketing) and Marco (finance): \"A buy-10-get-1 free goods rule on the Classic range has run for every customer since April 2016, 22,100 free cases last year. Was it a launch offer that was never switched off? Should it end, or be kept deliberately?\""}], "F5": [{"keys": ["what", "expire", "northgate", "318", "show"], "answer": "Two Northgate negotiated prices expired on 31 Jul 2025 and nobody renewed them. Since then 318 Northgate lines have been priced at list minus 8% instead of the negotiated rate, which is higher. No warning fires on expiry. The question was in Priya's guide but the session ran out of time."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "Dana did not discuss validity. The closest she came, at 10:30: \"occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\" That is consistent with expiry, but it is not evidence about the rule."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Lena (order desk): \"Negotiated chain prices expire after 12 months with no warning. Two Northgate prices lapsed in July 2025 and 318 lines since have been billed at the fallback price. Who is meant to renew them, and should S/4HANA warn before expiry?\""}], "F6": [{"keys": ["exact", "say", "quote", "dana"], "answer": "At 08:55: \"No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm.\" The control on file sets the manual discount limit to 0% for customer group Marketplace, since 2018."}, {"keys": ["draft", "reason"], "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. No manual discounts on marketplace orders, enforced by a 0% limit since 2018. Keep in S/4HANA."}]}, "prompts": {"F1": ["What did she say exactly?", "Draft my reason"], "F2": ["Show me the 412 orders", "Who set the 15% and when?", "Draft the question for Marco"], "F3": ["Show me the lines that got both discounts", "How does this show up in chargebacks?", "Draft the follow-up for Marco"], "F4": ["How many customers got free cases?", "Who created this rule?", "Draft the follow-up for Sam"], "F5": ["What expired, and what did it cost?", "Draft the follow-up for Lena"], "F6": ["What did she say exactly?", "Draft my reason"]}}, "find": {"working_lines": ["Reading people (6 rows), product (6 rows), discount (7 rows).", "Following 30 connections: who set what, what applies to which products.", "Grouping rules that act on the same decision into one configuration item.", "Checking each item has an owner, a value, and the products it touches."], "summary": "Found 6 configuration items in the pricing data for Step 2. Each one is a rule with a value, the person who set it, and the products it touches.", "items": [{"field_id": "F1", "derivation": "Discount D-01, Chain trade discount, 8%. Set by Jo Hoffman at the 2011 go-live. Applies to all six products on chain orders."}, {"field_id": "F2", "derivation": "Discounts D-02 and D-03: a 20% cap on what a rep can type, and approval above 15%. The cap was set at go-live; the 15% approval rule was set by Marco Ferreira in 2019."}, {"field_id": "F3", "derivation": "Discounts D-04 (Citrus promotion, 12%, set by Sam Okafor) and D-05 (volume, 3 to 6%, set at go-live) both apply to the Citrus products. Nothing in the tables says one excludes the other."}, {"field_id": "F4", "derivation": "Discount D-06, Classic free case, 1 free per 10. Set by Martin Brandt in 2016, who left in 2020. Applies to both Classic products for every customer, no end date."}, {"field_id": "F5", "derivation": "Product table: Northgate's negotiated prices on Classic Cola and Citrus Sparkle were valid until 31 Jul 2025. Lena Park maintains them. Nothing renews them automatically."}, {"field_id": "F6", "derivation": "Discount D-07, Marketplace discount, 0%. Set by Lena Park in 2018. No manual discount is possible on marketplace orders."}]}, "transcript": "# Interview transcript\n\n**Client:** Halo Beverages, ECC to S/4HANA migration, discovery phase\n**Process:** Order-to-Cash, step 2: price the order, discounts and approvals\n**Session:** Sales workshop 2 of 3, one-on-one\n**Date:** 18 September 2026, 10:00-10:50\n**Attendees:** Dana Ruiz (Head of Retail Sales, Halo), Priya Raman (consultant, leads), Tom Becker (consultant, notes)\n**Recording:** Teams, auto-transcribed, lightly cleaned. Timestamps approximate.\n\n---\n\n**[00:00] Priya:** Thanks for coming back, Dana. Last week we covered how orders arrive. Today I want to stay on the price: what happens to it between the order landing and it being final. I will ask some open questions first and then get specific. Can you walk me through the last chain order you personally looked at?\n\n**[00:40] Dana:** Sure. Thursday, FreshMart, their weekly EDI order. About 1,200 cases across maybe forty lines. It lands in the system, the order desk checks nothing is missing, and the price is already there. Every line comes in at list minus their negotiated price, and the chain discount is on top of that.\n\n**[01:20] Priya:** Who touches the price on an order like that?\n\n**Dana:** Nobody, for a standard order. The order desk does not change prices, they are not allowed to. It is only when a rep is pushing something, a new flavour or a shelf reset, that they add a discount on top. On the FreshMart one nobody touched it.\n\n**[01:55] Priya:** Roughly how many orders a week, and how many get a manual discount?\n\n**Dana:** Chains and distributors together, maybe three hundred orders a week. Manual discounts, I would guess ten or fifteen of those. It is not most orders. Marketplace is separate, that is hundreds of small orders and nobody touches those.\n\n**[02:30] Priya:** Let us build the price up from list. A chain, say FreshMart. What do they pay?\n\n**Dana:** List price minus their chain discount. All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account. Then on top of that whatever we have negotiated on specific products, which is most of the range for FreshMart honestly.\n\n**[03:10] Priya:** Eight percent for every chain, always?\n\n**Dana:** Every chain, yes. Distributors are different, they buy on a different price list, no percentage. Marketplace is its own price list too.\n\n**[03:35] Priya:** The negotiated prices per product. Who maintains those?\n\n**Dana:** The key account manager agrees them with the buyer, sends them to the order desk, and the order desk keys them in.\n\n**[04:30] Priya:** Now manual discounts. A rep wants to give FreshMart a bit extra on a new flavour to get it on shelf. How much can they give on their own?\n\n**Dana:** The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it.\n\n**[05:00] Priya:** Up to ten without approval, above ten needs you. How does the approval reach you?\n\n**Dana:** It shows up in my inbox in the system, the worklist thing. Sometimes the rep also messages me because the worklist is slow to refresh. I approve maybe two or three a week.\n\n**[05:30] Priya:** Two or three a week, out of ten or fifteen manual discounts. So most manual discounts do not come to you?\n\n**Dana:** Most are under ten, yes. Reps stay under ten if they can, they do not like waiting on me.\n\n**[05:50] Tom:** Is there an upper limit at all? Could a rep type in thirty percent and send it to you?\n\n**Dana:** They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty.\n\n**[06:15] Priya:** When did the ten percent rule come in, and why?\n\n**Dana:** 2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.\n\n**[06:40] Priya:** Promotions. Northgate runs a summer promo on the Citrus line, twelve percent off for six weeks. If they also place a big order that qualifies for the volume discount, do they get both?\n\n**Dana:** No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here.\n\n**[07:10] Priya:** And how is that enforced? Does the system take one off, or does the rep?\n\n**Dana:** I assume the system does it. The reps do not touch it. I have never had to check.\n\n**[07:30] Priya:** OK, I will verify that. Any buy-X-get-Y offers, free cases, samples?\n\n**Dana:** Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.\n\n**[07:55] Priya:** Anything that changes the price or the quantity on a line that nobody enters by hand?\n\n**Dana:** [pause] There is one thing that is odd, now that you say quantity. Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list. It happens maybe once a month. I have never got to the bottom of it.\n\n**[08:35] Priya:** Which products, do you remember?\n\n**Dana:** Always the Classic range, I think. Never the new stuff. And the customer never complains, so it drops off the list.\n\n**[08:55] Priya:** That is useful, I will dig into it. Marketplace orders, do reps ever discount those?\n\n**Dana:** No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm. The reps cannot even see those orders most of the time.\n\n**[09:20] Priya:** Let us do pain points. What goes wrong most often with pricing?\n\n**Dana:** Two things. The worklist, as I said, it is slow and reps message me anyway. And chargebacks. A chain short-pays because they think a promo price should have applied and we think it should not, and it takes AR weeks to untangle. That is not really my process but it lands on me.\n\n**[10:00] Priya:** Any pricing that happens outside the system? Spreadsheets, emails, credit notes after the fact?\n\n**Dana:** The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system. I know that is not ideal.\n\n**[10:30] Priya:** Anything the system does that nobody can explain?\n\n**Dana:** The extra cases thing. And occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\n\n**[10:50] Priya:** Who else should I talk to about pricing?\n\n**Dana:** Marco in finance, he owns the discount policy. Lena on the order desk, she keys everything. And marketing for promos, that is Sam.\n\n**[11:10] Priya:** Last one. If you could change one thing about pricing?\n\n**Dana:** I want to see every discount over ten percent before it ships, and I want the KAM spreadsheets gone. If the system had the agreed price, the order desk would not need to fix anything.\n\n**[11:35] Priya:** Perfect. That is time. Thank you, Dana. Tom will send the summary tomorrow and I will come back to you on the extra cases.\n\n**Dana:** Thanks both.\n\n---\n*End of transcript.*\n", "extract": {"people.csv": [{"id": "P-01", "name": "Dana Ruiz", "title": "Head of Retail Sales", "status": "active"}, {"id": "P-02", "name": "Marco Ferreira", "title": "Finance Controller", "status": "active"}, {"id": "P-03", "name": "Lena Park", "title": "Order Desk Lead", "status": "active"}, {"id": "P-04", "name": "Sam Okafor", "title": "Promotions Manager", "status": "active"}, {"id": "P-05", "name": "Martin Brandt", "title": "Trade Marketing Manager", "status": "left 2020"}, {"id": "P-06", "name": "Jo Hoffman", "title": "SAP Project Lead at 2011 go-live", "status": "left 2015"}], "product.csv": [{"id": "PR-01", "name": "Classic Cola 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00", "negotiated_price_northgate": "14.60", "northgate_price_valid_until": "2025-07-31"}, {"id": "PR-02", "name": "Classic Lemon 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-03", "name": "Citrus Sparkle 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80", "negotiated_price_northgate": "15.10", "northgate_price_valid_until": "2025-07-31"}, {"id": "PR-04", "name": "Citrus Zero 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-05", "name": "Halo Zero Cola 330ml x24", "range": "Zero", "list_price_usd_per_case": "16.40", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-06", "name": "Halo Ginger 330ml x24", "range": "Seasonal", "list_price_usd_per_case": "17.20", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}], "discount.csv": [{"id": "D-01", "name": "Chain trade discount", "percent": "8", "applies_to": "Every product on every supermarket-chain order", "kind": "Automatic", "since": "2011-06-01"}, {"id": "D-02", "name": "Manual discount cap", "percent": "20", "applies_to": "Any product; the most a rep can type in", "kind": "Hard limit", "since": "2011-06-01"}, {"id": "D-03", "name": "Manual discount approval", "percent": "15", "applies_to": "Any product; above this the sales manager must approve", "kind": "Approval rule", "since": "2019-03-04"}, {"id": "D-04", "name": "Citrus summer promotion", "percent": "12", "applies_to": "Citrus range for Northgate and FreshMart; 15 Jun to 31 Jul 2026", "kind": "Time-boxed", "since": "2026-06-15"}, {"id": "D-05", "name": "Volume discount", "percent": "3 to 6", "applies_to": "Orders of 500 / 1000 / 2500 cases", "kind": "Quantity scale", "since": "2011-06-01"}, {"id": "D-06", "name": "Classic free case", "percent": "1 free per 10", "applies_to": "Classic range for every customer; no end date", "kind": "Free goods", "since": "2016-04-02"}, {"id": "D-07", "name": "Marketplace discount", "percent": "0", "applies_to": "Marketplace orders; no manual discount allowed", "kind": "Hard limit", "since": "2018-02-12"}], "connections.csv": [{"from": "P-01", "relation": "in charge of", "to": "PR-01", "since": "2021", "note": "Retail sales owns the Classic and Citrus ranges"}, {"from": "P-01", "relation": "in charge of", "to": "PR-02", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-03", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-04", "since": "2021", "note": ""}, {"from": "P-04", "relation": "in charge of", "to": "PR-03", "since": "2024", "note": "Promotions on the Citrus range"}, {"from": "P-04", "relation": "in charge of", "to": "PR-04", "since": "2024", "note": ""}, {"from": "P-03", "relation": "maintains price of", "to": "PR-01", "since": "2023", "note": "Keys negotiated prices sent by the key account managers"}, {"from": "P-03", "relation": "maintains price of", "to": "PR-03", "since": "2023", "note": ""}, {"from": "P-06", "relation": "set", "to": "D-01", "since": "2011", "note": "Configured at go-live"}, {"from": "P-06", "relation": "set", "to": "D-02", "since": "2011", "note": "Configured at go-live"}, {"from": "P-02", "relation": "set", "to": "D-03", "since": "2019", "note": "Tightened after margin loss on two listings"}, {"from": "P-04", "relation": "set", "to": "D-04", "since": "2026", "note": ""}, {"from": "P-06", "relation": "set", "to": "D-05", "since": "2011", "note": "Configured at go-live"}, {"from": "P-05", "relation": "set", "to": "D-06", "since": "2016", "note": "Creator left the company in 2020; no one has touched it since"}, {"from": "P-03", "relation": "set", "to": "D-07", "since": "2018", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-05", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-06", "since": "2011", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-03", "since": "2026", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-04", "since": "2026", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-05", "since": "2011", "note": ""}, {"from": "D-06", "relation": "applies to", "to": "PR-01", "since": "2016", "note": ""}, {"from": "D-06", "relation": "applies to", "to": "PR-02", "since": "2016", "note": ""}], "process_mining_o2c_metrics.csv": [{"metric_id": "M-01", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Profitability", "metric": "Total number of sales orders", "value": "15640", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000, all customer groups", "plain": "About 300 orders a week, matches what sales said"}, {"metric_id": "M-02", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Automation", "metric": "Automation rate: sales order creation", "value": "71.4", "unit": "%", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "EDI (chains), portal (distributors) and marketplace feed create orders without a person"}, {"metric_id": "M-03", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Changes", "metric": "Price change rate", "value": "4.9", "unit": "% of sales orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "766 orders had a price changed after creation; almost all are manual discounts (RA01)"}, {"metric_id": "M-04", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Changes", "metric": "Manual SO item changes rate", "value": "11.2", "unit": "% of sales orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Order desk edits after creation: mostly quantity and requested delivery date, some price"}, {"metric_id": "M-05", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Compliance", "metric": "No-Touch-Order rate", "value": "57.8", "unit": "%", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Orders delivered on time, right quantity, no changes"}, {"metric_id": "M-06", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Customer Satisfaction", "metric": "Return rate", "value": "1.1", "unit": "% of cases", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": ""}, {"metric_id": "M-07", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Predictability", "metric": "Late payment rate", "value": "9.4", "unit": "% of invoices", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Chains short-pay and dispute; see M-12"}, {"metric_id": "M-08", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Sales orders with manual discount RA01 > 0%", "value": "766", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Roughly 15 a week, as sales estimated"}, {"metric_id": "M-09", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Sales orders with manual discount RA01 between 10% and 15%", "value": "412", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000; net value USD 1.93M", "plain": "Sales manager believes these all came to her. Approval block Z1 was set on 0 of them (see M-10)"}, {"metric_id": "M-10", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Compliance", "metric": "Sales orders with approval block Z1 set", "value": "131", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "All 131 had RA01 > 15%. Matches the 15% trigger in the system, not the 10% rule sales describes. 2 to 3 a week, as she said"}, {"metric_id": "M-11", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines with both promotion (K005) and volume (K029) discount applied", "value": "1340", "unit": "order lines", "period": "2025-09-01 to 2026-08-31", "scope": "Customer groups 01 Chains; combined discount avg 15.8%; net value USD 4.1M", "plain": "Stacking that sales says never happens"}, {"metric_id": "M-12", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Predictability", "metric": "Short-pays referencing a promotion price", "value": "58", "unit": "disputes", "period": "2025-09-01 to 2026-08-31", "scope": "Chains", "plain": "Most cite a promo price on lines where the promo had expired or was not stacked as the buyer expected"}, {"metric_id": "M-13", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines with free goods (NA00) quantity added by the system", "value": "2210", "unit": "order lines", "period": "2025-09-01 to 2026-08-31", "scope": "96 customers across all customer groups; 100% material group CLASSIC; 22,100 free cases", "plain": "Nobody in sales knows this rule exists. Matches the warehouse reports of extra cases"}, {"metric_id": "M-14", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines priced at fallback because the negotiated price (PR00) had expired", "value": "318", "unit": "order lines", "period": "2025-08-01 to 2026-08-31", "scope": "Northgate Grocers; 2 materials", "plain": "Silent expiry on 31 Jul 2025; price rose from negotiated to list minus 8% with no warning to anyone"}, {"metric_id": "M-15", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Throughput", "metric": "Sales documents created", "value": "15640", "unit": "documents", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Same population as M-01"}, {"metric_id": "M-16", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Customizing configuration", "metric": "Sales document type usage (cross-sales area)", "value": "OR 14,905; ZMKT 612; RE 123; ZSMP 0", "unit": "documents by type", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Standard order OR dominates; ZMKT is the marketplace type; RE returns; ZSMP (samples) unused in 12 months although sales says samples go through a separate type"}, {"metric_id": "M-17", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Exceptions", "metric": "Missing fields in incomplete sales document items", "value": "388", "unit": "items", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Most missing field: requested delivery date on distributor portal orders"}, {"metric_id": "M-18", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Backlog", "metric": "Rejected sales document items", "value": "1204", "unit": "items", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Lines rejected after creation, mostly out-of-stock substitutions"}]}, "db": {"people": [{"id": "P-01", "name": "Dana Ruiz", "title": "Head of Retail Sales", "status": "active"}, {"id": "P-02", "name": "Marco Ferreira", "title": "Finance Controller", "status": "active"}, {"id": "P-03", "name": "Lena Park", "title": "Order Desk Lead", "status": "active"}, {"id": "P-04", "name": "Sam Okafor", "title": "Promotions Manager", "status": "active"}, {"id": "P-05", "name": "Martin Brandt", "title": "Trade Marketing Manager", "status": "left 2020"}, {"id": "P-06", "name": "Jo Hoffman", "title": "SAP Project Lead at 2011 go-live", "status": "left 2015"}], "product": [{"id": "PR-01", "name": "Classic Cola 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00", "negotiated_price_northgate": "14.60", "northgate_price_valid_until": "2025-07-31"}, {"id": "PR-02", "name": "Classic Lemon 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-03", "name": "Citrus Sparkle 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80", "negotiated_price_northgate": "15.10", "northgate_price_valid_until": "2025-07-31"}, {"id": "PR-04", "name": "Citrus Zero 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-05", "name": "Halo Zero Cola 330ml x24", "range": "Zero", "list_price_usd_per_case": "16.40", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}, {"id": "PR-06", "name": "Halo Ginger 330ml x24", "range": "Seasonal", "list_price_usd_per_case": "17.20", "negotiated_price_northgate": "", "northgate_price_valid_until": ""}], "discount": [{"id": "D-01", "name": "Chain trade discount", "percent": "8", "applies_to": "Every product on every supermarket-chain order", "kind": "Automatic", "since": "2011-06-01"}, {"id": "D-02", "name": "Manual discount cap", "percent": "20", "applies_to": "Any product; the most a rep can type in", "kind": "Hard limit", "since": "2011-06-01"}, {"id": "D-03", "name": "Manual discount approval", "percent": "15", "applies_to": "Any product; above this the sales manager must approve", "kind": "Approval rule", "since": "2019-03-04"}, {"id": "D-04", "name": "Citrus summer promotion", "percent": "12", "applies_to": "Citrus range for Northgate and FreshMart; 15 Jun to 31 Jul 2026", "kind": "Time-boxed", "since": "2026-06-15"}, {"id": "D-05", "name": "Volume discount", "percent": "3 to 6", "applies_to": "Orders of 500 / 1000 / 2500 cases", "kind": "Quantity scale", "since": "2011-06-01"}, {"id": "D-06", "name": "Classic free case", "percent": "1 free per 10", "applies_to": "Classic range for every customer; no end date", "kind": "Free goods", "since": "2016-04-02"}, {"id": "D-07", "name": "Marketplace discount", "percent": "0", "applies_to": "Marketplace orders; no manual discount allowed", "kind": "Hard limit", "since": "2018-02-12"}], "connections": [{"from": "P-01", "relation": "in charge of", "to": "PR-01", "since": "2021", "note": "Retail sales owns the Classic and Citrus ranges"}, {"from": "P-01", "relation": "in charge of", "to": "PR-02", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-03", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-04", "since": "2021", "note": ""}, {"from": "P-04", "relation": "in charge of", "to": "PR-03", "since": "2024", "note": "Promotions on the Citrus range"}, {"from": "P-04", "relation": "in charge of", "to": "PR-04", "since": "2024", "note": ""}, {"from": "P-03", "relation": "maintains price of", "to": "PR-01", "since": "2023", "note": "Keys negotiated prices sent by the key account managers"}, {"from": "P-03", "relation": "maintains price of", "to": "PR-03", "since": "2023", "note": ""}, {"from": "P-06", "relation": "set", "to": "D-01", "since": "2011", "note": "Configured at go-live"}, {"from": "P-06", "relation": "set", "to": "D-02", "since": "2011", "note": "Configured at go-live"}, {"from": "P-02", "relation": "set", "to": "D-03", "since": "2019", "note": "Tightened after margin loss on two listings"}, {"from": "P-04", "relation": "set", "to": "D-04", "since": "2026", "note": ""}, {"from": "P-06", "relation": "set", "to": "D-05", "since": "2011", "note": "Configured at go-live"}, {"from": "P-05", "relation": "set", "to": "D-06", "since": "2016", "note": "Creator left the company in 2020; no one has touched it since"}, {"from": "P-03", "relation": "set", "to": "D-07", "since": "2018", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-05", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-06", "since": "2011", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-03", "since": "2026", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-04", "since": "2026", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-05", "since": "2011", "note": ""}, {"from": "D-06", "relation": "applies to", "to": "PR-01", "since": "2016", "note": ""}, {"from": "D-06", "relation": "applies to", "to": "PR-02", "since": "2016", "note": ""}]}, "sources": [{"file": "people", "what": "Who works on pricing at Halo: name, title, and whether they are still here.", "source": "Client HR list, cleaned by the consultant", "table": "people"}, {"file": "product", "what": "What Halo sells: range, list price per case, and any negotiated price with its expiry.", "source": "Product master and price list, ECC", "table": "product"}, {"file": "discount", "what": "Every discount rule in the system: the percentage, what it applies to, its kind, and since when.", "source": "Pricing configuration, ECC", "table": "discount"}, {"file": "connections", "what": "How the three tables link: who set which discount, which discount applies to which product, who is in charge of what.", "source": "Change history and org chart, joined by the consultant", "table": "connections"}, {"file": "process_mining_o2c_metrics", "what": "Measured facts about how orders actually behaved over 12 months.", "source": "SAP Signavio Process Intelligence, order-to-cash on ECC", "table": "process_mining_o2c_metrics.csv"}]}</script>
+<div class="tour-card" id="tour-card"><div class="k"></div><p></p><div class="row"><button class="skip">Skip</button><button class="next">Next</button></div></div>
+
+<script id="data" type="application/json">{"model": {"client": {"name": "Halo Beverages", "profile": "Mid-size sparkling drinks brand. ~600 employees, USD 220M revenue. Sells to supermarket chains (FreshMart, Northgate Grocers), convenience-store distributors (QuickStop Distribution), and an online marketplace. SAP ECC live since 2011.", "project": "ECC to S/4HANA migration, discovery phase"}, "process": {"id": "O2C", "name": "Order-to-Cash", "scope": "Retail sales, North America", "process_owner": "VP Sales Operations", "status": "In discovery"}, "steps": [{"id": "S01", "name": "Receive order", "lane": "Order desk", "plain": "Orders arrive by EDI from chains, by portal from distributors, by feed from the marketplace."}, {"id": "S02", "name": "Price the order", "lane": "Sales rep / Sales manager", "plain": "The system prices each line, applies discounts, and decides whether someone has to approve.", "focus": "Discounts and approvals"}, {"id": "S03", "name": "Check customer credit", "lane": "Credit team", "plain": "Is the customer allowed to buy this much on account?"}, {"id": "S04", "name": "Confirm delivery date and stock", "lane": "Order desk / Planning", "plain": "Can we ship what they asked for, when they asked for it?"}, {"id": "S05", "name": "Pick, pack and ship", "lane": "Warehouse", "plain": "Goods leave the warehouse."}, {"id": "S06", "name": "Invoice the customer", "lane": "Billing", "plain": "The invoice is created and sent."}, {"id": "S07", "name": "Collect payment and handle deductions", "lane": "Accounts receivable", "plain": "Payment comes in, short-pays and chargebacks are resolved."}], "node_step_id": "S02", "node_fields": [{"id": "F1", "label": "8% off for supermarket chains", "system_value": "8% on every product on every supermarket-chain order, since 2011-06-01.", "plain": "Every product on every chain order.", "source_rows": ["discount.csv#D-01", "connections.csv#P-04 set D-01"], "derived_from": {"discounts": ["D-01"], "people": ["P-04"], "products": ["PR-01", "PR-02", "PR-03", "PR-04"], "line": "8% on every chain order. Set 2011 by Jo Hoffman (left 2015). Links to all four products."}}, {"id": "F2", "label": "Manual discount needs approval above 15%, capped at 20%", "system_value": "D-02: the most a rep can type in is 20%, since 2011. D-03: above 15% the sales manager must approve, since 2019-03-04.", "plain": "Reps can type up to 20%. Above 15% the sales manager approves.", "source_rows": ["discount.csv#D-02", "discount.csv#D-03", "connections.csv#P-02 set D-03"], "derived_from": {"discounts": ["D-02", "D-03"], "people": ["P-04", "P-02"], "products": [], "line": "Two rows about manual discounts. Cap 20%, set 2011 by Jo Hoffman. Approval above 15%, set 2019 by Marco Ferreira."}}, {"id": "F3", "label": "Summer promotion and volume discount both apply to Citrus Sparkle", "system_value": "D-04: 12% on the Citrus range for Northgate and FreshMart, 15 Jun to 31 Jul 2026. D-05: 3 to 6% on orders of 500 / 1000 / 2500 cases, any product. Both link to PR-03.", "plain": "A 12% promotion and a 3 to 6% volume discount can land on the same order line.", "derived_from": {"discounts": ["D-04", "D-05"], "people": ["P-03", "P-04"], "products": ["PR-03"], "line": "Summer promotion (12%, set 2026 by Lena Park) and volume discount (3 to 6%, set 2011 by Jo Hoffman) both link to Citrus Sparkle. No row says one replaces the other."}, "source_rows": ["discount.csv#D-04", "discount.csv#D-05", "connections.csv#D-04 applies to PR-03"]}], "connections": [{"from": "S01", "to": "S02", "carries": "order lines with customer, products, quantities"}, {"from": "S02", "to": "S03", "carries": "net order value after discounts (credit exposure)"}, {"from": "S02", "to": "S05", "carries": "free-goods quantities added to the pick list"}, {"from": "S02", "to": "S06", "carries": "final line prices and discounts printed on the invoice"}, {"from": "S03", "to": "S04", "carries": "released order"}, {"from": "S04", "to": "S05", "carries": "confirmed quantities and dates"}, {"from": "S05", "to": "S06", "carries": "shipped quantities"}, {"from": "S06", "to": "S07", "carries": "invoice amount; disputes over promo pricing arrive here as short-pays"}], "node": {"step_id": "S02", "why_this_node": "Pricing is where the client's commercial rules live. It feeds credit exposure, the pick list (free goods), the invoice, and most short-pay disputes.", "system_extract_files": ["data/db/people.csv", "data/db/product.csv", "data/db/discount.csv", "data/db/connections.csv"]}, "stakeholders": [{"id": "dana", "name": "Dana Ruiz", "role": "Head of Retail Sales", "side": "Halo Beverages", "note": "Interviewed 18 Sep. Owns the discount rule as sales applies it.", "interviewed": true, "added": true}, {"id": "marco", "name": "Marco Ferreira", "role": "Finance Controller", "side": "Halo Beverages", "note": "Owns discount policy. Set the 2019 approval rule.", "interviewed": false, "added": false}, {"id": "lena", "name": "Lena Park", "role": "Order Desk Lead", "side": "Halo Beverages", "note": "Keys negotiated prices into the system. Owns the Zero range listing.", "interviewed": false, "added": false}, {"id": "priya", "name": "Priya Raman", "role": "SD Consultant", "side": "Consulting team", "note": "Leads the Order-to-Cash workstream.", "interviewed": false, "added": false}]}, "output": {"interview_id": "01-sales-manager", "step_id": "S02", "fields": [{"field_id": "F1", "state": "match", "confidence": 0.95, "why": "Dana says chains get 8% automatically. D-01 says the same.", "quotes": [{"speaker": "Dana Ruiz", "text": "All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account."}], "related_rows": [{"table": "discount", "id": "D-01", "why": "8% on every chain order"}, {"table": "connections", "id": "P-04 set D-01", "why": "set at the 2011 go-live"}], "missing_side": null, "missing_note": null, "follow_up_question": null, "ask_who": null}, {"field_id": "F2", "state": "contradiction", "confidence": 0.9, "why": "Dana says approval starts above 10%. D-03 says 15%.", "quotes": [{"speaker": "Dana Ruiz", "text": "The rep can knock off up to ten percent on their own. Anything above ten comes to me."}], "related_rows": [{"table": "discount", "id": "D-03", "why": "approval starts at 15%, not 10%"}, {"table": "discount", "id": "D-02", "why": "reps are capped at 20%"}, {"table": "connections", "id": "P-02 set D-03", "why": "Marco set it in 2019"}], "missing_side": null, "missing_note": null, "follow_up_question": "Is the policy 10% or 15%?", "ask_who": "Marco Ferreira (Finance Controller)"}, {"field_id": "F3", "state": "gap_no_data", "confidence": 0.85, "why": "Dana says a promotion replaces the volume discount. No row says so; both apply to Citrus Sparkle.", "quotes": [{"speaker": "Dana Ruiz", "text": "No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here."}, {"speaker": "Dana Ruiz", "text": "I assume the system does it. The reps do not touch it. I have never had to check."}], "related_rows": [{"table": "discount", "id": "D-04", "why": "12% promotion on Citrus"}, {"table": "discount", "id": "D-05", "why": "3 to 6% volume discount on any product"}, {"table": "connections", "id": "D-04 applies to PR-03", "why": "both land on Citrus Sparkle"}], "missing_side": "system", "missing_note": "No row says the promotion replaces the volume discount.", "follow_up_question": "Is 'one or the other' the finance rule?", "ask_who": "Marco Ferreira (Finance Controller)"}], "unmapped_claims": [], "_meta": {"model": "hand-authored fallback", "generated_by": "written by hand to the same schema; replace by running agent/synthesize.py"}}, "chat": {"working_lines": ["Reading the transcript.", "Matching what Dana said to the 3 items.", "Checking each against the tables."], "summary": "Checked 3 items. 1 match, 1 contradiction, 1 gap.", "generic": ["Pick an item and ask me to check it against the data.", "That's outside the interview and the tables. Worth a follow-up question."], "items": {"F1": [{"keys": ["check", "against", "obey"], "answer": "Dana: every chain gets 8% automatically. Data agrees: [[discount:D-01]] is 8% on every chain order, unchanged since 2011."}, {"keys": ["draft", "reason"], "answer": "Draft reason: Confirmed by Dana Ruiz. 8% chain discount, in place since 2011. Keep."}], "F2": [{"keys": ["check", "against", "obey", "10"], "answer": "Dana: approval above 10%. Data: [[discount:D-03]] starts approval at 15%, [[discount:D-02]] caps at 20%. No row says 10%."}, {"keys": ["who", "set", "2019", "marco", "when"], "answer": "[[connections:P-02 set D-03]]: Marco Ferreira, 4 March 2019."}, {"keys": ["draft", "question", "reason"], "answer": "Draft for Marco: \"Sales works as if approval starts at 10%. The system says 15%. Which is the policy?\""}], "F3": [{"keys": ["check", "against", "obey"], "answer": "Dana: a promotion replaces the volume discount. Data: no row says so. [[discount:D-04]] and [[discount:D-05]] both link to Citrus Sparkle."}, {"keys": ["which", "products", "both", "get"], "answer": "[[product:PR-03]] Citrus Sparkle gets both: [[connections:D-04 applies to PR-03]] and [[connections:D-05 applies to PR-03]]."}, {"keys": ["draft", "follow", "reason"], "answer": "Draft for Marco: \"Sales believes a promotion replaces the volume discount. Nothing enforces that. Is 'one or the other' the rule?\""}]}, "prompts": {"F1": ["Check this rule against the data"], "F2": ["Check this rule against the data", "Who set the 15%?", "Draft the question for Marco"], "F3": ["Check this rule against the data", "Which products get both?", "Draft the follow-up for Marco"]}}, "find": {"working_lines": ["Reading 4 tables.", "Joining each discount to who set it and what it applies to.", "Grouping rows about the same decision."], "summary": "3 rules found.", "items": [{"field_id": "F1", "derivation": "8% on every chain order. Set 2011 by Jo Hoffman (left 2015). Links to all four products."}, {"field_id": "F2", "derivation": "Two rows about manual discounts. Cap 20%, set 2011 by Jo Hoffman. Approval above 15%, set 2019 by Marco Ferreira."}, {"field_id": "F3", "derivation": "Summer promotion (12%, set 2026 by Lena Park) and volume discount (3 to 6%, set 2011 by Jo Hoffman) both link to Citrus Sparkle. No row says one replaces the other."}]}, "transcript": "# Interview transcript\n\n**Client:** Halo Beverages, ECC to S/4HANA migration, discovery phase\n**Process:** Order-to-Cash, step 2: price the order, discounts and approvals\n**Session:** Sales workshop 2 of 3, one-on-one\n**Date:** 18 September 2026, 10:00-10:50\n**Attendees:** Dana Ruiz (Head of Retail Sales, Halo), Priya Raman (consultant, leads), Tom Becker (consultant, notes)\n**Recording:** Teams, auto-transcribed, lightly cleaned. Timestamps approximate.\n\n---\n\n**[00:00] Priya:** Thanks for coming back, Dana. Last week we covered how orders arrive. Today I want to stay on the price: what happens to it between the order landing and it being final. I will ask some open questions first and then get specific. Can you walk me through the last chain order you personally looked at?\n\n**[00:40] Dana:** Sure. Thursday, FreshMart, their weekly EDI order. About 1,200 cases across maybe forty lines. It lands in the system, the order desk checks nothing is missing, and the price is already there. Every line comes in at list minus their negotiated price, and the chain discount is on top of that.\n\n**[01:20] Priya:** Who touches the price on an order like that?\n\n**Dana:** Nobody, for a standard order. The order desk does not change prices, they are not allowed to. It is only when a rep is pushing something, a new flavour or a shelf reset, that they add a discount on top. On the FreshMart one nobody touched it.\n\n**[01:55] Priya:** Roughly how many orders a week, and how many get a manual discount?\n\n**Dana:** Chains and distributors together, maybe three hundred orders a week. Manual discounts, I would guess ten or fifteen of those. It is not most orders. Marketplace is separate, that is hundreds of small orders and nobody touches those.\n\n**[02:30] Priya:** Let us build the price up from list. A chain, say FreshMart. What do they pay?\n\n**Dana:** List price minus their chain discount. All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account. Then on top of that whatever we have negotiated on specific products, which is most of the range for FreshMart honestly.\n\n**[03:10] Priya:** Eight percent for every chain, always?\n\n**Dana:** Every chain, yes. Distributors are different, they buy on a different price list, no percentage. Marketplace is its own price list too.\n\n**[03:35] Priya:** The negotiated prices per product. Who maintains those?\n\n**Dana:** The key account manager agrees them with the buyer, sends them to the order desk, and the order desk keys them in.\n\n**[04:30] Priya:** Now manual discounts. A rep wants to give FreshMart a bit extra on a new flavour to get it on shelf. How much can they give on their own?\n\n**Dana:** The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it.\n\n**[05:00] Priya:** Up to ten without approval, above ten needs you. How does the approval reach you?\n\n**Dana:** It shows up in my inbox in the system, the worklist thing. Sometimes the rep also messages me because the worklist is slow to refresh. I approve maybe two or three a week.\n\n**[05:30] Priya:** Two or three a week, out of ten or fifteen manual discounts. So most manual discounts do not come to you?\n\n**Dana:** Most are under ten, yes. Reps stay under ten if they can, they do not like waiting on me.\n\n**[05:50] Tom:** Is there an upper limit at all? Could a rep type in thirty percent and send it to you?\n\n**Dana:** They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty.\n\n**[06:15] Priya:** When did the ten percent rule come in, and why?\n\n**Dana:** 2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.\n\n**[06:40] Priya:** Promotions. Northgate runs a summer promo on the Citrus line, twelve percent off for six weeks. If they also place a big order that qualifies for the volume discount, do they get both?\n\n**Dana:** No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here.\n\n**[07:10] Priya:** And how is that enforced? Does the system take one off, or does the rep?\n\n**Dana:** I assume the system does it. The reps do not touch it. I have never had to check.\n\n**[07:30] Priya:** OK, I will verify that. Any buy-X-get-Y offers, free cases, samples?\n\n**Dana:** Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.\n\n**[07:55] Priya:** Anything that changes the price or the quantity on a line that nobody enters by hand?\n\n**Dana:** [pause] There is one thing that is odd, now that you say quantity. Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list. It happens maybe once a month. I have never got to the bottom of it.\n\n**[08:35] Priya:** Which products, do you remember?\n\n**Dana:** Always the Classic range, I think. Never the new stuff. And the customer never complains, so it drops off the list.\n\n**[08:55] Priya:** That is useful, I will dig into it. Marketplace orders, do reps ever discount those?\n\n**Dana:** No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm. The reps cannot even see those orders most of the time.\n\n**[09:20] Priya:** Let us do pain points. What goes wrong most often with pricing?\n\n**Dana:** Two things. The worklist, as I said, it is slow and reps message me anyway. And chargebacks. A chain short-pays because they think a promo price should have applied and we think it should not, and it takes AR weeks to untangle. That is not really my process but it lands on me.\n\n**[10:00] Priya:** Any pricing that happens outside the system? Spreadsheets, emails, credit notes after the fact?\n\n**Dana:** The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system. I know that is not ideal.\n\n**[10:30] Priya:** Anything the system does that nobody can explain?\n\n**Dana:** The extra cases thing. And occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\n\n**[10:50] Priya:** Who else should I talk to about pricing?\n\n**Dana:** Marco in finance, he owns the discount policy. Lena on the order desk, she keys everything. And marketing for promos, that is Sam.\n\n**[11:10] Priya:** Last one. If you could change one thing about pricing?\n\n**Dana:** I want to see every discount over ten percent before it ships, and I want the KAM spreadsheets gone. If the system had the agreed price, the order desk would not need to fix anything.\n\n**[11:35] Priya:** Perfect. That is time. Thank you, Dana. Tom will send the summary tomorrow and I will come back to you on the extra cases.\n\n**Dana:** Thanks both.\n\n---\n*End of transcript.*\n", "extract": {"people.csv": [{"id": "P-01", "name": "Dana Ruiz", "title": "Head of Retail Sales", "status": "active"}, {"id": "P-02", "name": "Marco Ferreira", "title": "Finance Controller", "status": "active"}, {"id": "P-03", "name": "Lena Park", "title": "Order Desk Lead", "status": "active"}, {"id": "P-04", "name": "Jo Hoffman", "title": "SAP Project Lead at the 2011 go-live", "status": "left 2015"}], "product.csv": [{"id": "PR-01", "name": "Classic Cola 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00"}, {"id": "PR-02", "name": "Classic Lemon 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00"}, {"id": "PR-03", "name": "Citrus Sparkle 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80"}, {"id": "PR-04", "name": "Halo Zero Cola 330ml x24", "range": "Zero", "list_price_usd_per_case": "16.40"}], "discount.csv": [{"id": "D-01", "name": "Chain trade discount", "percent": "8", "applies_to": "Every product on every supermarket-chain order", "since": "2011-06-01"}, {"id": "D-02", "name": "Manual discount cap", "percent": "20", "applies_to": "The most a rep can type in on any product", "since": "2011-06-01"}, {"id": "D-03", "name": "Manual discount approval", "percent": "15", "applies_to": "Above this the sales manager must approve", "since": "2019-03-04"}, {"id": "D-04", "name": "Summer promotion", "percent": "12", "applies_to": "Citrus Sparkle for Northgate and FreshMart; 15 Jun to 31 Jul 2026", "since": "2026-06-15"}, {"id": "D-05", "name": "Volume discount", "percent": "3 to 6", "applies_to": "Orders of 500 / 1000 / 2500 cases; any product", "since": "2011-06-01"}], "connections.csv": [{"from": "P-01", "relation": "in charge of", "to": "PR-01", "since": "2021", "note": "Retail sales owns the Classic and Citrus ranges"}, {"from": "P-01", "relation": "in charge of", "to": "PR-02", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-03", "since": "2021", "note": ""}, {"from": "P-03", "relation": "in charge of", "to": "PR-04", "since": "2023", "note": "Order desk owns the Zero range listing"}, {"from": "P-04", "relation": "set", "to": "D-01", "since": "2011", "note": "Configured at go-live"}, {"from": "P-04", "relation": "set", "to": "D-02", "since": "2011", "note": "Configured at go-live"}, {"from": "P-02", "relation": "set", "to": "D-03", "since": "2019", "note": "Tightened after margin loss on two listings"}, {"from": "P-03", "relation": "set", "to": "D-04", "since": "2026", "note": "Keyed from the promotion sheet sent by marketing"}, {"from": "P-04", "relation": "set", "to": "D-05", "since": "2011", "note": "Configured at go-live"}, {"from": "D-01", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-03", "since": "2026", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}]}, "db": {"people": [{"id": "P-01", "name": "Dana Ruiz", "title": "Head of Retail Sales", "status": "active"}, {"id": "P-02", "name": "Marco Ferreira", "title": "Finance Controller", "status": "active"}, {"id": "P-03", "name": "Lena Park", "title": "Order Desk Lead", "status": "active"}, {"id": "P-04", "name": "Jo Hoffman", "title": "SAP Project Lead at the 2011 go-live", "status": "left 2015"}], "product": [{"id": "PR-01", "name": "Classic Cola 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00"}, {"id": "PR-02", "name": "Classic Lemon 330ml x24", "range": "Classic", "list_price_usd_per_case": "16.00"}, {"id": "PR-03", "name": "Citrus Sparkle 330ml x24", "range": "Citrus", "list_price_usd_per_case": "16.80"}, {"id": "PR-04", "name": "Halo Zero Cola 330ml x24", "range": "Zero", "list_price_usd_per_case": "16.40"}], "discount": [{"id": "D-01", "name": "Chain trade discount", "percent": "8", "applies_to": "Every product on every supermarket-chain order", "since": "2011-06-01"}, {"id": "D-02", "name": "Manual discount cap", "percent": "20", "applies_to": "The most a rep can type in on any product", "since": "2011-06-01"}, {"id": "D-03", "name": "Manual discount approval", "percent": "15", "applies_to": "Above this the sales manager must approve", "since": "2019-03-04"}, {"id": "D-04", "name": "Summer promotion", "percent": "12", "applies_to": "Citrus Sparkle for Northgate and FreshMart; 15 Jun to 31 Jul 2026", "since": "2026-06-15"}, {"id": "D-05", "name": "Volume discount", "percent": "3 to 6", "applies_to": "Orders of 500 / 1000 / 2500 cases; any product", "since": "2011-06-01"}], "connections": [{"from": "P-01", "relation": "in charge of", "to": "PR-01", "since": "2021", "note": "Retail sales owns the Classic and Citrus ranges"}, {"from": "P-01", "relation": "in charge of", "to": "PR-02", "since": "2021", "note": ""}, {"from": "P-01", "relation": "in charge of", "to": "PR-03", "since": "2021", "note": ""}, {"from": "P-03", "relation": "in charge of", "to": "PR-04", "since": "2023", "note": "Order desk owns the Zero range listing"}, {"from": "P-04", "relation": "set", "to": "D-01", "since": "2011", "note": "Configured at go-live"}, {"from": "P-04", "relation": "set", "to": "D-02", "since": "2011", "note": "Configured at go-live"}, {"from": "P-02", "relation": "set", "to": "D-03", "since": "2019", "note": "Tightened after margin loss on two listings"}, {"from": "P-03", "relation": "set", "to": "D-04", "since": "2026", "note": "Keyed from the promotion sheet sent by marketing"}, {"from": "P-04", "relation": "set", "to": "D-05", "since": "2011", "note": "Configured at go-live"}, {"from": "D-01", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-01", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}, {"from": "D-04", "relation": "applies to", "to": "PR-03", "since": "2026", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-01", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-02", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-03", "since": "2011", "note": ""}, {"from": "D-05", "relation": "applies to", "to": "PR-04", "since": "2011", "note": ""}]}, "sources": [{"file": "people", "what": "Who works on pricing at Halo: name, title, and whether they are still here.", "source": "Client HR list, cleaned by the consultant", "table": "people"}, {"file": "product", "what": "What Halo sells: range, list price per case, and any negotiated price with its expiry.", "source": "Product master and price list, ECC", "table": "product"}, {"file": "discount", "what": "Every discount rule in the system: the percentage, what it applies to, its kind, and since when.", "source": "Pricing configuration, ECC", "table": "discount"}, {"file": "connections", "what": "How the three tables link: who set which discount, which discount applies to which product, who is in charge of what.", "source": "Change history and org chart, joined by the consultant", "table": "connections"}]}</script>
 <script>
 (() => {
   const D = JSON.parse(document.getElementById('data').textContent);
@@ -422,20 +393,20 @@
   const interviewee = M.stakeholders.find(p => p.interviewed);
   const num = id => M.node_fields.findIndex(f => f.id === id) + 1;
 
-  const state = { found: false, synthesized: false, working: false, view: 'map', scope: null, open: new Set(), selected: null, log: [],
+  const state = { sent: new Set(), found: false, synthesized: false, working: false, view: 'map', scope: null, open: new Set(), selected: null,
     items: Object.fromEntries(M.node_fields.map(f => [f.id, { verdict: 'none', out: null, decision: null }])) };
   const outFor = id => OUT.fields.find(f => f.field_id === id);
   const tsFor = quote => { const i = T.indexOf(quote.slice(0, 40)); if (i < 0) return null; const m = T.slice(0, i).match(/\[(\d\d:\d\d)\](?![\s\S]*\[\d\d:\d\d\])/); return m ? m[1] : null; };
   const explained = () => Object.values(state.items).filter(i => i.verdict === 'match' || i.verdict === 'resolved').length;
   const needs = () => Object.values(state.items).filter(i => NEEDS.has(i.verdict) || i.verdict === 'follow_up').length;
-  const statusPill = (lg) => { const n = explained(), c = lg ? 'pill lg ' : 'pill '; if (!state.synthesized) return `<span class="${c}plain">Not started</span>`; if (n === total) return `<span class="${c}match">Ready for review · ${total} of ${total}</span>`; return `<span class="${c}review">In review · ${n} of ${total} explained</span>`; };
+  const statusPill = (lg) => { const n = explained(), c = lg ? 'pill lg ' : 'pill '; if (!state.synthesized) return `<span class="${c}plain">${state.found ? 'Awaiting interview' : 'Not started'}</span>`; if (n === total) return `<span class="${c}review">Ready for review · ${total} of ${total}</span>`; return `<span class="${c}review">In review · ${n} of ${total} explained</span>`; };
+  const lookup = (t, id) => (D.db[t] || []).find(r => r.id === id) || {};
+  const rowKey = (t, r) => t === 'connections' ? `${r.from} ${r.relation} ${r.to}` : r.id;
 
-  $('#proj-name').textContent = M.client.name;
-  $('#map-eyebrow').textContent = `${M.client.name} · ${M.client.project}`;
-
+  // ---- map
   function renderMap() {
     const procs = $('#procs'); procs.innerHTML = '';
-    const o2c = el('button', 'proc scoped', `<span class="eyebrow">In scope</span><span class="name">${esc(M.process.name)}</span><span class="foot"><span>${M.steps.length} steps</span><span class="num">${state.synthesized ? '1 in review' : '0 in review'}</span></span>`);
+    const o2c = el('button', 'proc scoped', `<span class="eyebrow">In scope</span><span class="name">${esc(M.process.name)}</span><span class="foot"><span>${M.steps.length} steps</span><span>${state.synthesized ? '1 in review' : '0 in review'}</span></span>`);
     o2c.addEventListener('click', () => $('#flow').scrollIntoView({ behavior: 'smooth', block: 'center' }));
     procs.appendChild(o2c);
     OTHER_PROCS.forEach(p => procs.appendChild(el('div', 'proc', `<span class="eyebrow">Not in scope</span><span class="name">${p.name}</span><span class="foot"><span>${p.steps} steps</span><span>—</span></span>`)));
@@ -449,10 +420,10 @@
     });
   }
 
+  // ---- step
   function renderStrip() {
     const strip = $('#strip'); strip.innerHTML = '';
     const back = el('button', 'chip scoped', esc(M.process.name)); back.addEventListener('click', showMap); strip.appendChild(back);
-    OTHER_PROCS.forEach(p => strip.appendChild(el('span', 'chip', p.name)));
     strip.appendChild(el('span', 'sep', '›'));
     M.steps.forEach((s, i) => { const c = el('button', 'chip' + (s.id === M.node_step_id ? ' active' : ''), `<span class="n">${i + 1}</span>${esc(s.name)}`); c.addEventListener('click', showMap); strip.appendChild(c); });
     const b = el('button', 'btn secondary small back', '← Map'); b.addEventListener('click', showMap); strip.appendChild(b);
@@ -460,26 +431,17 @@
   function renderHead() {
     $('#step-title').textContent = NODE.name; $('#step-sub').textContent = NODE.focus || '';
     $('#step-status').innerHTML = statusPill(true);
-    const people = $('#people'); people.innerHTML = '<span class="lbl">People</span>';
-    M.stakeholders.filter(p => p.added).forEach(p => {
-      const ini = p.name.split(' ').map(w => w[0]).join('').slice(0, 2);
-      const b = el('button', 'person' + (p.interviewed ? ' interviewed' : ''), `<span class="avatar">${ini}</span>${esc(p.name.split(' ')[0])}<span class="role">${esc(p.role)}</span>`);
-      b.addEventListener('click', e => { e.stopPropagation(); const open = b.querySelector('.pop'); document.querySelectorAll('.pop').forEach(x => x.remove()); if (open) return; b.appendChild(el('div', 'pop', `<b>${esc(p.name)}</b><span class="r">${esc(p.role)} · ${esc(p.side)}</span><p>${esc(p.note)}</p>${p.interviewed ? '<div class="iv"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Interview · 18 Sep · 50 min</div>' : ''}`)); });
-      people.appendChild(b);
-    });
-    const add = el('button', 'person add', '+ Add stakeholder'); add.title = 'Add a person from the client side or the project team'; people.appendChild(add);
-    $('#c-items').textContent = state.found ? total : 0; $('#c-src').textContent = D.sources.length + (state.synthesized ? 1 : 0); $('#c-log').textContent = state.log.length;
+    $('#c-items').textContent = state.found ? total : 0; $('#c-src').textContent = D.sources.length + (state.synthesized ? 1 : 0);
     const h = $('#hint');
-    if (!state.found) { h.style.display = ''; h.innerHTML = `<span><b>No configuration items yet.</b> Ask the agent to find them in the sources: people, product, discount, and how they connect.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
-    else if (!state.synthesized) { h.style.display = ''; h.innerHTML = `<span>${total} items found in the data. <b>No interview has been checked against them yet.</b> Add a transcript in the agent panel.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
+    if (!state.found) { h.style.display = ''; h.innerHTML = `<span><b>No configuration items yet.</b> Drag the tables from Sources into the agent.</span><button class="btn small">Open Sources</button>`; h.querySelector('button').addEventListener('click', () => showTab('sources')); }
+    else if (!state.synthesized) { h.style.display = ''; h.innerHTML = `<span><b>No interview checked yet.</b> Add a transcript in the agent panel.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
     else h.style.display = 'none';
-    $('#drop').hidden = !state.found;
+    $('#drop').hidden = !state.found || state.synthesized; $('#srcdrop').hidden = state.found; $('.dropwrap').hidden = state.synthesized;
   }
-  document.addEventListener('click', () => document.querySelectorAll('.pop').forEach(x => x.remove()));
 
   function renderItems() {
     const wrap = $('#items'); wrap.innerHTML = '';
-    if (!state.found) { wrap.innerHTML = '<div class="empty">Items appear here once the agent has derived them from the sources.</div>'; renderBanner(); return; }
+    if (!state.found) { wrap.innerHTML = '<div class="empty">Nothing here yet.</div>'; return; }
     M.node_fields.forEach((f, idx) => {
       const st = state.items[f.id];
       const it = el('div', 'item' + (state.open.has(f.id) ? ' open' : '') + (state.selected === f.id ? ' selected' : '')); it.dataset.id = f.id;
@@ -487,119 +449,183 @@
       row.addEventListener('click', () => { state.open.has(f.id) ? state.open.delete(f.id) : state.open.add(f.id); state.selected = f.id; setScope(f.id); renderItems(); tour.emit('open-' + (idx + 1)); });
       it.appendChild(row); it.appendChild(renderDetail(f, st)); wrap.appendChild(it);
     });
-    renderBanner();
   }
 
-  function evidenceSide(title, who, items, missing) {
-    const s = el('div', 'side'); s.innerHTML = `<h4>${title}${who ? `<span class="who">${esc(who)}</span>` : ''}</h4>`;
-    if (missing) { s.appendChild(el('div', 'missing' + (missing.neutral ? ' neutral' : ''), `<b>${esc(missing.title)}</b>${esc(missing.text)}`)); return s; }
-    const ev = el('div', 'ev'); items.forEach(x => ev.appendChild(x)); s.appendChild(ev); return s;
+  function rowText(table, id) {
+    const r = lookup(table, id);
+    if (table === 'discount') return `${r.name} · ${r.percent}${/^[\d.]+$/.test(r.percent) ? '%' : ''} · ${r.applies_to} · since ${r.since}`;
+    if (table === 'people') return `${r.name} · ${r.title} · ${r.status}`;
+    if (table === 'product') return `${r.name} · ${r.range} · $${r.list_price_usd_per_case}/case`;
+    if (table === 'connections') { const c = D.db.connections.find(x => `${x.from} ${x.relation} ${x.to}` === id) || {}; const nm = x => (lookup('people', x).name || lookup('discount', x).name || lookup('product', x).name || x); return `${nm(c.from)} ${c.relation} ${nm(c.to)} · ${c.since}${c.note ? ' · ' + c.note : ''}`; }
+    return id;
   }
-  const srcLink = ref => { const a = el('a', null, esc(ref.split('#')[1] || ref)); a.href = '#'; a.title = ref; a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); showTab('sources'); }); return a; };
+  const lineOf = (table, id) => { const i = (D.db[table] || []).findIndex(r => rowKey(table, r) === id); return i < 0 ? '' : ` · line ${i + 2}`; };
+  function evLine(table, id) {
+    const l = el('div', 'evl', `<a href="#" class="ref">${esc(table)}.csv${lineOf(table, id)}</a><span>${esc(rowText(table, id))}</span>`);
+    l.querySelector('.ref').addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); locateRow(table, id); }); return l;
+  }
+  const parseRef = ref => { const [file, key] = ref.split('#'); return [file.replace('.csv', ''), key]; };
 
-  const lookup = (t, id) => (D.db[t] || []).find(r => r.id === id) || {};
-  function chain(f) {
-    const dv = f.derived_from; const c = el('div', 'chain');
-    const grp = (title, nodes) => { const g = el('div', 'grp', `<span class="gl">${title}</span>`); nodes.forEach(n => g.appendChild(n)); return g; };
-    const ppl = dv.people.map(id => { const r = lookup('people', id); return el('span', 'node p' + (/left/.test(r.status) ? ' gone' : ''), `<b>${esc(r.name)}</b><small>${esc(r.title)}${/left/.test(r.status) ? ' · ' + esc(r.status) : ''}</small>`); });
-    const dis = dv.discounts.map(id => { const r = lookup('discount', id); return el('span', 'node d', `<b>${esc(r.name)}</b><small>${esc(r.percent)}% · since ${esc(r.since).slice(0, 4)}</small>`); });
-    const prd = dv.products.map(id => { const r = lookup('product', id); return el('span', 'node r', `<b>${esc(r.name)}</b><small>${esc(r.range)} · $${esc(r.list_price_usd_per_case)}/case</small>`); });
-    c.appendChild(grp(dv.discounts.length ? 'Set by' : 'Maintained by', ppl));
-    if (dis.length) c.appendChild(grp('Discount', dis));
-    if (prd.length) c.appendChild(grp(dv.discounts.length ? 'Applies to' : 'Product price', prd));
-    const w = el('div', 'from'); w.innerHTML = '<h4>Where it comes from</h4>'; w.appendChild(c); w.appendChild(el('p', 'dl', esc(dv.line))); return w;
-  }
   function renderDetail(f, st) {
     const d = el('div', 'detail'); const o = st.out;
-    d.appendChild(chain(f));
-    // evidence pair
-    const pair = el('div', 'pair');
-    if (!o) {
-      const sys = f.source_rows.slice(0, 2).map(r => { const e = el('div', 'e', esc(f.plain)); e.appendChild(srcLink(r)); return e; }).slice(0, 1);
-      pair.appendChild(evidenceSide('What the system shows', null, sys));
-      pair.appendChild(evidenceSide('What the client said', null, [], { neutral: true, title: 'No interview yet', text: 'Drop a transcript in the agent panel and this side fills in.' }));
-      d.appendChild(pair); return d;
+    const why = el('div', 'why');
+    if (!o) why.innerHTML = `<span class="pill plain">Awaiting interview</span><span class="muted">${esc(f.derived_from.line)}</span>`;
+    else why.innerHTML = `<span class="pill ${o.state}">${VERDICT[o.state]}</span><span>${esc(o.why)}</span><span class="c">${Math.round(o.confidence * 100)}%</span>`;
+    d.appendChild(why);
+    const ev = el('div', 'ev');
+    const rows = o ? o.related_rows.map(r => [r.table, r.id]) : f.source_rows.map(parseRef);
+    rows.forEach(([t, id]) => ev.appendChild(evLine(t, id)));
+    if (o && o.missing_side === 'system') ev.appendChild(el('div', 'evl miss', `<span class="ref plain">missing in the data</span><span>${esc(o.missing_note)}</span>`));
+    if (o) {
+      if (o.missing_side === 'client') ev.appendChild(el('div', 'evl miss', `<span class="ref plain">missing in the interview</span><span>${esc(o.missing_note)}</span>`));
+      (o.quotes || []).forEach(q => { const ts = tsFor(q.text); ev.appendChild(el('div', 'evl', `<span class="ref plain">interview.docx${ts ? ' · ' + ts : ''}</span><span>“${esc(q.text)}” <span class="muted">${esc(q.speaker)}</span></span>`)); });
     }
-    const sysItems = (o.system_evidence || []).map(x => { const e = el('div', 'e', esc(x.text)); e.appendChild(srcLink(x.source)); return e; });
-    const cliItems = (o.quotes || []).map(q => { const ts = tsFor(q.text); return el('div', 'q', `“${esc(q.text)}”<div class="by">${esc(q.speaker)}, ${esc(interviewee.role)} · 18 Sep${ts ? ' · ' + ts : ''}</div>`); });
-    const sysMissing = o.missing_side === 'system' ? { title: 'Nothing in the system does this', text: o.missing_note } : null;
-    const cliMissing = o.missing_side === 'client' ? { title: o.state === 'not_discussed' ? 'Not discussed' : 'No one explained this', text: o.missing_note, neutral: o.state === 'not_discussed' } : null;
-    pair.appendChild(evidenceSide('What the system shows', null, sysItems, sysMissing));
-    pair.appendChild(evidenceSide('What the client said', o.quotes.length && !cliMissing ? interviewee.name : null, cliItems, cliMissing));
-    if (cliMissing && o.quotes.length) { const side = pair.lastChild; const ev = el('div', 'ev'); ev.style.marginTop = '10px'; cliItems.forEach(x => ev.appendChild(x)); side.appendChild(el('div', 'eyebrow', 'Closest thing said')); side.lastChild.style.margin = '12px 0 6px'; side.appendChild(ev); }
-    d.appendChild(pair);
+    d.appendChild(ev);
+    if (!o) return d;
 
-    // verdict row
-    const vr = el('div', 'verdict-row');
-    const a = el('div', 'agentsays', `<div class="top"><span class="pill ${o.state}">${VERDICT[o.state]}</span><span class="c">agent · confidence ${Math.round(o.confidence * 100)}%</span></div><p>${esc(o.conflict_summary || o.reasoning)}</p>`);
-    const askBtn = el('button', 'btn secondary small ask'); askBtn.dataset.ask = f.id; askBtn.textContent = ( o.state === 'match' ? 'Ask the agent' : 'Ask the agent why');
-    askBtn.addEventListener('click', e => { e.stopPropagation(); openAgent(); state.selected = f.id; setScope(f.id); renderItems(); agentSay(`<b>${num(f.id)} · ${esc(f.label)}</b><br>${esc(o.reasoning)}${o.follow_up_question ? `<br><br>To close it: ${esc(o.follow_up_question)} Ask <b>${esc(o.ask_who)}</b>.` : ''}`, promptChips(f.id)); tour.emit('asked'); });
-    a.appendChild(askBtn); vr.appendChild(a);
+    const act = el('div', 'act');
+    const ask = el('div', 'ask');
+    const askBtn = el('button', 'linkbtn', 'Check with the agent'); askBtn.dataset.ask = f.id;
+    askBtn.addEventListener('click', e => { e.stopPropagation(); openAgent(); state.selected = f.id; setScope(f.id); renderItems(); askScoped(f.id, 'Check this rule against the data'); tour.emit('asked'); });
+    ask.appendChild(askBtn); act.appendChild(ask);
 
-    const j = el('div', 'judge'); j.innerHTML = '<h4>Your judgment</h4>';
+    const j = el('div', 'judge');
     if (st.decision) {
       j.appendChild(el('div', 'decided', `<b>${esc(st.decision.choice)}</b><div style="margin-top:4px">${esc(st.decision.reason)}</div>${st.decision.followUp ? `<div style="margin-top:4px">Follow-up: ${esc(st.decision.followUp)} <b>→ ${esc(st.decision.askWho)}</b></div>` : ''}<div class="who">Priya Raman · ${st.decision.when}</div>`));
-      const undo = el('button', 'btn secondary small', 'Edit'); undo.style.marginTop = '10px';
-      undo.addEventListener('click', e => { e.stopPropagation(); st.decision = null; st.verdict = o.state; state.log = state.log.filter(l => l.id !== f.id); refresh(); });
-      j.appendChild(undo); vr.appendChild(j); d.appendChild(vr); return d;
+      const undo = el('button', 'linkbtn', 'Edit'); undo.style.marginTop = '8px';
+      undo.addEventListener('click', e => { e.stopPropagation(); st.decision = null; st.verdict = o.state; refresh(); });
+      j.appendChild(undo); act.appendChild(j); d.appendChild(act); return d;
     }
-    const todo = o.state === 'match' ? 'Nothing to decide. Confirm it, or add a note for the process owner.' : o.state === 'not_discussed' ? 'Decide from the data, or queue it for the next interview.' : `Decide which side is right, or send it to <b>${esc(o.ask_who)}</b>.`;
     const choices = o.state === 'match' ? ['Confirmed, keep as is'] : o.state === 'not_discussed' ? ['Decide from the data', 'Needs follow-up'] : ['Trust the client account', 'Trust the system', 'Needs follow-up'];
-    const form = el('div', null, `<div class="todo">${todo}</div><div class="field"><label>Decision</label><select>${choices.map(c => `<option>${c}</option>`).join('')}</select></div><div class="field"><label>My reason</label><textarea placeholder="In your own words: what is true here, and why."></textarea></div><div class="field fu" style="display:none"><label>Follow-up question, and who owes the answer</label><input value="${esc(o.follow_up_question || '')}"><input value="${esc(o.ask_who || '')}"></div><div class="field-row"><button class="btn small">Save</button></div>`);
+    const form = el('div', null, `<div class="field"><label>Decision</label><select>${choices.map(c => `<option>${c}</option>`).join('')}</select></div><div class="field"><label>Reason</label><textarea placeholder="${o.state === 'match' ? 'Click to use the agent\'s reason, or write your own.' : 'In your own words.'}"></textarea></div><div class="field fu" style="display:none"><label>Follow-up question, and who owes the answer</label><input value="${esc(o.follow_up_question || '')}"><input value="${esc(o.ask_who || '')}"></div><div class="field-row"><button class="btn small">Save</button></div>`);
     const sel = form.querySelector('select'), ta = form.querySelector('textarea'), fu = form.querySelector('.fu');
     sel.addEventListener('change', () => fu.style.display = sel.value === 'Needs follow-up' ? '' : 'none');
+    if (o.state === 'match') { const fill = () => { if (!ta.value) { ta.value = `Confirmed by ${interviewee.name} on 18 Sep. ${o.why}`; ta.select(); } }; ta.addEventListener('focus', fill); ta.addEventListener('click', e => { e.stopPropagation(); fill(); }); }
     form.querySelector('button').addEventListener('click', e => {
       e.stopPropagation();
       if (!ta.value.trim()) { ta.focus(); ta.style.borderColor = 'var(--contra-line)'; return; }
       const followUp = sel.value === 'Needs follow-up'; const inputs = fu.querySelectorAll('input');
       st.decision = { choice: sel.value, reason: ta.value.trim(), followUp: followUp ? inputs[0].value : null, askWho: followUp ? inputs[1].value : null, when: nowStr() };
       st.verdict = followUp ? 'follow_up' : 'resolved';
-      state.log.unshift({ id: f.id, label: f.label, ...st.decision, from: VERDICT[o.state] });
-      agentSay(followUp ? `Logged. Item ${num(f.id)} stays open until ${esc(inputs[1].value)} answers.` : `Logged your reason on item ${num(f.id)}. Step 2 is ${explained()} of ${total} explained.`);
-      refresh(); tour.emit('saved');
+      agentSay(followUp ? `Saved. Item ${num(f.id)} waits on ${esc(inputs[1].value)}.` : `Saved. ${explained()} of ${total} explained.`);
+      refresh(); tour.emit('saved'); tour.emit('saved-' + f.id);
     });
-    j.appendChild(form); vr.appendChild(j); d.appendChild(vr); return d;
+    j.appendChild(form); act.appendChild(j); d.appendChild(act); return d;
   }
 
-  function renderBanner() {
-    const b = $('#banner'); b.className = 'banner'; if (!state.synthesized) return;
-    const n = explained(), open = Object.entries(state.items).filter(([, i]) => i.verdict === 'follow_up');
-    if (n === total) { b.classList.add('show'); b.innerHTML = `<b>Ready for process owner review.</b> All ${total} items have a confirmed reason. The decision log is the record.`; }
-    else { b.classList.add('show', 'open-items'); b.innerHTML = `<b>${n} of ${total} explained.</b> ${needs()} still need you${open.length ? `, ${open.length} waiting on ${[...new Set(open.map(([id]) => state.items[id].decision.askWho))].join(', ')}` : ''}.`; }
-  }
-  function renderLog() { const l = $('#log'); l.innerHTML = ''; if (!state.log.length) { l.innerHTML = '<div class="empty">No decisions yet. Reasons you save on an item appear here.</div>'; return; } state.log.forEach(e => l.appendChild(el('div', 'entry', `<span class="when">${esc(e.when)}</span><div class="what"><b>${num(e.id)} · ${esc(e.label)}</b> <span class="pill ${e.followUp ? 'follow_up' : 'resolved'}" style="margin-left:6px">${e.followUp ? 'Follow-up open' : 'Resolved'}</span><p>${esc(e.choice)}, was ${esc(e.from)}. ${esc(e.reason)}${e.followUp ? ` Follow-up for ${esc(e.askWho)}: ${esc(e.followUp)}` : ''}</p></div>`))); }
+  // ---- sources
   function renderSources() {
     const s = $('#sources'); s.innerHTML = '';
-    if (state.synthesized) s.appendChild(el('div', 'source', `<div class="name"><span class="pill match plain">Interview</span>01-sales-manager.md</div><p>18 Sep, Dana Ruiz, Head of Retail Sales. 50 minutes, transcribed. Synthesized against Step 2.</p>`));
+    if (state.found) s.appendChild(erd());
+    if (state.synthesized) s.appendChild(el('div', 'source', `<div class="name"><span class="pill plain">Interview</span>Interview with Dana.docx</div><p>Dana Ruiz, 18 Sep. Synthesized against ${esc(NODE.name)}.</p>`));
     D.sources.forEach(src => {
-      const rows = D.db[src.table] || D.extract[src.table] || [];
-      const card = el('div', 'source', `<div class="name">${esc(src.file)}<span class="mono muted">${rows.length} rows</span></div><p>${esc(src.what)}</p><p class="mono" style="margin-top:8px">${esc(src.source)}</p>`);
+      const rows = D.db[src.table] || [];
+      const card = el('div', 'source', `<div class="name">${esc(src.file)}<span class="mono muted">${rows.length} rows</span><span class="drag">${state.sent.has(src.file) ? '✓ with the agent' : '⠿ drag to the agent'}</span></div><p>${esc(src.what)}</p>`);
+      card.dataset.table = src.file; if (state.sent.has(src.file)) card.classList.add('sent');
+      if (!state.found) { card.draggable = true; card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', 'source:' + src.file); e.dataTransfer.effectAllowed = 'copy'; card.classList.add('dragging'); openAgent(); }); card.addEventListener('dragend', () => card.classList.remove('dragging')); }
       const btn = el('button', 'btn secondary small', 'View table'); btn.style.marginTop = '10px';
-      const tw = el('div', 'tablewrap'); tw.hidden = true;
-      btn.addEventListener('click', () => { if (!tw.innerHTML) { const cols = Object.keys(rows[0] || {}); tw.innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c.replace(/_/g, ' '))}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${cols.map(c => `<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`; } tw.hidden = !tw.hidden; btn.textContent = tw.hidden ? 'View table' : 'Hide table'; });
+      if (!state.found && !state.sent.has(src.file)) { const send = el('button', 'btn secondary small', 'Send to agent'); send.style.margin = '10px 8px 0 0'; send.addEventListener('click', () => receiveSource(src.file)); card.appendChild(send); }
+      const tw = el('div', 'tablewrap'); tw.hidden = true; tw.dataset.table = src.table;
+      const build = () => { if (tw.innerHTML) return; const cols = Object.keys(rows[0] || {}); tw.innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c.replace(/_/g, ' '))}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr data-key="${esc(rowKey(src.table, r))}">${cols.map(c => `<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`; };
+      btn.addEventListener('click', () => { build(); tw.hidden = !tw.hidden; btn.textContent = tw.hidden ? 'View table' : 'Hide table'; });
+      tw.build = build; tw.btn = btn;
       card.appendChild(btn); card.appendChild(tw); s.appendChild(card);
     });
   }
-  function showTab(name) { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.tab === name)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name)); }
+  function locateRow(table, id) {
+    showTab('sources');
+    const tw = document.querySelector(`.tablewrap[data-table="${table}"]`); if (!tw) return;
+    tw.build(); tw.hidden = false; tw.btn.textContent = 'Hide table';
+    const tr = [...tw.querySelectorAll('tr[data-key]')].find(r => r.dataset.key === id); if (!tr) return;
+    tr.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    tr.classList.remove('flash'); void tr.offsetWidth; tr.classList.add('flash'); setTimeout(() => tr.classList.remove('flash'), 1800);
+  }
+  function showTab(name) { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.tab === name)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name)); tour.emit('tab-' + name); }
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
-  function refresh() { renderHead(); renderItems(); renderLog(); renderSources(); renderMap(); updateEdge(); }
+  function refresh() { renderHead(); renderItems(); renderSources(); renderMap(); updateEdge(); }
   function showStep() { state.view = 'step'; $('#map').style.display = 'none'; $('#step').style.display = 'block'; refresh(); tour.emit('step-open'); }
   function showMap() { state.view = 'map'; $('#step').style.display = 'none'; $('#map').style.display = 'block'; state.selected = null; setScope(null); refresh(); }
 
+  // ---- entity-relationship diagram of the tables
+  function erd() {
+    const cols = t => Object.keys(D.db[t][0] || {});
+    const ents = [['people', 20], ['discount', 290], ['product', 560]];
+    const W = 780, bw = 200, rowH = 16, hdr = 24;
+    const box = {}; let H = 0;
+    ents.forEach(([t, x]) => { const c = cols(t); const h = hdr + c.length * rowH + 8; box[t] = { x, y: 20, w: bw, h, cols: c }; H = Math.max(H, 20 + h); });
+    const count = rel => D.db.connections.filter(c => c.relation === rel).length;
+    let svg = `<svg viewBox="0 0 ${W} ${H + 64}" xmlns="http://www.w3.org/2000/svg">`;
+    ents.forEach(([t]) => { const b = box[t]; svg += `<g class="ent"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="4"/><rect class="hd" x="${b.x}" y="${b.y}" width="${b.w}" height="${hdr}" rx="4"/><text class="tn" x="${b.x + 10}" y="${b.y + 16}">${t}</text><text class="rc" x="${b.x + b.w - 10}" y="${b.y + 16}" text-anchor="end">${D.db[t].length} rows</text>`; b.cols.forEach((c, i) => { svg += `<text class="col${i === 0 ? ' pk' : ''}" x="${b.x + 10}" y="${b.y + hdr + 12 + i * rowH}">${esc(c.replace(/_/g, ' '))}</text>`; }); svg += '</g>'; });
+    const foot = (x, y, dir) => `<path class="cf" d="M${x} ${y - 5} L${x + 8 * dir} ${y} L${x} ${y + 5} M${x + 8 * dir} ${y} L${x} ${y}"/>`;
+    const one = (x, y) => `<path class="cf" d="M${x} ${y - 5} L${x} ${y + 5}"/>`;
+    const a = box.people, b = box.discount, c = box.product; const ym = 20 + hdr + 12;
+    svg += `<line x1="${a.x + a.w}" y1="${ym}" x2="${b.x}" y2="${ym}"/>${one(a.x + a.w + 8, ym)}${foot(b.x - 8, ym, -1)}<text class="rl" x="${(a.x + a.w + b.x) / 2}" y="${ym - 6}" text-anchor="middle">set · ${count('set')}</text>`;
+    svg += `<line x1="${b.x + b.w}" y1="${ym}" x2="${c.x}" y2="${ym}"/>${foot(b.x + b.w + 8, ym, 1)}${foot(c.x - 8, ym, -1)}<text class="rl" x="${(b.x + b.w + c.x) / 2}" y="${ym - 6}" text-anchor="middle">applies to · ${count('applies to')}</text>`;
+    const yb = H + 30;
+    svg += `<path d="M${a.x + a.w / 2} ${a.y + a.h} V${yb} H${c.x + c.w / 2} V${c.y + c.h}"/>${one(a.x + a.w / 2 - 5, a.y + a.h + 8).replace(/M(\S+) (\S+) L(\S+) (\S+)/, (m, x1, y1, x2, y2) => `M${a.x + a.w / 2 - 5} ${a.y + a.h + 8} L${a.x + a.w / 2 + 5} ${a.y + a.h + 8}`)}<path class="cf" d="M${c.x + c.w / 2 - 5} ${c.y + c.h + 8} L${c.x + c.w / 2} ${c.y + c.h} L${c.x + c.w / 2 + 5} ${c.y + c.h + 8}"/><text class="rl" x="${(a.x + c.x + c.w) / 2}" y="${yb - 6}" text-anchor="middle">in charge of · ${count('in charge of')}</text>`;
+    svg += '</svg>';
+    const w = el('div', 'erd', `<div class="erd-t">How the tables connect <span class="muted">links come from the connections table</span></div>${svg}`);
+    return w;
+  }
+
   // ---- agent
-  const thread = $('#thread'), agent = $('#agent'), edge = $('#edge');
+  const thread = $('#thread'), agent = $('#agent'), toggle = $('#agent-toggle');
   const scrollThread = () => { thread.scrollTop = thread.scrollHeight; };
-  function agentSay(html, extra) { const m = el('div', 'msg', `<div class="who">Agent</div>${html}`); if (extra) m.appendChild(extra); thread.appendChild(m); scrollThread(); return m; }
+  const linkify = html => html.replace(/\[\[(\w+):([^\]]+)\]\]/g, (_, t, id) => `<button class="loc" data-t="${esc(t)}" data-id="${esc(id)}">${esc(id)}</button>`);
+  function wire(m) { m.querySelectorAll('.loc').forEach(b => b.addEventListener('click', () => locateRow(b.dataset.t, b.dataset.id))); return m; }
+  function agentSay(html, extra) { const m = el('div', 'msg', `<div class="who">Agent</div>${linkify(html)}`); if (extra) m.appendChild(extra); thread.appendChild(wire(m)); scrollThread(); return m; }
   function userSay(text) { thread.appendChild(el('div', 'msg user', esc(text))); scrollThread(); }
   function setDot(mode, label) { $('#dot').className = 'dot ' + mode; $('#edge-dot').className = 'dot ' + mode; $('#agent-state').textContent = label; }
-  function updateEdge() { const b = $('#edge-badge'); const n = state.synthesized ? needs() : 0; b.hidden = !n; b.textContent = n; }
-  function openAgent() { agent.classList.remove('closed'); edge.classList.remove('show'); }
+  function updateEdge() { const b = $('#edge-badge'); const n = state.synthesized ? needs() : 0; b.hidden = !n || !agent.classList.contains('closed'); b.textContent = n; }
+  function openAgent() { agent.classList.remove('closed'); toggle.classList.add('active'); }
+  function closeAgent() { agent.classList.add('closed'); toggle.classList.remove('active'); }
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  async function typeSay(html, extra) {
+    const m = el('div', 'msg', '<div class="who">Agent</div><span class="tw"></span>'); thread.appendChild(m);
+    const span = m.querySelector('.tw'); const words = html.split(' ');
+    for (let i = 0; i < words.length; i++) { span.innerHTML = linkify(words.slice(0, i + 1).join(' ')); scrollThread(); if (!document.hidden) await sleep(55); }
+    if (extra) m.appendChild(extra); wire(m); scrollThread();
+  }
+  function promptChips(id) { const wrap = el('div', 'prompts'); (CHAT.prompts[id] || []).forEach(t => { const b = el('button', null, esc(t)); b.addEventListener('click', () => { wrap.remove(); ask(t); tour.emit('prompted'); }); wrap.appendChild(b); }); return wrap; }
+
+  function receiveSource(name) {
+    if (state.found || state.sent.has(name)) return;
+    state.sent.add(name); openAgent();
+    $('#srcdrop .t').textContent = `${state.sent.size} table${state.sent.size > 1 ? 's' : ''} added`; $('#srcs').textContent = [...state.sent].join(', ');
+    $('#configure').hidden = false; renderSources();
+    tour.emit('source-dropped');
+  }
+  const srcdrop = $('#srcdrop');
+  ['dragenter', 'dragover'].forEach(ev => agent.addEventListener(ev, e => { if ([...e.dataTransfer.types].includes('text/plain')) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; srcdrop.classList.add('over'); } }));
+  agent.addEventListener('dragleave', e => { if (!agent.contains(e.relatedTarget)) srcdrop.classList.remove('over'); });
+  agent.addEventListener('drop', e => { const d = e.dataTransfer.getData('text/plain'); if (d.startsWith('source:')) { e.preventDefault(); e.stopPropagation(); srcdrop.classList.remove('over'); receiveSource(d.slice(7)); } });
+  $('#configure').addEventListener('click', e => { e.stopPropagation(); findItems(); });
+
+  async function findItems() {
+    if (state.found || state.working) return;
+    state.working = true; setDot('working', 'working'); tour.emit('find-started');
+    $('#configure').disabled = true; $('#configure').textContent = 'Configuring…';
+    userSay('Configure the rules.');
+    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Reading the pricing data<span class="sh"></span></div><ol>${D.find.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
+    thread.appendChild(run); scrollThread();
+    const lis = run.querySelectorAll('li');
+    for (let i = 0; i < lis.length; i++) { lis[i].classList.add('on'); await sleep(850); lis[i].classList.remove('on'); lis[i].classList.add('ok'); }
+    run.querySelector('.title').classList.add('done'); run.querySelector('.title .dot').className = 'dot ready';
+    const wrap = el('div');
+    const list = el('div', 'found');
+    D.find.items.forEach((it, i) => { const f = M.node_fields.find(x => x.id === it.field_id); list.appendChild(el('span', 'n', String(i + 1))); list.appendChild(el('span', null, `<b>${esc(f.label)}</b><small>${esc(it.derivation)}</small>`)); });
+    const add = el('button', 'btn small addall', `Add these ${total} items`);
+    add.addEventListener('click', () => { add.disabled = true; add.textContent = 'Added'; state.found = true; srcdrop.hidden = true; refresh(); tour.emit('added'); agentSay(`${total} items added. Next, add an interview transcript.`); });
+    wrap.appendChild(list); wrap.appendChild(add);
+    state.working = false; setDot('ready', 'ready');
+    await typeSay(esc(D.find.summary), wrap);
+    tour.emit('found');
+  }
 
   async function synthesize() {
     if (state.synthesized || state.working) return;
     state.working = true; $('#synth').disabled = true; setDot('working', 'working'); tour.emit('started');
-    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Checking Step 2 against Dana's interview<span class="sh"></span></div><ol>${CHAT.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
+    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Checking ${esc(NODE.name)} against Dana's interview<span class="sh"></span></div><ol>${CHAT.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
     thread.appendChild(run); scrollThread();
     const lis = run.querySelectorAll('li');
     for (let i = 0; i < lis.length; i++) { lis[i].classList.add('on'); await sleep(900); lis[i].classList.remove('on'); lis[i].classList.add('ok'); }
@@ -610,110 +636,78 @@
     const counts = ['match', 'contradiction', 'gap_no_data', 'gap_no_explanation', 'not_discussed'].map(s => [s, OUT.fields.filter(f => f.state === s).length]).filter(([, n]) => n);
     const grid = el('div', 'verdicts');
     M.node_fields.forEach((f, i) => { const o = outFor(f.id); grid.appendChild(el('span', 'vid', String(i + 1))); grid.appendChild(el('span', null, `<span class="pill ${o.state}">${VERDICT[o.state]}</span>`)); const b = el('button', 'vname', esc(f.label)); b.addEventListener('click', () => { if (state.view !== 'step') showStep(); state.open.add(f.id); state.selected = f.id; setScope(f.id); renderItems(); document.querySelector(`.item[data-id="${f.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }); grid.appendChild(b); });
-    await typeSay(`Checked all ${total} items. ${counts.map(([s, n]) => `${n} ${VERDICT[s].toLowerCase()}`).join(', ')}. <b>${needs()} need your judgment.</b>`, grid);
+    await typeSay(`Checked ${total} items. ${counts.map(([s, n]) => `${n} ${VERDICT[s].toLowerCase()}`).join(', ')}.`, grid);
     tour.emit('synthesized');
-  }
-  async function findItems() {
-    if (state.found || state.working) return;
-    state.working = true; setDot('working', 'working'); tour.emit('find-started');
-    document.querySelectorAll('.prompts button[data-find]').forEach(b => b.closest('.prompts').remove());
-    userSay('Find the configuration items for this step in the sources.');
-    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Reading the pricing data<span class="sh"></span></div><ol>${D.find.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
-    thread.appendChild(run); scrollThread();
-    const lis = run.querySelectorAll('li');
-    for (let i = 0; i < lis.length; i++) { lis[i].classList.add('on'); await sleep(850); lis[i].classList.remove('on'); lis[i].classList.add('ok'); }
-    run.querySelector('.title').classList.add('done'); run.querySelector('.title .dot').className = 'dot ready';
-    const list = el('div', 'found');
-    D.find.items.forEach((it, i) => { const f = M.node_fields.find(x => x.id === it.field_id); list.appendChild(el('span', 'n', String(i + 1))); list.appendChild(el('span', null, `<b>${esc(f.label)}</b><small>${esc(it.derivation)}</small>`)); });
-    const add = el('button', 'btn small addall', `Add all ${total} to Step 2`);
-    add.addEventListener('click', () => { add.disabled = true; add.textContent = 'Added'; state.found = true; refresh(); tour.emit('added'); agentSay(`${total} items are on Step 2, all awaiting interview evidence. Next, add an interview transcript and I'll check each one.`); });
-    const wrap = el('div'); wrap.appendChild(list); wrap.appendChild(add);
-    state.working = false; setDot('ready', 'ready');
-    await typeSay(esc(D.find.summary), wrap);
-    tour.emit('found');
-  }
-  async function typeSay(html, extra) {
-    const m = el('div', 'msg', '<div class="who">Agent</div><span class="tw"></span>'); thread.appendChild(m);
-    const span = m.querySelector('.tw'); const words = html.split(' ');
-    for (let i = 0; i < words.length; i++) { span.innerHTML = words.slice(0, i + 1).join(' '); scrollThread(); await sleep(55); }
-    if (extra) m.appendChild(extra); scrollThread();
-  }
-  function promptChips(id) {
-    const wrap = el('div', 'prompts');
-    (CHAT.prompts[id] || []).forEach(t => { const b = el('button', null, esc(t)); b.addEventListener('click', () => { wrap.remove(); ask(t); tour.emit('prompted'); }); wrap.appendChild(b); });
-    return wrap;
   }
   $('#synth').addEventListener('click', e => { e.stopPropagation(); synthesize(); });
   const drop = $('#drop');
-  function uploaded() { if (drop.classList.contains('has')) return; drop.classList.add('has'); $('#tfile').hidden = false; $('#drop .t').textContent = 'Transcript added'; $('#drop .s:not(.pick)').textContent = 'Synthesize to check it against every item in this step.'; tour.emit('uploaded'); }
+  function uploaded() { if (drop.classList.contains('has')) return; drop.classList.add('has'); $('#tfile').hidden = false; tour.emit('uploaded'); }
   drop.addEventListener('click', () => { if (!state.synthesized) uploaded(); });
-  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); if (ev === 'drop') uploaded(); }));
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); if (ev === 'drop' && !e.dataTransfer.getData('text/plain').startsWith('source:')) { e.stopPropagation(); uploaded(); } }));
 
   function setScope(id) { state.scope = id; const s = $('#scope'); if (!id) { s.className = 'scope'; s.innerHTML = ''; return; } const f = M.node_fields.find(x => x.id === id); s.className = 'scope show'; s.innerHTML = `About <b>${num(id)} · ${esc(f.label)}</b><button class="x" aria-label="Clear">×</button>`; s.querySelector('.x').addEventListener('click', () => { state.selected = null; setScope(null); renderItems(); }); }
   function answerFor(text) {
     const t = text.toLowerCase();
-    if (!state.synthesized) return 'I haven’t read an interview yet. Drop the transcript first.';
+    if (!state.synthesized) return 'I haven’t read an interview yet. Add the transcript first.';
     if (state.scope) { const hit = (CHAT.items[state.scope] || []).find(a => a.keys.some(k => t.includes(k))); if (hit) return hit.answer; }
     if (/need|open|left|judg/.test(t)) return `${needs()} items need you: ${Object.entries(state.items).filter(([, i]) => NEEDS.has(i.verdict)).map(([id]) => `${num(id)} (${VERDICT[state.items[id].verdict]})`).join(', ')}.`;
     return state.scope ? CHAT.generic[1] : CHAT.generic[0];
   }
+  function reply(text, ans, extra) { setTimeout(() => agentSay(esc(ans).replace(/\n/g, '<br>'), extra), 450); }
   function ask(text) {
-    userSay(text); const ans = answerFor(text);
-    setTimeout(() => {
-      let extra = null;
-      if (/draft/i.test(text) && state.scope && /^draft (reason|follow-up)/i.test(ans)) {
-        extra = el('div', 'use'); const b = el('button', 'btn secondary small', 'Use as my reason');
-        b.addEventListener('click', () => { if (!state.open.has(state.scope)) { state.open.add(state.scope); renderItems(); } const ta = document.querySelector(`.item[data-id="${state.scope}"] textarea`); if (ta) { ta.value = ans.replace(/^Draft [^:]+:\s*/i, '').replace(/^“|”$/g, ''); ta.focus(); } });
-        extra.appendChild(b);
-      }
-      agentSay(esc(ans).replace(/\n/g, '<br>'), extra);
-    }, 450);
+    userSay(text); const ans = answerFor(text); let extra = null;
+    if (/draft/i.test(text) && state.scope && /^draft (reason|follow-up)/i.test(ans)) {
+      extra = el('div', 'use'); const b = el('button', 'btn secondary small', 'Use as my reason');
+      b.addEventListener('click', () => { if (!state.open.has(state.scope)) { state.open.add(state.scope); renderItems(); } const ta = document.querySelector(`.item[data-id="${state.scope}"] textarea`); if (ta) { ta.value = ans.replace(/^Draft [^:]+:\s*/i, '').replace(/^“|”$/g, ''); ta.focus(); } });
+      extra.appendChild(b);
+    }
+    reply(text, ans, extra);
   }
+  function askScoped(id, text) { userSay(text); const ans = answerFor(text); const chips = promptChips(id); chips.querySelector('button')?.remove(); reply(text, ans, chips.childElementCount ? chips : null); }
   $('#form').addEventListener('submit', e => { e.preventDefault(); const v = $('#q').value.trim(); if (!v) return; $('#q').value = ''; ask(v); });
-  $('#agent-close').addEventListener('click', () => { agent.classList.add('closed'); edge.classList.add('show'); });
-  edge.addEventListener('click', openAgent);
+  $('#agent-close').addEventListener('click', closeAgent);
+  toggle.addEventListener('click', () => agent.classList.contains('closed') ? openAgent() : closeAgent());
+  toggle.classList.add('active');
   const nowStr = () => { const d = new Date(); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' + d.toTimeString().slice(0, 5); };
 
   // ---- walkthrough
   const tour = (() => {
     const veil = $('#tour-veil'), spot = $('#tour-spot'), card = $('#tour-card');
     const steps = [
-      { key: 'Locate', target: () => $('.step.current'), text: 'Open Step 2.', on: 'step-open' },
-      { key: 'Find items', target: () => $('.prompts button[data-find]'), text: 'Ask the agent to find the configuration items.', on: 'find-started', pre: () => openAgent() },
-      { key: 'Reading', target: () => $('#thread .run'), text: 'Reading the three tables and their connections.', on: 'found', wait: 600 },
-      { key: 'Add', target: () => $('#thread .addall'), text: 'Add them to the step.', on: 'added', wait: 400 },
-      { key: 'Add the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'uploaded', wait: 400 },
-      { key: 'Synthesize', target: () => $('#synth'), text: 'Synthesize.', on: 'started', wait: 350 },
-      { key: 'The agent works', target: () => $('#thread .run'), text: 'Checking the interview against the six items.', on: 'synthesized', wait: 700 },
-      { key: 'Verdicts', target: () => $('#items'), text: 'Every item has a verdict. Four need you.', next: true, pre: () => document.querySelector('.stage').scrollTo({ top: 0 }) },
-      { key: 'A match', target: () => $('.item[data-id="F1"] .row'), text: 'Open item 1, a match.', on: 'open-1', hold: 'Look around, then Next.' },
-      { key: 'A gap', target: () => $('.item[data-id="F3"] .row'), text: 'Open item 3, a gap.', on: 'open-3', pre: () => { state.open.delete('F1'); renderItems(); } },
-      { key: 'Ask why', target: () => $('button[data-ask="F3"]'), text: 'Ask why.', on: 'asked', pre: () => document.querySelector('.item[data-id="F3"]')?.scrollIntoView({ block: 'start', behavior: 'smooth' }) },
-      { key: 'Dig in', target: () => $('#thread .prompts'), text: 'Pick a question.', on: 'prompted', wait: 300 },
-      { key: 'Your judgment', target: () => $('.item[data-id="F3"] .judge'), text: 'Record your decision and save.', on: 'saved', wait: 900 },
-      { key: 'Done', target: () => $('#step-status'), text: 'Three of six explained. Keep going.', next: true, wait: 300, last: true }
+      { key: 'Locate', target: () => $('.step.current'), text: `Open ${NODE.name}.`, on: 'step-open' },
+      { key: 'Configure', target: () => $('#panel-sources'), also: ['#agent'], text: 'Drag the tables into the agent and configure the rules.', on: 'added', pre: () => { showTab('sources'); openAgent(); }, wait: 200 },
+      { key: 'Diagram', target: () => $('#sources .erd'), text: 'How the tables connect. The rules are under Configuration items.', next: true, wait: 300 },
+      { key: 'Interview', target: () => (!$('#drop').hidden && $('#drop').offsetHeight) ? $('#drop') : [...document.querySelectorAll('#thread .run')].pop(), text: 'Add the interview and synthesize.', on: 'synthesized', wait: 300 },
+      { key: 'Items', target: () => $('.tab[data-tab="items"]'), text: 'Open Configuration items.', on: 'tab-items', wait: 300 },
+      { key: 'A match', target: () => $('.item[data-id="F1"]'), text: 'Open item 1, a match, and decide. Click into Reason to use the agent\'s.', on: 'saved-F1', wait: 300 },
+      { key: 'A contradiction', target: () => $('.item[data-id="F2"]'), text: 'Open item 2, a contradiction, and decide.', on: 'saved-F2', wait: 300, pre: () => { state.open.delete('F1'); renderItems(); } },
+      { key: 'A gap', target: () => $('.item[data-id="F3"]'), text: 'Open item 3, a gap. Check with the agent, then decide.', on: 'saved-F3', wait: 300, pre: () => { state.open.delete('F2'); renderItems(); }, done: 'All three decided. Ready for review.' }
     ];
     let i = -1, active = false, current = null, raf = null;
     const place = () => {
       const t = current?.target?.(); if (!t) return;
-      const r = t.getBoundingClientRect(); const pad = 8;
+      const r = t.getBoundingClientRect(); const pad = 8; if (!r.width && !r.height) return;
       spot.style.left = (r.left - pad) + 'px'; spot.style.top = (r.top - pad) + 'px'; spot.style.width = (r.width + pad * 2) + 'px'; spot.style.height = (r.height + pad * 2) + 'px';
       const cw = card.offsetWidth || 220, ch = card.offsetHeight || 60, g = 12; let left, top;
       if (r.right + g + cw < innerWidth - 8) { left = r.right + g; top = r.top; }
       else if (r.left - g - cw > 8) { left = r.left - g - cw; top = r.top; }
       else if (r.bottom + g + ch < innerHeight - 8) { left = r.left; top = r.bottom + g; }
-      else { left = r.left; top = r.top - g - ch; }
+      else if (r.top - g - ch > 8) { left = r.left; top = r.top - g - ch; }
+      else { left = r.left + 16; top = Math.max(r.top, 0) + 16; }
       left = Math.min(Math.max(8, left), innerWidth - cw - 8); top = Math.min(Math.max(8, top), innerHeight - ch - 8);
       card.style.left = left + 'px'; card.style.top = top + 'px';
     };
-    const tick = () => { if (active) { place(); raf = requestAnimationFrame(tick); } };
+    const raise = () => { const t = current?.target?.(); if (!t) return; if (!t.classList.contains('tour-target')) { clear(); t.classList.add('tour-target'); t.closest('.agent')?.classList.add('tour-target'); (current.also || []).forEach(sel => $(sel)?.classList.add('tour-target')); } };
+    const tick = () => { if (active) { raise(); place(); raf = requestAnimationFrame(tick); } };
     const clear = () => { document.querySelectorAll('.tour-target').forEach(x => x.classList.remove('tour-target')); };
     const show = () => {
-      current = steps[i]; current.held = false; clear(); current.pre?.();
+      current = steps[i]; current.held = false; clear(); current.pre?.(); const me = current;
       setTimeout(() => {
+        if (current !== me) return;
         const t = current.target(); if (!t) { return next(); }
-        t.classList.add('tour-target'); t.closest('.agent')?.classList.add('tour-target'); t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        card.querySelector('.next').textContent = 'Next';
+        t.classList.add('tour-target'); t.closest('.agent')?.classList.add('tour-target'); (current.also || []).forEach(sel => $(sel)?.classList.add('tour-target')); t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         card.querySelector('.k').textContent = `${i + 1}/${steps.length}`; card.querySelector('p').textContent = current.text;
         card.querySelector('.next').hidden = !current.next; card.querySelector('.next').textContent = current.last ? 'Finish' : 'Next';
         veil.classList.add('on'); spot.classList.add('on'); card.classList.add('on'); place();
@@ -722,15 +716,13 @@
     const next = () => { i++; if (i >= steps.length) return stop(); show(); };
     const stop = () => { active = false; i = -1; current = null; clear(); veil.classList.remove('on'); spot.classList.remove('on'); card.classList.remove('on'); cancelAnimationFrame(raf); };
     const start = () => { stop(); active = true; i = -1; next(); tick(); };
-    card.querySelector('.skip').textContent = 'Skip'; card.querySelector('.skip').addEventListener('click', stop);
+    card.querySelector('.skip').addEventListener('click', stop);
     card.querySelector('.next').addEventListener('click', next);
     veil.addEventListener('click', e => e.stopPropagation());
-    return { start, stop, emit: ev => { if (!(active && current && current.on === ev)) return; if (current.hold && !current.held) { current.held = true; card.querySelector('p').textContent = current.hold; card.querySelector('.next').hidden = false; place(); return; } next(); } };
+    return { start, stop, emit: ev => { if (!(active && current && current.on === ev)) return; if (current.hold && !current.held) { current.held = true; card.querySelector('p').textContent = current.hold; card.querySelector('.next').hidden = false; place(); return; } if (current.done && !current.held) { current.held = true; current.last = true; card.querySelector('p').textContent = current.done; card.querySelector('.next').hidden = false; card.querySelector('.next').textContent = 'Finish'; place(); return; } next(); } };
   })();
-  $('#tour-restart').addEventListener('click', () => { location.reload(); });
 
-  const findChip = el('div', 'prompts'); const fb = el('button', null, 'Find the configuration items in the sources'); fb.dataset.find = '1'; fb.addEventListener('click', findItems); findChip.appendChild(fb);
-  agentSay(`Step 2 has no configuration items yet. I can derive them from the sources: ${D.db.people.length} people, ${D.db.product.length} products, ${D.db.discount.length} discounts, and ${D.db.connections.length} connections between them.`, findChip);
+  agentSay(`No configuration items yet. Drag the tables from <b>Sources</b> here.`);
   renderStrip(); refresh();
   setTimeout(() => tour.start(), 600);
 })();

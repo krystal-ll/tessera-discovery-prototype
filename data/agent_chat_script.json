@@ -1,63 +1,41 @@
 {
   "working_lines": [
-    "Reading transcript: 18 Sep, Dana Ruiz, 50 minutes, 2 consultants.",
-    "Pulling 31 claims about pricing out of the conversation.",
-    "Matching claims to the 6 configuration items in Step 2.",
-    "Checking 18 process-mining facts and 14 readiness-check rows.",
-    "Writing one verdict per item."
+    "Reading the transcript.",
+    "Matching what Dana said to the 3 items.",
+    "Checking each against the tables."
   ],
-  "summary": "Checked 6 items against Dana's interview. 2 match, 1 contradiction, 2 gaps, 1 not discussed. 4 need your judgment.",
+  "summary": "Checked 3 items. 1 match, 1 contradiction, 1 gap.",
   "generic": [
-    "I can only speak to the evidence on this step: the six items, the extract rows, the process-mining facts, and Dana's transcript. Pick an item and I'll show what I have.",
-    "That's outside what the interview or the extract covers. It would make a good follow-up question. Want me to draft it?"
+    "Pick an item and ask me to check it against the data.",
+    "That's outside the interview and the tables. Worth a follow-up question."
   ],
   "items": {
     "F1": [
       {
         "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
+          "check",
+          "against",
+          "obey"
         ],
-        "answer": "At 02:30 Dana said: \"All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account.\" The record on file is condition K007 for customer group Chains at -8.00%, created 2011 and unchanged."
-      },
-      {
-        "keys": [
-          "fact",
-          "data",
-          "number",
-          "mining"
-        ],
-        "answer": "71.4% of orders are created without a person touching them, and the 8% applies on every one of them. Nothing in the last 12 months contradicts her."
+        "answer": "Dana: every chain gets 8% automatically. Data agrees: [[discount:D-01]] is 8% on every chain order, unchanged since 2011."
       },
       {
         "keys": [
           "draft",
           "reason"
         ],
-        "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. Automatic 8% trade discount for supermarket chains, in place since 2011, still the intended rule. Keep in S/4HANA."
+        "answer": "Draft reason: Confirmed by Dana Ruiz. 8% chain discount, in place since 2011. Keep."
       }
     ],
     "F2": [
       {
         "keys": [
-          "412",
-          "orders",
-          "show",
-          "list",
-          "between"
+          "check",
+          "against",
+          "obey",
+          "10"
         ],
-        "answer": "412 orders in the last 12 months carried a manual discount between 10% and 15%, worth USD 1.93M net. Approval block Z1 was set on none of them. The 131 orders above 15% were all blocked and released from the worklist, which is the 2 to 3 a week Dana described."
-      },
-      {
-        "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
-        ],
-        "answer": "At 04:30: \"The rep can knock off up to ten percent on their own. Anything above ten comes to me.\" And at 05:50 she noticed it herself: \"Most are under ten, yes. Reps stay under ten if they can.\""
+        "answer": "Dana: approval above 10%. Data: [[discount:D-03]] starts approval at 15%, [[discount:D-02]] caps at 20%. No row says 10%."
       },
       {
         "keys": [
@@ -65,180 +43,60 @@
           "set",
           "2019",
           "marco",
-          "why"
+          "when"
         ],
-        "answer": "The 15% trigger and the 20% cap were both last changed on 4 Mar 2019 by user MARCOF, which matches Dana's memory that finance tightened the rule in 2019. The threshold she remembers is 10%. Either the intent was 10% and it was keyed as 15%, or it was 15% and the rule drifted in people's heads. Marco can answer that in one sentence."
-      },
-      {
-        "keys": [
-          "standard",
-          "s/4",
-          "s4",
-          "hana"
-        ],
-        "answer": "S/4HANA has no approval workflow for discounts in the standard. The usual options are a condition upper limit, a workflow like the one Halo built, or Situation Handling. Whatever the threshold is meant to be, it will have to be rebuilt deliberately, so this is the moment to decide it."
+        "answer": "[[connections:P-02 set D-03]]: Marco Ferreira, 4 March 2019."
       },
       {
         "keys": [
           "draft",
-          "reason",
-          "question"
+          "question",
+          "reason"
         ],
-        "answer": "Draft follow-up for Marco (finance): \"The discount approval trigger is configured at 15% but sales operates as if it were 10%. 412 orders last year sat between the two with no approval. Which threshold is the policy, and should S/4HANA enforce it at order entry?\""
+        "answer": "Draft for Marco: \"Sales works as if approval starts at 10%. The system says 15%. Which is the policy?\""
       }
     ],
     "F3": [
       {
         "keys": [
-          "show",
-          "lines",
-          "1340",
-          "stack",
-          "example"
+          "check",
+          "against",
+          "obey"
         ],
-        "answer": "1,340 chain order lines carried both the promotion discount and the volume discount in the last 12 months, average combined 15.8%, net value USD 4.1M. The Northgate Citrus promo in June is the clearest case: 12% promo plus 4.5% volume on the same lines."
+        "answer": "Dana: a promotion replaces the volume discount. Data: no row says so. [[discount:D-04]] and [[discount:D-05]] both link to Citrus Sparkle."
       },
       {
         "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
+          "which",
+          "products",
+          "both",
+          "get"
         ],
-        "answer": "At 06:40: \"No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance.\" And at 07:10: \"I assume the system does it. The reps do not touch it. I have never had to check.\""
-      },
-      {
-        "keys": [
-          "chargeback",
-          "short",
-          "dispute",
-          "58"
-        ],
-        "answer": "58 short-pays in the year cite a promotion price. Several are buyers who expected the stacked amount because that is what previous invoices showed. So the missing rule is already costing money on both sides."
+        "answer": "[[product:PR-03]] Citrus Sparkle gets both: [[connections:D-04 applies to PR-03]] and [[connections:D-05 applies to PR-03]]."
       },
       {
         "keys": [
           "draft",
-          "reason",
-          "question"
-        ],
-        "answer": "Draft follow-up for Marco (finance): \"Sales believes promo and volume discounts never combine. The system has no exclusion, and 1,340 lines got both last year. Is the finance rule 'one or the other'? If so, S/4HANA needs a condition exclusion between the two.\""
-      }
-    ],
-    "F4": [
-      {
-        "keys": [
-          "show",
-          "2210",
-          "cases",
-          "customers",
-          "how many"
-        ],
-        "answer": "2,210 order lines had free cases added by the system in 12 months: 22,100 free cases across 96 customers, every one on the Classic range. That is the warehouse's extra-cases mystery, and it is not once a month, it is about six times a week."
-      },
-      {
-        "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
-        ],
-        "answer": "At 07:30: \"Free cases, no, we do not do that on chain orders. Not that I know of.\" Then at 07:55: \"the customer ordered fifty cases of Classic Cola and fifty-five went out... the warehouse says the system had it on the pick list.\" Fifty plus five is exactly buy 10 get 1."
-      },
-      {
-        "keys": [
-          "who",
-          "2016",
-          "brandt",
-          "created",
-          "why"
-        ],
-        "answer": "The rule was created on 2 Apr 2016 by user MBRANDT with no end date. That person left in 2020. Nobody in sales, and as far as the interview shows nobody at all, knows it is running. Marketing (Sam) owns promotions today and would know if it was ever a launch offer."
-      },
-      {
-        "keys": [
-          "draft",
-          "reason",
-          "question"
-        ],
-        "answer": "Draft follow-up for Sam (marketing) and Marco (finance): \"A buy-10-get-1 free goods rule on the Classic range has run for every customer since April 2016, 22,100 free cases last year. Was it a launch offer that was never switched off? Should it end, or be kept deliberately?\""
-      }
-    ],
-    "F5": [
-      {
-        "keys": [
-          "what",
-          "expire",
-          "northgate",
-          "318",
-          "show"
-        ],
-        "answer": "Two Northgate negotiated prices expired on 31 Jul 2025 and nobody renewed them. Since then 318 Northgate lines have been priced at list minus 8% instead of the negotiated rate, which is higher. No warning fires on expiry. The question was in Priya's guide but the session ran out of time."
-      },
-      {
-        "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
-        ],
-        "answer": "Dana did not discuss validity. The closest she came, at 10:30: \"occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\" That is consistent with expiry, but it is not evidence about the rule."
-      },
-      {
-        "keys": [
-          "draft",
-          "reason",
-          "question"
-        ],
-        "answer": "Draft follow-up for Lena (order desk): \"Negotiated chain prices expire after 12 months with no warning. Two Northgate prices lapsed in July 2025 and 318 lines since have been billed at the fallback price. Who is meant to renew them, and should S/4HANA warn before expiry?\""
-      }
-    ],
-    "F6": [
-      {
-        "keys": [
-          "exact",
-          "say",
-          "quote",
-          "dana"
-        ],
-        "answer": "At 08:55: \"No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm.\" The control on file sets the manual discount limit to 0% for customer group Marketplace, since 2018."
-      },
-      {
-        "keys": [
-          "draft",
+          "follow",
           "reason"
         ],
-        "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. No manual discounts on marketplace orders, enforced by a 0% limit since 2018. Keep in S/4HANA."
+        "answer": "Draft for Marco: \"Sales believes a promotion replaces the volume discount. Nothing enforces that. Is 'one or the other' the rule?\""
       }
     ]
   },
   "prompts": {
     "F1": [
-      "What did she say exactly?",
-      "Draft my reason"
+      "Check this rule against the data"
     ],
     "F2": [
-      "Show me the 412 orders",
-      "Who set the 15% and when?",
+      "Check this rule against the data",
+      "Who set the 15%?",
       "Draft the question for Marco"
     ],
     "F3": [
-      "Show me the lines that got both discounts",
-      "How does this show up in chargebacks?",
+      "Check this rule against the data",
+      "Which products get both?",
       "Draft the follow-up for Marco"
-    ],
-    "F4": [
-      "How many customers got free cases?",
-      "Who created this rule?",
-      "Draft the follow-up for Sam"
-    ],
-    "F5": [
-      "What expired, and what did it cost?",
-      "Draft the follow-up for Lena"
-    ],
-    "F6": [
-      "What did she say exactly?",
-      "Draft my reason"
     ]
   }
 }

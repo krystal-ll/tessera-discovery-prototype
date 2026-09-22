@@ -24,7 +24,6 @@ sources = [
     {"file": "product", "what": "What Halo sells: range, list price per case, and any negotiated price with its expiry.", "source": "Product master and price list, ECC", "table": "product"},
     {"file": "discount", "what": "Every discount rule in the system: the percentage, what it applies to, its kind, and since when.", "source": "Pricing configuration, ECC", "table": "discount"},
     {"file": "connections", "what": "How the three tables link: who set which discount, which discount applies to which product, who is in charge of what.", "source": "Change history and org chart, joined by the consultant", "table": "connections"},
-    {"file": "process_mining_o2c_metrics", "what": "Measured facts about how orders actually behaved over 12 months.", "source": "SAP Signavio Process Intelligence, order-to-cash on ECC", "table": "process_mining_o2c_metrics.csv"},
 ]
 
 data = {"model": model, "output": output, "chat": chat, "find": find, "transcript": transcript, "extract": extract, "db": db, "sources": sources}
