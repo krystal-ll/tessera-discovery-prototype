@@ -1,0 +1,656 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tessera Discovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ink: #09090b; --ink-2: #52525b; --ink-3: #a1a1aa;
+    --line: #e4e4e7; --line-2: #d4d4d8;
+    --ground: #ffffff; --ground-2: #fafafa; --ground-3: #f4f4f5;
+    --dot: #d4d4d8;
+    --match-ink: #166534; --match-bg: #ecfdf3; --match-line: #bbf7d0;
+    --contra-ink: #991b1b; --contra-bg: #fef2f2; --contra-line: #fecaca;
+    --gap-ink: #9a3412; --gap-bg: #fff7ed; --gap-line: #fed7aa;
+    --resolved-ink: #1e40af; --resolved-bg: #eff6ff; --resolved-line: #bfdbfe;
+    --none-ink: #52525b; --none-bg: #f4f4f5; --none-line: #e4e4e7;
+    --review-ink: #ffffff; --review-bg: #09090b; --review-line: #09090b;
+    --work: #09090b;
+    --sans: "Geist", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #f4f4f5; --ink-2: #a1a1aa; --ink-3: #71717a;
+      --line: #27272a; --line-2: #3f3f46;
+      --ground: #0b0b0d; --ground-2: #111113; --ground-3: #18181b;
+      --dot: #2a2a2e;
+      --match-ink: #86efac; --match-bg: #0a2416; --match-line: #14532d;
+      --contra-ink: #fca5a5; --contra-bg: #2a0f0f; --contra-line: #7f1d1d;
+      --gap-ink: #fdba74; --gap-bg: #2a170a; --gap-line: #7c2d12;
+      --resolved-ink: #93c5fd; --resolved-bg: #0c1a33; --resolved-line: #1e3a8a;
+      --none-ink: #a1a1aa; --none-bg: #18181b; --none-line: #27272a;
+      --review-ink: #0b0b0d; --review-bg: #f4f4f5; --review-line: #f4f4f5;
+      --work: #f4f4f5;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #f4f4f5; --ink-2: #a1a1aa; --ink-3: #71717a;
+    --line: #27272a; --line-2: #3f3f46;
+    --ground: #0b0b0d; --ground-2: #111113; --ground-3: #18181b;
+    --dot: #2a2a2e;
+    --match-ink: #86efac; --match-bg: #0a2416; --match-line: #14532d;
+    --contra-ink: #fca5a5; --contra-bg: #2a0f0f; --contra-line: #7f1d1d;
+    --gap-ink: #fdba74; --gap-bg: #2a170a; --gap-line: #7c2d12;
+    --resolved-ink: #93c5fd; --resolved-bg: #0c1a33; --resolved-line: #1e3a8a;
+    --none-ink: #a1a1aa; --none-bg: #18181b; --none-line: #27272a;
+    --review-ink: #0b0b0d; --review-bg: #f4f4f5; --review-line: #f4f4f5;
+    --work: #f4f4f5;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.5; letter-spacing: -0.01em; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
+  button, input, textarea, select { font: inherit; color: inherit; letter-spacing: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  h1, h2, h3, h4 { margin: 0; text-wrap: balance; font-weight: 600; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .mono { font-family: var(--mono); font-size: 12px; }
+  .muted { color: var(--ink-2); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .topbar { height: 52px; display: flex; align-items: center; gap: 24px; padding: 0 24px; border-bottom: 1px solid var(--line); background: var(--ground); flex: none; }
+  .wordmark { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -0.02em; }
+  .wordmark svg { width: 18px; height: 18px; }
+  .wordmark span { color: var(--ink-2); font-weight: 400; }
+  .topbar .project { margin-left: auto; display: flex; align-items: center; gap: 12px; color: var(--ink-2); }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--ground); font-size: 11px; font-weight: 600; display: grid; place-items: center; flex: none; }
+
+  .frame { flex: 1; display: flex; min-height: 0; }
+  .stage { flex: 1; min-width: 0; overflow: auto; position: relative; }
+
+  .pill { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 500; border: 1px solid var(--none-line); background: var(--none-bg); color: var(--none-ink); white-space: nowrap; }
+  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .85; }
+  .pill.match { color: var(--match-ink); background: var(--match-bg); border-color: var(--match-line); }
+  .pill.contradiction { color: var(--contra-ink); background: var(--contra-bg); border-color: var(--contra-line); }
+  .pill.gap_no_data, .pill.gap_no_explanation { color: var(--gap-ink); background: var(--gap-bg); border-color: var(--gap-line); }
+  .pill.resolved { color: var(--resolved-ink); background: var(--resolved-bg); border-color: var(--resolved-line); }
+  .pill.follow_up { color: var(--gap-ink); background: transparent; border-color: var(--gap-line); }
+  .pill.review { color: var(--review-ink); background: var(--review-bg); border-color: var(--review-line); }
+  .pill.plain::before { display: none; }
+  .pill.lg { height: 28px; padding: 0 12px; font-size: 13px; }
+
+  .btn { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--ink); background: var(--ink); color: var(--ground); font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+  .btn:hover { opacity: .88; }
+  .btn.secondary { background: transparent; color: var(--ink); border-color: var(--line-2); }
+  .btn.secondary:hover { background: var(--ground-3); opacity: 1; }
+  .btn.small { height: 28px; padding: 0 11px; font-size: 13px; }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  /* ---------- map ---------- */
+  #map { padding: 40px 48px 64px; background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 22px 22px; min-height: 100%; }
+  #map header { max-width: 760px; margin-bottom: 36px; }
+  #map h1 { font-size: 30px; letter-spacing: -0.03em; margin-top: 10px; }
+  #map header p { color: var(--ink-2); font-size: 15px; max-width: 60ch; margin: 10px 0 0; }
+  .level-label { margin: 0 0 14px; }
+  .procs { display: grid; grid-template-columns: repeat(5, minmax(140px, 1fr)); gap: 12px; overflow-x: auto; }
+  .proc { border: 1px dashed var(--line-2); border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, var(--ground) 70%, transparent); min-height: 92px; display: flex; flex-direction: column; gap: 6px; color: var(--ink-3); text-align: left; }
+  .proc .name { font-weight: 500; font-size: 15px; letter-spacing: -0.015em; color: inherit; }
+  .proc.scoped { border: 1px solid var(--ink); background: var(--ground); color: var(--ink); position: relative; }
+  .proc.scoped::after { content: ""; position: absolute; left: 50%; bottom: -33px; width: 1px; height: 32px; background: var(--ink); }
+  .proc .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .proc.scoped .foot { color: var(--ink-2); }
+  .flow-wrap { margin-top: 32px; border: 1px solid var(--line); border-radius: 12px; background: var(--ground); padding: 22px 22px 18px; overflow-x: auto; }
+  .flow-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+  .flow-head h2 { font-size: 17px; letter-spacing: -0.02em; }
+  .flow { display: grid; grid-template-columns: repeat(7, 1fr); position: relative; min-width: 840px; }
+  .flow::before { content: ""; position: absolute; left: 7%; right: 7%; top: 48px; height: 1px; background: var(--line-2); }
+  .step { position: relative; z-index: 1; padding: 0 6px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: transparent; border: 0; text-align: center; }
+  .step .box { width: 100%; min-height: 96px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--ground); padding: 12px 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; transition: border-color .15s; }
+  .step:hover .box { border-color: var(--ink); }
+  .step .box .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .step .box .name { font-weight: 500; font-size: 13px; line-height: 1.3; }
+  .step.current .box { border: 1.5px solid var(--ink); background: var(--ground-3); }
+  .step .pill { font-size: 11px; height: 20px; }
+
+  /* ---------- step ---------- */
+  #step { display: none; }
+  .strip { display: flex; align-items: center; gap: 6px; padding: 12px 32px; border-bottom: 1px solid var(--line); background: var(--ground); position: sticky; top: 0; z-index: 5; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .strip::-webkit-scrollbar { display: none; }
+  .chip { flex: none; height: 26px; padding: 0 10px; border-radius: 999px; border: 1px dashed var(--line-2); background: transparent; color: var(--ink-3); font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .chip.scoped { border-style: solid; color: var(--ink-2); }
+  .chip.active { border: 1px solid var(--ink); color: var(--ink); background: var(--ground-3); font-weight: 500; }
+  .chip .n { font-family: var(--mono); font-size: 11px; opacity: .8; }
+  .strip .sep { color: var(--ink-3); padding: 0 4px; }
+  .strip .back { margin-left: auto; flex: none; }
+
+  .step-body { padding: 28px 32px 80px; max-width: 1180px; }
+  .step-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  .step-head h1 { font-size: 28px; letter-spacing: -0.03em; }
+  .step-head .sub { color: var(--ink-2); margin-top: 4px; font-size: 15px; }
+  .status { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: none; }
+  .status .lbl { font-size: 12px; color: var(--ink-3); }
+  .people { display: flex; align-items: center; gap: 6px; margin-top: 18px; position: relative; }
+  .people .lbl { font-size: 12px; color: var(--ink-3); margin-right: 4px; }
+  .person { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 10px 0 3px; border-radius: 999px; border: 1px solid var(--line); background: var(--ground); font-size: 13px; position: relative; white-space: nowrap; }
+  .person.add { border-style: dashed; color: var(--ink-2); padding: 0 12px; }
+  .pop .iv { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
+  .pop .iv svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .person:hover { border-color: var(--ink); }
+  .person .avatar { width: 24px; height: 24px; font-size: 10px; background: var(--ground-3); color: var(--ink); border: 1px solid var(--line-2); }
+  .person.interviewed .avatar { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+  .person .role { color: var(--ink-3); font-size: 12px; }
+  .pop { position: absolute; top: 36px; left: 0; z-index: 12; width: 280px; background: var(--ground); border: 1px solid var(--line-2); border-radius: 12px; padding: 14px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.08); text-align: left; font-size: 13px; }
+  .pop b { font-weight: 600; display: block; }
+  .pop .r { color: var(--ink-2); }
+  .pop p { margin: 8px 0 0; color: var(--ink-2); }
+  .pop .tag { margin-top: 10px; }
+
+  .tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); margin-top: 26px; }
+  .tab { background: none; border: 0; padding: 10px 0; color: var(--ink-2); border-bottom: 1.5px solid transparent; margin-bottom: -1px; font-weight: 500; }
+  .tab.active { color: var(--ink); border-color: var(--ink); }
+  .tab .count { font-family: var(--mono); font-size: 11px; margin-left: 6px; color: var(--ink-3); }
+  .panel { display: none; padding-top: 18px; }
+  .panel.active { display: block; }
+
+  .hint { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 1px dashed var(--line-2); border-radius: 10px; color: var(--ink-2); margin-bottom: 14px; }
+  .hint b { color: var(--ink); font-weight: 500; }
+  .hint button { margin-left: auto; }
+
+  .items { border-top: 1px solid var(--line); }
+  .item { border-bottom: 1px solid var(--line); }
+  .item .row { display: grid; grid-template-columns: 40px 1fr 190px 24px; gap: 16px; align-items: center; min-height: 58px; padding: 8px 8px; cursor: pointer; border-radius: 8px; }
+  .item .row:hover { background: var(--ground-2); }
+  .item .id { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+  .item .label { font-weight: 500; }
+  .item .plain { color: var(--ink-2); font-size: 13px; display: block; font-weight: 400; margin-top: 1px; }
+  .item .none { color: var(--ink-3); font-size: 13px; }
+  .item .chev { color: var(--ink-3); transition: transform .15s; text-align: center; }
+  .item.open .chev { transform: rotate(90deg); }
+  .item.selected .row { box-shadow: inset 3px 0 0 var(--ink); }
+  .item .detail { display: none; padding: 4px 8px 26px 64px; }
+  .item.open .detail { display: block; }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .side h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .side h4 .who { text-transform: none; letter-spacing: 0; font-family: var(--sans); font-size: 12px; color: var(--ink-2); }
+  .ev { display: flex; flex-direction: column; gap: 10px; }
+  .ev .e { position: relative; padding-left: 14px; font-size: 13.5px; line-height: 1.5; }
+  .ev .e::before { content: ""; position: absolute; left: 0; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); }
+  .ev .e a { color: var(--ink-3); font-family: var(--mono); font-size: 11px; text-decoration: none; margin-left: 6px; border-bottom: 1px dotted var(--line-2); }
+  .ev .e a:hover { color: var(--ink); }
+  .q { border-left: 2px solid var(--ink); padding: 2px 0 2px 12px; font-size: 13.5px; }
+  .q .by { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .missing { border: 1px dashed var(--gap-line); background: var(--gap-bg); color: var(--gap-ink); border-radius: 10px; padding: 12px 14px; font-size: 13px; }
+  .missing b { display: block; font-weight: 600; margin-bottom: 2px; }
+  .missing.neutral { border-color: var(--line-2); background: var(--ground-2); color: var(--ink-2); }
+
+  .verdict-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .agentsays { font-size: 13.5px; }
+  .agentsays .top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .agentsays .top .c { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .agentsays p { margin: 0; color: var(--ink-2); }
+  .agentsays .ask { margin-top: 12px; }
+  .judge h4 { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; margin-bottom: 10px; }
+  .judge .todo { font-size: 13px; color: var(--ink-2); margin-bottom: 10px; }
+  .judge .todo b { color: var(--ink); font-weight: 500; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .field label { font-size: 12px; color: var(--ink-2); }
+  .field select, .field textarea, .field input { border: 1px solid var(--line-2); border-radius: 8px; background: var(--ground); padding: 8px 10px; width: 100%; }
+  .field textarea { min-height: 72px; resize: vertical; line-height: 1.45; }
+  .field-row { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .decided { padding: 12px 14px; border-radius: 10px; background: var(--resolved-bg); border: 1px solid var(--resolved-line); font-size: 13px; }
+  .decided .who { color: var(--ink-2); font-size: 12px; margin-top: 6px; }
+  .empty { color: var(--ink-3); padding: 28px 0; text-align: center; }
+
+  .banner { display: none; margin-top: 18px; border: 1px solid var(--match-line); background: var(--match-bg); color: var(--match-ink); border-radius: 12px; padding: 14px 18px; align-items: center; gap: 14px; }
+  .banner.show { display: flex; }
+  .banner.open-items { border-color: var(--line); background: var(--ground-2); color: var(--ink); }
+  .banner b { font-weight: 600; }
+
+  .log .entry { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .log .when { font-family: var(--mono); font-size: 11px; color: var(--ink-3); padding-top: 3px; }
+  .log .what b { font-weight: 500; }
+  .log .what p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
+  .sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .source { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .source .name { font-family: var(--mono); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+  .source p { margin: 6px 0 0; color: var(--ink-2); font-size: 13px; }
+
+  /* ---------- agent ---------- */
+  .agent { width: 400px; flex: none; border-left: 1px solid var(--line); background: var(--ground); display: flex; flex-direction: column; min-height: 0; transition: width .2s; }
+  .agent.closed { width: 0; border-left: 0; overflow: hidden; }
+  .agent-head { height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--line); flex: none; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); flex: none; }
+  .dot.working { background: var(--work); animation: pulse 1s infinite; }
+  .dot.ready { background: var(--match-ink); }
+  .agent-head .close { margin-left: auto; background: none; border: 0; color: var(--ink-2); font-size: 18px; line-height: 1; }
+  .drop { margin: 16px; border: 1.5px dashed var(--line-2); border-radius: 14px; padding: 22px 18px 18px; text-align: center; color: var(--ink-2); transition: border-color .15s, background .15s; }
+  .drop.over { border-color: var(--ink); background: var(--ground-3); }
+  .drop svg { width: 36px; height: 36px; stroke: var(--ink-3); fill: none; stroke-width: 1.4; margin-bottom: 8px; }
+  .drop .t { font-weight: 500; color: var(--ink); }
+  .drop .s { font-size: 12.5px; margin-top: 2px; }
+  .drop .tfile { margin-top: 14px; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--ground); color: var(--ink); }
+  .drop .tfile .fi { width: 28px; height: 34px; border: 1px solid var(--line-2); border-radius: 4px; position: relative; flex: none; background: var(--ground-2); }
+  .drop .tfile .fi::after { content: "MD"; position: absolute; left: 0; right: 0; bottom: 4px; font-family: var(--mono); font-size: 8px; text-align: center; color: var(--ink-3); }
+  .drop .tfile small { display: block; color: var(--ink-2); font-size: 12px; }
+  .drop .tfile .btn { margin-left: auto; }
+  .drop.done { border-style: solid; border-color: var(--line); padding: 12px 16px; }
+  .drop.done svg, .drop.done .t, .drop.done .s { display: none; }
+  .drop.done .tfile { margin-top: 0; border: 0; padding: 0; }
+
+  .thread { flex: 1; overflow: auto; padding: 4px 16px 14px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { font-size: 13.5px; line-height: 1.5; }
+  .msg .who { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 4px; }
+  .msg.user { align-self: flex-end; background: var(--ground-3); border-radius: 12px 12px 2px 12px; padding: 8px 12px; max-width: 88%; }
+  .run { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .run .title { display: flex; align-items: center; gap: 10px; font-weight: 500; margin-bottom: 8px; }
+  .run .title .sh { flex: 1; height: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--line) 0%, var(--ink-3) 50%, var(--line) 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+  .run .title.done .sh { display: none; }
+  .run ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .run li { font-size: 12.5px; color: var(--ink-3); display: flex; gap: 8px; align-items: baseline; }
+  .run li::before { content: "○"; font-size: 10px; }
+  .run li.on { color: var(--ink); }
+  .run li.on::before { content: "●"; color: var(--ink); animation: pulse 1s infinite; }
+  .run li.ok { color: var(--ink-2); }
+  .run li.ok::before { content: "✓"; color: var(--match-ink); }
+  .verdicts { display: grid; grid-template-columns: 30px 150px 1fr; gap: 6px 10px; align-items: center; margin-top: 10px; }
+  .verdicts .vid { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .verdicts .vname { font-size: 12.5px; color: var(--ink-2); text-align: left; background: none; border: 0; padding: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .verdicts .vname:hover { color: var(--ink); text-decoration: underline; }
+  .msg .use { margin-top: 8px; }
+  .compose { border-top: 1px solid var(--line); padding: 10px 16px 14px; flex: none; }
+  .scope { display: none; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--ink-2); }
+  .scope.show { display: flex; }
+  .scope .x { border: 0; background: none; color: var(--ink-3); font-size: 14px; }
+  .compose form { display: flex; gap: 8px; }
+  .compose input { flex: 1; border: 1px solid var(--line-2); border-radius: 999px; padding: 8px 14px; background: var(--ground); }
+  .compose button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ink); background: var(--ink); color: var(--ground); display: grid; place-items: center; }
+
+  .edge { position: fixed; right: 0; top: 50%; transform: translateY(-50%); display: none; flex-direction: column; align-items: center; gap: 8px; padding: 12px 8px; border: 1px solid var(--line); border-right: 0; border-radius: 10px 0 0 10px; background: var(--ground); z-index: 20; }
+  .edge.show { display: flex; }
+  .edge .vt { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; font-weight: 500; }
+  .edge .badge { font-family: var(--mono); font-size: 10px; border-radius: 999px; background: var(--ink); color: var(--ground); padding: 1px 6px; }
+
+  .prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .prompts button { border: 1px solid var(--line-2); background: var(--ground); border-radius: 999px; padding: 4px 11px; font-size: 12.5px; color: var(--ink); }
+  .prompts button:hover { border-color: var(--ink); background: var(--ground-3); }
+  .tw { white-space: pre-wrap; }
+
+  /* tour */
+  .tour-veil { position: fixed; inset: 0; z-index: 900; background: transparent; display: none; }
+  .tour-veil.on { display: block; }
+  .tour-spot { position: fixed; z-index: 901; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(9,9,11,.42); pointer-events: none; transition: all .25s ease; display: none; outline: 2px solid var(--ground); }
+  .tour-spot.on { display: block; }
+  .tour-target { position: relative; z-index: 902 !important; }
+  .tour-card { position: fixed; z-index: 903; width: max-content; max-width: 260px; background: var(--ink); color: var(--ground); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.4; box-shadow: 0 12px 32px rgba(0,0,0,.2); display: none; }
+  .tour-card.on { display: block; }
+  .tour-card .k { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; opacity: .5; margin-bottom: 3px; }
+  .tour-card p { margin: 0; }
+  .tour-card .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 12px; }
+  .tour-card .skip { background: none; border: 0; color: var(--ground); opacity: .55; font-size: 11.5px; padding: 0; }
+  .tour-card .next { background: var(--ground); color: var(--ink); border: 0; border-radius: 999px; height: 24px; padding: 0 10px; font-size: 12px; font-weight: 500; }
+  .tour-card .next[hidden] { display: none; }
+  .tour-restart { background: none; border: 1px solid var(--line-2); border-radius: 999px; height: 28px; padding: 0 11px; font-size: 12.5px; color: var(--ink-2); }
+  .tour-restart:hover { border-color: var(--ink); color: var(--ink); }
+
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+  @keyframes shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  @media (max-width: 1180px) {
+    .agent { position: fixed; right: 0; top: 52px; bottom: 0; width: min(400px, 92vw); box-shadow: -12px 0 32px rgba(0,0,0,.08); z-index: 30; }
+    .pair, .verdict-row { grid-template-columns: 1fr; }
+    #map { padding: 28px 24px 48px; } .step-body { padding: 22px 20px 80px; } .strip { padding: 10px 20px; }
+  }
+  @media (max-width: 760px) { .item .row { grid-template-columns: 32px 1fr 130px 20px; } .item .detail { padding-left: 8px; } .topbar .project span:first-child { display: none; } }
+</style>
+
+<div class="topbar">
+  <div class="wordmark"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.5 18.5 10 10 18.5 1.5 10z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 6 14 10l-4 4-4-4z" fill="currentColor"/></svg>Tessera <span>Discovery</span></div>
+  <div class="project"><button class="tour-restart" id="tour-restart">Restart walkthrough</button><span id="proj-name"></span><span class="mono muted">ECC → S/4HANA · Discovery</span><div class="avatar">PR</div></div>
+</div>
+
+<div class="frame">
+  <div class="stage">
+    <section id="map">
+      <header>
+        <div class="eyebrow" id="map-eyebrow"></div>
+        <h1>Where discovery stands</h1>
+        <p>Every process in scope, every step inside it, and how much of its configuration the business has explained so far. Pick a step to review it.</p>
+      </header>
+      <div class="level-label"><span class="eyebrow">End-to-end processes</span></div>
+      <div class="procs" id="procs"></div>
+      <div class="flow-wrap">
+        <div class="flow-head"><h2 id="flow-title"></h2><span class="muted" id="flow-sub"></span></div>
+        <div class="flow" id="flow"></div>
+      </div>
+    </section>
+
+    <section id="step">
+      <div class="strip" id="strip"></div>
+      <div class="step-body">
+        <div class="step-head">
+          <div><h1 id="step-title"></h1><div class="sub" id="step-sub"></div></div>
+          <div class="status"><span class="lbl">Step status</span><span id="step-status"></span></div>
+        </div>
+        <div class="people" id="people"></div>
+        <div class="tabs">
+          <button class="tab active" data-tab="items">Configuration items<span class="count" id="c-items"></span></button>
+          <button class="tab" data-tab="log">Decision log<span class="count" id="c-log">0</span></button>
+          <button class="tab" data-tab="sources">Sources<span class="count" id="c-src"></span></button>
+        </div>
+        <div class="panel active" id="panel-items">
+          <div class="hint" id="hint"></div>
+          <div class="items" id="items"></div>
+          <div class="banner" id="banner"></div>
+        </div>
+        <div class="panel" id="panel-log"><div class="log" id="log"></div></div>
+        <div class="panel" id="panel-sources"><div class="sources" id="sources"></div></div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="agent" id="agent">
+    <div class="agent-head"><span class="dot" id="dot"></span><b>Agent</b><span class="muted" id="agent-state">idle</span><button class="close" id="agent-close" aria-label="Close agent panel">×</button></div>
+    <div class="drop" id="drop">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+      <div class="t">Drag an interview transcript here</div>
+      <div class="s">Notes, minutes or a recording transcript. The agent checks it against every item in this step.</div>
+      <div class="tfile"><span class="fi"></span><div><b>18 Sep · Dana Ruiz</b><small>Head of Retail Sales · 50 min</small></div><button class="btn small" id="synth">Synthesize</button></div>
+    </div>
+    <div class="thread" id="thread"></div>
+    <div class="compose">
+      <div class="scope" id="scope"></div>
+      <form id="form"><input id="q" placeholder="Ask about an item" autocomplete="off"><button type="submit" aria-label="Send">→</button></form>
+    </div>
+  </aside>
+  <button class="edge" id="edge" aria-label="Open agent panel"><span class="dot" id="edge-dot"></span><span class="vt">Agent</span><span class="badge" id="edge-badge" hidden></span></button>
+</div>
+
+<div class="tour-veil" id="tour-veil"></div><div class="tour-spot" id="tour-spot"></div>
+<div class="tour-card" id="tour-card"><div class="k"></div><p></p><div class="row"><button class="skip">Skip walkthrough</button><button class="next">Next</button></div></div>
+<script id="data" type="application/json">{"model": {"client": {"name": "Halo Beverages", "profile": "Mid-size sparkling drinks brand. ~600 employees, USD 220M revenue. Sells to supermarket chains (FreshMart, Northgate Grocers), convenience-store distributors (QuickStop Distribution), and an online marketplace. SAP ECC live since 2011.", "project": "ECC to S/4HANA migration, discovery phase"}, "process": {"id": "O2C", "name": "Order-to-Cash", "scope": "Retail sales, North America", "process_owner": "VP Sales Operations", "status": "In discovery"}, "steps": [{"id": "S01", "name": "Receive order", "lane": "Order desk", "plain": "Orders arrive by EDI from chains, by portal from distributors, by feed from the marketplace."}, {"id": "S02", "name": "Price the order", "lane": "Sales rep / Sales manager", "plain": "The system prices each line, applies discounts, and decides whether someone has to approve.", "focus": "Discounts and approvals"}, {"id": "S03", "name": "Check customer credit", "lane": "Credit team", "plain": "Is the customer allowed to buy this much on account?"}, {"id": "S04", "name": "Confirm delivery date and stock", "lane": "Order desk / Planning", "plain": "Can we ship what they asked for, when they asked for it?"}, {"id": "S05", "name": "Pick, pack and ship", "lane": "Warehouse", "plain": "Goods leave the warehouse."}, {"id": "S06", "name": "Invoice the customer", "lane": "Billing", "plain": "The invoice is created and sent."}, {"id": "S07", "name": "Collect payment and handle deductions", "lane": "Accounts receivable", "plain": "Payment comes in, short-pays and chargebacks are resolved."}], "node_step_id": "S02", "node_fields": [{"id": "F1", "label": "Automatic trade discount for supermarket chains", "system_value": "8% off list price, applied automatically to every order from customer group 'Chains'", "plain": "Every chain order gets 8% off before anyone touches it.", "sap_note": "Pricing procedure ZHALO01, condition type K007 (customer group discount), record for customer group 01 Chains = 8%", "source_rows": ["condition_records.csv#0000411203", "process_mining_o2c_metrics.csv#M-02"]}, {"id": "F2", "label": "Manual discount that triggers manager approval", "system_value": "Reps can enter a manual discount up to 20%. Approval workflow to the sales manager triggers only when the manual discount exceeds 15%.", "plain": "A rep can give up to 15% extra without anyone being asked. Between 15% and 20% the order waits for the sales manager.", "sap_note": "Condition type RA01 (manual % discount), upper limit 20%. Order block 'Z1 discount approval' set by user exit when RA01 > 15%; released via workflow ZDISC_APPR.", "source_rows": ["order_controls.csv#C-01", "order_controls.csv#C-03", "order_controls.csv#C-04", "process_mining_o2c_metrics.csv#M-09", "process_mining_o2c_metrics.csv#M-10", "readiness_check_summary.csv#MV45AFZZ"]}, {"id": "F3", "label": "Stacking a promotion discount on top of the volume discount", "system_value": "No exclusion configured. Promotion discount (up to 12%) and volume discount (3% to 6%) both apply on the same line when both are valid.", "plain": "If a product is on promotion and the order is large, the customer gets both discounts added together.", "sap_note": "Condition types K005 (promotion) and K029 (volume scale) both active in ZHALO01, no condition exclusion group defined", "source_rows": ["order_controls.csv#C-05", "condition_records.csv#0000602118", "condition_records.csv#0000398003", "process_mining_o2c_metrics.csv#M-11", "process_mining_o2c_metrics.csv#M-12"]}, {"id": "F4", "label": "Free goods on the Classic range", "system_value": "Buy 10 cases of any Classic-range product, get 1 case free. Active since 2016-04-02, created by user MBRANDT (left the company in 2020). Applies to all customer groups.", "plain": "The system adds a free case for every 10 cases of Classic ordered, for every customer, and has done since 2016.", "sap_note": "Free goods condition NA00, inclusive, 10 + 1, material group CLASSIC, no validity end date", "source_rows": ["condition_records.csv#0000455610", "order_controls.csv#C-06", "process_mining_o2c_metrics.csv#M-13"]}, {"id": "F5", "label": "How long a negotiated chain price list stays valid", "system_value": "Chain price lists are valid 12 months from creation. After expiry the line falls back to list price minus the 8% trade discount.", "plain": "A negotiated price for a chain quietly expires after a year unless someone renews it.", "sap_note": "Condition type PR00 records per customer / material with validity period 12 months, no expiry warning configured", "source_rows": ["condition_records.csv#0000587731", "condition_records.csv#0000587790", "order_controls.csv#C-07", "process_mining_o2c_metrics.csv#M-14"]}, {"id": "F6", "label": "Discounts on marketplace orders", "system_value": "Manual discounts not allowed for customer group 'Marketplace'. Upper limit 0%.", "plain": "Nobody can discount a marketplace order. The price is the price.", "sap_note": "RA01 upper limit 0% for customer group 03 Marketplace via condition record on customer group", "source_rows": ["order_controls.csv#C-02", "condition_records.csv#0000411205"]}], "connections": [{"from": "S01", "to": "S02", "carries": "order lines with customer, products, quantities"}, {"from": "S02", "to": "S03", "carries": "net order value after discounts (credit exposure)"}, {"from": "S02", "to": "S05", "carries": "free-goods quantities added to the pick list"}, {"from": "S02", "to": "S06", "carries": "final line prices and discounts printed on the invoice"}, {"from": "S03", "to": "S04", "carries": "released order"}, {"from": "S04", "to": "S05", "carries": "confirmed quantities and dates"}, {"from": "S05", "to": "S06", "carries": "shipped quantities"}, {"from": "S06", "to": "S07", "carries": "invoice amount; disputes over promo pricing arrive here as short-pays"}], "node": {"step_id": "S02", "why_this_node": "Pricing is where the client's commercial rules live. It feeds credit exposure, the pick list (free goods), the invoice, and most short-pay disputes.", "system_extract_files": ["data/system_extract/pricing_procedure_ZHALO01.csv", "data/system_extract/condition_records.csv", "data/system_extract/order_controls.csv", "data/system_extract/process_mining_o2c_metrics.csv", "data/system_extract/readiness_check_summary.csv"]}, "stakeholders": [{"id": "dana", "name": "Dana Ruiz", "role": "Head of Retail Sales", "side": "Halo Beverages", "note": "Interviewed 18 Sep. Owns the discount rule as sales applies it.", "interviewed": true, "added": true}, {"id": "marco", "name": "Marco Ferreira", "role": "Finance Controller", "side": "Halo Beverages", "note": "Owns discount policy. Set the 2019 approval rule.", "interviewed": false, "added": false}, {"id": "lena", "name": "Lena Park", "role": "Order Desk Lead", "side": "Halo Beverages", "note": "Keys negotiated prices and promotions into the system.", "interviewed": false, "added": false}, {"id": "sam", "name": "Sam Okafor", "role": "Marketing, Promotions", "side": "Halo Beverages", "note": "Owns promotions and free-goods offers.", "interviewed": false, "added": false}, {"id": "priya", "name": "Priya Raman", "role": "SD Consultant", "side": "Consulting team", "note": "Leads the Order-to-Cash workstream.", "interviewed": false, "added": false}]}, "output": {"interview_id": "01-sales-manager", "step_id": "S02", "fields": [{"field_id": "F1", "state": "match", "confidence": 0.95, "quotes": [{"speaker": "Dana Ruiz", "text": "All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account."}, {"speaker": "Dana Ruiz", "text": "Every chain, yes. Distributors are different, they buy on a different price list, no percentage."}], "reasoning": "An automatic 8% for every chain customer, with distributors on a separate price list, is exactly what is configured.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "Every order from a supermarket chain gets 8% off list price automatically, before anyone touches it. The rule has been in place since June 2011 and has never changed.", "source": "condition_records.csv#0000411203"}, {"text": "71% of orders are created with no person involved, and the 8% applied on all of them in the last 12 months.", "source": "process_mining_o2c_metrics.csv#M-02"}], "missing_side": null, "missing_note": null}, {"field_id": "F2", "state": "contradiction", "confidence": 0.9, "quotes": [{"speaker": "Dana Ruiz", "text": "The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it."}, {"speaker": "Dana Ruiz", "text": "They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty."}], "reasoning": "She believes approval starts above 10%. The system only routes an order to her above 15%, so discounts between 10% and 15% go through with no approval at all. The 20% hard cap she is unsure about does exist.", "conflict_summary": "Sales believes any discount above 10% needs her approval; the system only asks her above 15%, so 10% to 15% discounts pass unseen.", "follow_up_question": "Was the approval threshold meant to be 10%? Pull the last quarter's orders with manual discounts between 10% and 15% to see how much margin went through without sign-off.", "ask_who": "Dana Ruiz (Head of Retail Sales) and the finance controller who set the 2019 rule", "system_evidence": [{"text": "A rep can enter a manual discount up to 20%. The order only goes to the sales manager for approval when the discount is above 15%. Both settings were last changed on 4 Mar 2019 by Marco Ferreira.", "source": "order_controls.csv#C-03"}, {"text": "412 orders in the last 12 months carried a discount between 10% and 15%, worth USD 1.93M. None of them were sent for approval.", "source": "process_mining_o2c_metrics.csv#M-09"}, {"text": "131 orders were above 15% and all of them were blocked and released from the manager's worklist.", "source": "process_mining_o2c_metrics.csv#M-10"}], "missing_side": null, "missing_note": null}, {"field_id": "F3", "state": "gap_no_data", "confidence": 0.85, "quotes": [{"speaker": "Dana Ruiz", "text": "No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here."}, {"speaker": "Dana Ruiz", "text": "I assume the system does it. The reps do not touch it. I have never had to check."}], "reasoning": "She describes a firm rule that promotion and volume discounts never combine. Nothing in the configuration enforces it: both discount types are active with no exclusion, so a line that qualifies for both gets both.", "conflict_summary": "Sales says promo and volume discounts never stack; nothing in the system prevents it, so customers who qualify for both are getting both.", "follow_up_question": "Check recent Northgate promo orders: did lines carry both the promotion and the volume discount? Does finance want the exclusion enforced in S/4HANA?", "ask_who": "Finance controller, then Dana Ruiz", "system_evidence": [{"text": "Nothing in the system stops a promotion discount and a volume discount from applying to the same line. No exclusion rule exists between the two.", "source": "order_controls.csv#C-05"}, {"text": "1,340 chain order lines received both discounts together in the last 12 months, averaging 15.8% off, worth USD 4.1M.", "source": "process_mining_o2c_metrics.csv#M-11"}, {"text": "58 short-payments in the year cited a promotion price, several from buyers who expected the combined amount.", "source": "process_mining_o2c_metrics.csv#M-12"}], "missing_side": "system", "missing_note": "Nothing in the system produces the rule she describes."}, {"field_id": "F4", "state": "gap_no_explanation", "confidence": 0.75, "quotes": [{"speaker": "Dana Ruiz", "text": "Free cases, no, we do not do that on chain orders. Not that I know of."}, {"speaker": "Dana Ruiz", "text": "Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list."}, {"speaker": "Dana Ruiz", "text": "Always the Classic range, I think. Never the new stuff."}], "reasoning": "She says Halo does not give free cases on chain orders. A buy-10-get-1 free goods rule on the Classic range has been active for every customer group since 2016, created by someone who has left. Fifty cases ordered and fifty-five shipped is exactly 10+1. Nobody in the interview knows the rule exists, so it is unexplained rather than confirmed.", "conflict_summary": "A 2016 free-goods rule adds one free case per ten on the Classic range for every customer; nobody knows it exists, and it matches the mystery extra cases the warehouse reports.", "follow_up_question": "Was the Classic 10+1 offer meant to be permanent and for all customers? Who owns it now, and should it survive the migration?", "ask_who": "Finance controller and marketing (promotions owner)", "system_evidence": [{"text": "For every 10 cases of any Classic-range product, the system adds 1 free case, for every customer. The rule was created on 2 Apr 2016 by a user who left in 2020, with no end date.", "source": "condition_records.csv#0000455610"}, {"text": "2,210 order lines had free cases added in the last 12 months: 22,100 free cases across 96 customers, all on the Classic range.", "source": "process_mining_o2c_metrics.csv#M-13"}], "missing_side": "client", "missing_note": "Nobody in the interview explained this rule, or knew it existed."}, {"field_id": "F5", "state": "not_discussed", "confidence": 0.95, "quotes": [], "reasoning": "How long negotiated chain prices stay valid, and what happens on expiry, was in the consultant's question guide but the session never got to it. Two Northgate prices expired in July 2025 and fell back to list minus 8% with no warning.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "A negotiated chain price stays valid for 12 months. When it expires the line silently falls back to list price minus 8%, with no warning to anyone.", "source": "order_controls.csv#C-07"}, {"text": "Two Northgate prices expired on 31 Jul 2025 and were never renewed. 318 lines since then have been billed at the fallback price.", "source": "process_mining_o2c_metrics.csv#M-14"}], "missing_side": "client", "missing_note": "This item was not discussed. It was on the question guide; the session ran out of time."}, {"field_id": "F6", "state": "match", "confidence": 0.95, "quotes": [{"speaker": "Dana Ruiz", "text": "No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm."}], "reasoning": "No manual discounts on marketplace orders matches the 0% upper limit configured for that customer group.", "conflict_summary": null, "follow_up_question": null, "ask_who": null, "system_evidence": [{"text": "Manual discounts are not possible on marketplace orders: the limit for that customer group is 0%, set in Feb 2018.", "source": "order_controls.csv#C-02"}], "missing_side": null, "missing_note": null}], "unmapped_claims": [{"speaker": "Dana Ruiz", "text": "2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.", "note": "Gives the business reason and date for the approval rule. Useful context for F2 but not a field value."}, {"speaker": "Dana Ruiz", "text": "Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.", "note": "Samples are a separate order type. She also says there are no free cases on chain orders, which contradicts the free-goods rule under F4 without her knowing it."}, {"speaker": "Dana Ruiz", "text": "The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system.", "note": "Negotiated prices live in spreadsheets outside the system. Relevant to F5 (price validity) and to data migration scope; raise with the order desk."}], "_meta": {"model": "hand-authored fallback", "generated_by": "written by hand to the same schema; replace by running agent/synthesize.py"}}, "chat": {"working_lines": ["Reading transcript: 18 Sep, Dana Ruiz, 50 minutes, 2 consultants.", "Pulling 31 claims about pricing out of the conversation.", "Matching claims to the 6 configuration items in Step 2.", "Checking 18 process-mining facts and 14 readiness-check rows.", "Writing one verdict per item."], "summary": "Checked 6 items against Dana's interview. 2 match, 1 contradiction, 2 gaps, 1 not discussed. 4 need your judgment.", "generic": ["I can only speak to the evidence on this step: the six items, the extract rows, the process-mining facts, and Dana's transcript. Pick an item and I'll show what I have.", "That's outside what the interview or the extract covers. It would make a good follow-up question. Want me to draft it?"], "items": {"F1": [{"keys": ["exact", "say", "quote", "dana"], "answer": "At 02:30 Dana said: \"All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account.\" The record on file is condition K007 for customer group Chains at -8.00%, created 2011 and unchanged."}, {"keys": ["fact", "data", "number", "mining"], "answer": "71.4% of orders are created without a person touching them, and the 8% applies on every one of them. Nothing in the last 12 months contradicts her."}, {"keys": ["draft", "reason"], "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. Automatic 8% trade discount for supermarket chains, in place since 2011, still the intended rule. Keep in S/4HANA."}], "F2": [{"keys": ["412", "orders", "show", "list", "between"], "answer": "412 orders in the last 12 months carried a manual discount between 10% and 15%, worth USD 1.93M net. Approval block Z1 was set on none of them. The 131 orders above 15% were all blocked and released from the worklist, which is the 2 to 3 a week Dana described."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 04:30: \"The rep can knock off up to ten percent on their own. Anything above ten comes to me.\" And at 05:50 she noticed it herself: \"Most are under ten, yes. Reps stay under ten if they can.\""}, {"keys": ["who", "set", "2019", "marco", "why"], "answer": "The 15% trigger and the 20% cap were both last changed on 4 Mar 2019 by user MARCOF, which matches Dana's memory that finance tightened the rule in 2019. The threshold she remembers is 10%. Either the intent was 10% and it was keyed as 15%, or it was 15% and the rule drifted in people's heads. Marco can answer that in one sentence."}, {"keys": ["standard", "s/4", "s4", "hana"], "answer": "S/4HANA has no approval workflow for discounts in the standard. The usual options are a condition upper limit, a workflow like the one Halo built, or Situation Handling. Whatever the threshold is meant to be, it will have to be rebuilt deliberately, so this is the moment to decide it."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Marco (finance): \"The discount approval trigger is configured at 15% but sales operates as if it were 10%. 412 orders last year sat between the two with no approval. Which threshold is the policy, and should S/4HANA enforce it at order entry?\""}], "F3": [{"keys": ["show", "lines", "1340", "stack", "example"], "answer": "1,340 chain order lines carried both the promotion discount and the volume discount in the last 12 months, average combined 15.8%, net value USD 4.1M. The Northgate Citrus promo in June is the clearest case: 12% promo plus 4.5% volume on the same lines."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 06:40: \"No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance.\" And at 07:10: \"I assume the system does it. The reps do not touch it. I have never had to check.\""}, {"keys": ["chargeback", "short", "dispute", "58"], "answer": "58 short-pays in the year cite a promotion price. Several are buyers who expected the stacked amount because that is what previous invoices showed. So the missing rule is already costing money on both sides."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Marco (finance): \"Sales believes promo and volume discounts never combine. The system has no exclusion, and 1,340 lines got both last year. Is the finance rule 'one or the other'? If so, S/4HANA needs a condition exclusion between the two.\""}], "F4": [{"keys": ["show", "2210", "cases", "customers", "how many"], "answer": "2,210 order lines had free cases added by the system in 12 months: 22,100 free cases across 96 customers, every one on the Classic range. That is the warehouse's extra-cases mystery, and it is not once a month, it is about six times a week."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "At 07:30: \"Free cases, no, we do not do that on chain orders. Not that I know of.\" Then at 07:55: \"the customer ordered fifty cases of Classic Cola and fifty-five went out... the warehouse says the system had it on the pick list.\" Fifty plus five is exactly buy 10 get 1."}, {"keys": ["who", "2016", "brandt", "created", "why"], "answer": "The rule was created on 2 Apr 2016 by user MBRANDT with no end date. That person left in 2020. Nobody in sales, and as far as the interview shows nobody at all, knows it is running. Marketing (Sam) owns promotions today and would know if it was ever a launch offer."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Sam (marketing) and Marco (finance): \"A buy-10-get-1 free goods rule on the Classic range has run for every customer since April 2016, 22,100 free cases last year. Was it a launch offer that was never switched off? Should it end, or be kept deliberately?\""}], "F5": [{"keys": ["what", "expire", "northgate", "318", "show"], "answer": "Two Northgate negotiated prices expired on 31 Jul 2025 and nobody renewed them. Since then 318 Northgate lines have been priced at list minus 8% instead of the negotiated rate, which is higher. No warning fires on expiry. The question was in Priya's guide but the session ran out of time."}, {"keys": ["exact", "say", "quote", "dana"], "answer": "Dana did not discuss validity. The closest she came, at 10:30: \"occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\" That is consistent with expiry, but it is not evidence about the rule."}, {"keys": ["draft", "reason", "question"], "answer": "Draft follow-up for Lena (order desk): \"Negotiated chain prices expire after 12 months with no warning. Two Northgate prices lapsed in July 2025 and 318 lines since have been billed at the fallback price. Who is meant to renew them, and should S/4HANA warn before expiry?\""}], "F6": [{"keys": ["exact", "say", "quote", "dana"], "answer": "At 08:55: \"No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm.\" The control on file sets the manual discount limit to 0% for customer group Marketplace, since 2018."}, {"keys": ["draft", "reason"], "answer": "Draft reason: Confirmed by Dana Ruiz on 18 Sep. No manual discounts on marketplace orders, enforced by a 0% limit since 2018. Keep in S/4HANA."}]}, "prompts": {"F1": ["What did she say exactly?", "Draft my reason"], "F2": ["Show me the 412 orders", "Who set the 15% and when?", "Draft the question for Marco"], "F3": ["Show me the lines that got both discounts", "How does this show up in chargebacks?", "Draft the follow-up for Marco"], "F4": ["How many customers got free cases?", "Who created this rule?", "Draft the follow-up for Sam"], "F5": ["What expired, and what did it cost?", "Draft the follow-up for Lena"], "F6": ["What did she say exactly?", "Draft my reason"]}}, "transcript": "# Interview transcript\n\n**Client:** Halo Beverages, ECC to S/4HANA migration, discovery phase\n**Process:** Order-to-Cash, step 2: price the order, discounts and approvals\n**Session:** Sales workshop 2 of 3, one-on-one\n**Date:** 18 September 2026, 10:00-10:50\n**Attendees:** Dana Ruiz (Head of Retail Sales, Halo), Priya Raman (consultant, leads), Tom Becker (consultant, notes)\n**Recording:** Teams, auto-transcribed, lightly cleaned. Timestamps approximate.\n\n---\n\n**[00:00] Priya:** Thanks for coming back, Dana. Last week we covered how orders arrive. Today I want to stay on the price: what happens to it between the order landing and it being final. I will ask some open questions first and then get specific. Can you walk me through the last chain order you personally looked at?\n\n**[00:40] Dana:** Sure. Thursday, FreshMart, their weekly EDI order. About 1,200 cases across maybe forty lines. It lands in the system, the order desk checks nothing is missing, and the price is already there. Every line comes in at list minus their negotiated price, and the chain discount is on top of that.\n\n**[01:20] Priya:** Who touches the price on an order like that?\n\n**Dana:** Nobody, for a standard order. The order desk does not change prices, they are not allowed to. It is only when a rep is pushing something, a new flavour or a shelf reset, that they add a discount on top. On the FreshMart one nobody touched it.\n\n**[01:55] Priya:** Roughly how many orders a week, and how many get a manual discount?\n\n**Dana:** Chains and distributors together, maybe three hundred orders a week. Manual discounts, I would guess ten or fifteen of those. It is not most orders. Marketplace is separate, that is hundreds of small orders and nobody touches those.\n\n**[02:30] Priya:** Let us build the price up from list. A chain, say FreshMart. What do they pay?\n\n**Dana:** List price minus their chain discount. All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account. Then on top of that whatever we have negotiated on specific products, which is most of the range for FreshMart honestly.\n\n**[03:10] Priya:** Eight percent for every chain, always?\n\n**Dana:** Every chain, yes. Distributors are different, they buy on a different price list, no percentage. Marketplace is its own price list too.\n\n**[03:35] Priya:** The negotiated prices per product. Who maintains those?\n\n**Dana:** The key account manager agrees them with the buyer, sends them to the order desk, and the order desk keys them in.\n\n**[04:30] Priya:** Now manual discounts. A rep wants to give FreshMart a bit extra on a new flavour to get it on shelf. How much can they give on their own?\n\n**Dana:** The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it.\n\n**[05:00] Priya:** Up to ten without approval, above ten needs you. How does the approval reach you?\n\n**Dana:** It shows up in my inbox in the system, the worklist thing. Sometimes the rep also messages me because the worklist is slow to refresh. I approve maybe two or three a week.\n\n**[05:30] Priya:** Two or three a week, out of ten or fifteen manual discounts. So most manual discounts do not come to you?\n\n**Dana:** Most are under ten, yes. Reps stay under ten if they can, they do not like waiting on me.\n\n**[05:50] Tom:** Is there an upper limit at all? Could a rep type in thirty percent and send it to you?\n\n**Dana:** They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty.\n\n**[06:15] Priya:** When did the ten percent rule come in, and why?\n\n**Dana:** 2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.\n\n**[06:40] Priya:** Promotions. Northgate runs a summer promo on the Citrus line, twelve percent off for six weeks. If they also place a big order that qualifies for the volume discount, do they get both?\n\n**Dana:** No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here.\n\n**[07:10] Priya:** And how is that enforced? Does the system take one off, or does the rep?\n\n**Dana:** I assume the system does it. The reps do not touch it. I have never had to check.\n\n**[07:30] Priya:** OK, I will verify that. Any buy-X-get-Y offers, free cases, samples?\n\n**Dana:** Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.\n\n**[07:55] Priya:** Anything that changes the price or the quantity on a line that nobody enters by hand?\n\n**Dana:** [pause] There is one thing that is odd, now that you say quantity. Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list. It happens maybe once a month. I have never got to the bottom of it.\n\n**[08:35] Priya:** Which products, do you remember?\n\n**Dana:** Always the Classic range, I think. Never the new stuff. And the customer never complains, so it drops off the list.\n\n**[08:55] Priya:** That is useful, I will dig into it. Marketplace orders, do reps ever discount those?\n\n**Dana:** No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm. The reps cannot even see those orders most of the time.\n\n**[09:20] Priya:** Let us do pain points. What goes wrong most often with pricing?\n\n**Dana:** Two things. The worklist, as I said, it is slow and reps message me anyway. And chargebacks. A chain short-pays because they think a promo price should have applied and we think it should not, and it takes AR weeks to untangle. That is not really my process but it lands on me.\n\n**[10:00] Priya:** Any pricing that happens outside the system? Spreadsheets, emails, credit notes after the fact?\n\n**Dana:** The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system. I know that is not ideal.\n\n**[10:30] Priya:** Anything the system does that nobody can explain?\n\n**Dana:** The extra cases thing. And occasionally a price on a line is different from what the KAM agreed and nobody knows why. Usually an old number.\n\n**[10:50] Priya:** Who else should I talk to about pricing?\n\n**Dana:** Marco in finance, he owns the discount policy. Lena on the order desk, she keys everything. And marketing for promos, that is Sam.\n\n**[11:10] Priya:** Last one. If you could change one thing about pricing?\n\n**Dana:** I want to see every discount over ten percent before it ships, and I want the KAM spreadsheets gone. If the system had the agreed price, the order desk would not need to fix anything.\n\n**[11:35] Priya:** Perfect. That is time. Thank you, Dana. Tom will send the summary tomorrow and I will come back to you on the extra cases.\n\n**Dana:** Thanks both.\n\n---\n*End of transcript.*\n", "extract": {"pricing_procedure_ZHALO01.csv": [{"step": "10", "counter": "0", "condition_type": "PR00", "description": "Price (list or negotiated)", "manual": "", "statistical": "", "exclusion_group": "", "plain": "Base price: negotiated customer/product price if one exists, else list price"}, {"step": "20", "counter": "0", "condition_type": "K007", "description": "Customer group discount %", "manual": "", "statistical": "", "exclusion_group": "", "plain": "Automatic discount by customer group (Chains 8%)"}, {"step": "30", "counter": "0", "condition_type": "K005", "description": "Promotion discount %", "manual": "", "statistical": "", "exclusion_group": "", "plain": "Time-boxed promotion on specific products"}, {"step": "40", "counter": "0", "condition_type": "K029", "description": "Volume scale discount %", "manual": "", "statistical": "", "exclusion_group": "", "plain": "Discount by order quantity, 3% to 6%"}, {"step": "50", "counter": "0", "condition_type": "RA01", "description": "Manual discount %", "manual": "X", "statistical": "", "exclusion_group": "", "plain": "Typed in by the rep, capped by upper limit on the condition type"}, {"step": "60", "counter": "0", "condition_type": "NA00", "description": "Free goods", "manual": "", "statistical": "X", "exclusion_group": "", "plain": "Statistical line: system adds free quantity per free-goods condition record"}, {"step": "100", "counter": "0", "condition_type": "", "description": "Net price", "manual": "", "statistical": "", "exclusion_group": "", "plain": "Subtotal after all discounts"}, {"step": "110", "counter": "0", "condition_type": "MWST", "description": "Sales tax", "manual": "", "statistical": "", "exclusion_group": "", "plain": ""}], "condition_records.csv": [{"record_id": "0000411203", "condition_type": "K007", "key_type": "Customer group", "key": "01 Chains", "rate": "-8.00", "unit": "%", "valid_from": "2011-06-01", "valid_to": "9999-12-31", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20", "plain": "Automatic 8% for every chain customer"}, {"record_id": "0000411204", "condition_type": "K007", "key_type": "Customer group", "key": "02 Distributors", "rate": "0.00", "unit": "%", "valid_from": "2011-06-01", "valid_to": "9999-12-31", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20", "plain": "No percentage for distributors; they buy on price list 02"}, {"record_id": "0000411205", "condition_type": "K007", "key_type": "Customer group", "key": "03 Marketplace", "rate": "0.00", "unit": "%", "valid_from": "2018-02-12", "valid_to": "9999-12-31", "created_by": "LPARK", "created_on": "2018-02-12", "last_changed_by": "LPARK", "last_changed_on": "2018-02-12", "plain": "No percentage for marketplace; price list 03"}, {"record_id": "0000587731", "condition_type": "PR00", "key_type": "Customer/Material", "key": "100031 FreshMart / HB-CL-330 Classic Cola 330ml x24", "rate": "14.40", "unit": "USD/case", "valid_from": "2025-10-01", "valid_to": "2026-09-30", "created_by": "LNGUYEN", "created_on": "2025-09-28", "last_changed_by": "LNGUYEN", "last_changed_on": "2025-09-28", "plain": "Negotiated FreshMart price for Classic Cola, expires 30 Sep 2026"}, {"record_id": "0000587732", "condition_type": "PR00", "key_type": "Customer/Material", "key": "100031 FreshMart / HB-CI-330 Citrus 330ml x24", "rate": "15.10", "unit": "USD/case", "valid_from": "2025-10-01", "valid_to": "2026-09-30", "created_by": "LNGUYEN", "created_on": "2025-09-28", "last_changed_by": "LNGUYEN", "last_changed_on": "2025-09-28", "plain": "Negotiated FreshMart price for Citrus, expires 30 Sep 2026"}, {"record_id": "0000587790", "condition_type": "PR00", "key_type": "Customer/Material", "key": "100044 Northgate / HB-CL-330 Classic Cola 330ml x24", "rate": "14.60", "unit": "USD/case", "valid_from": "2024-08-01", "valid_to": "2025-07-31", "created_by": "LNGUYEN", "created_on": "2024-07-25", "last_changed_by": "LNGUYEN", "last_changed_on": "2024-07-25", "plain": "Northgate negotiated price EXPIRED 31 Jul 2025; line now falls back to list minus 8%"}, {"record_id": "0000602118", "condition_type": "K005", "key_type": "Customer/Material group", "key": "100044 Northgate / CITRUS", "rate": "-12.00", "unit": "%", "valid_from": "2026-06-15", "valid_to": "2026-07-31", "created_by": "SAMIR", "created_on": "2026-06-10", "last_changed_by": "SAMIR", "last_changed_on": "2026-06-10", "plain": "Northgate summer promo on Citrus line"}, {"record_id": "0000602119", "condition_type": "K005", "key_type": "Customer/Material group", "key": "100031 FreshMart / CITRUS", "rate": "-10.00", "unit": "%", "valid_from": "2026-06-15", "valid_to": "2026-07-31", "created_by": "SAMIR", "created_on": "2026-06-10", "last_changed_by": "SAMIR", "last_changed_on": "2026-06-10", "plain": "FreshMart summer promo on Citrus line"}, {"record_id": "0000398002", "condition_type": "K029", "key_type": "Scale (quantity)", "key": ">= 500 cases", "rate": "-3.00", "unit": "%", "valid_from": "2011-06-01", "valid_to": "9999-12-31", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20", "plain": "Volume discount tier 1"}, {"record_id": "0000398003", "condition_type": "K029", "key_type": "Scale (quantity)", "key": ">= 1000 cases", "rate": "-4.50", "unit": "%", "valid_from": "2011-06-01", "valid_to": "9999-12-31", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20", "plain": "Volume discount tier 2"}, {"record_id": "0000398004", "condition_type": "K029", "key_type": "Scale (quantity)", "key": ">= 2500 cases", "rate": "-6.00", "unit": "%", "valid_from": "2011-06-01", "valid_to": "9999-12-31", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20", "plain": "Volume discount tier 3"}, {"record_id": "0000455610", "condition_type": "NA00", "key_type": "Material group", "key": "CLASSIC (all customer groups)", "rate": "10 + 1", "unit": "cases", "valid_from": "2016-04-02", "valid_to": "9999-12-31", "created_by": "MBRANDT", "created_on": "2016-04-02", "last_changed_by": "MBRANDT", "last_changed_on": "2016-04-02", "plain": "Free goods: for every 10 cases of any Classic-range product add 1 free case. No end date. Creator left the company in 2020."}], "order_controls.csv": [{"control_id": "C-01", "area": "Manual discount", "object": "Condition type RA01", "setting": "Upper limit", "value": "20.00 %", "plain": "Hard cap: a rep cannot enter more than 20% manual discount", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "MARCOF", "last_changed_on": "2019-03-04"}, {"control_id": "C-02", "area": "Manual discount", "object": "Condition type RA01 / customer group 03 Marketplace", "setting": "Upper limit", "value": "0.00 %", "plain": "Manual discount not possible on marketplace orders", "created_by": "LPARK", "created_on": "2018-02-12", "last_changed_by": "LPARK", "last_changed_on": "2018-02-12"}, {"control_id": "C-03", "area": "Approval", "object": "User exit MV45AFZZ / block Z1 'Discount approval'", "setting": "Trigger", "value": "RA01 > 15.00 %", "plain": "Order gets block Z1 and lands in the sales manager's worklist only if manual discount exceeds 15%", "created_by": "MARCOF", "created_on": "2019-03-04", "last_changed_by": "MARCOF", "last_changed_on": "2019-03-04"}, {"control_id": "C-04", "area": "Approval", "object": "Workflow ZDISC_APPR", "setting": "Approver", "value": "Role: Head of Retail Sales", "plain": "Sales manager releases block Z1 from worklist", "created_by": "MARCOF", "created_on": "2019-03-04", "last_changed_by": "MARCOF", "last_changed_on": "2019-03-04"}, {"control_id": "C-05", "area": "Promotion vs volume", "object": "Condition exclusion group", "setting": "Exclusion between K005 and K029", "value": "not maintained", "plain": "Nothing prevents promotion and volume discounts applying together on the same line", "created_by": "", "created_on": "", "last_changed_by": "", "last_changed_on": ""}, {"control_id": "C-06", "area": "Free goods", "object": "Condition type NA00", "setting": "Active in ZHALO01", "value": "yes (step 60)", "plain": "Free goods determination runs on every order line", "created_by": "JHOFFMAN", "created_on": "2011-05-20", "last_changed_by": "JHOFFMAN", "last_changed_on": "2011-05-20"}, {"control_id": "C-07", "area": "Price validity", "object": "Condition type PR00", "setting": "Expiry warning", "value": "none", "plain": "No warning when a negotiated price expires; line silently falls back to list minus group discount", "created_by": "", "created_on": "", "last_changed_by": "", "last_changed_on": ""}], "process_mining_o2c_metrics.csv": [{"metric_id": "M-01", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Profitability", "metric": "Total number of sales orders", "value": "15640", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000, all customer groups", "plain": "About 300 orders a week, matches what sales said"}, {"metric_id": "M-02", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Automation", "metric": "Automation rate: sales order creation", "value": "71.4", "unit": "%", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "EDI (chains), portal (distributors) and marketplace feed create orders without a person"}, {"metric_id": "M-03", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Changes", "metric": "Price change rate", "value": "4.9", "unit": "% of sales orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "766 orders had a price changed after creation; almost all are manual discounts (RA01)"}, {"metric_id": "M-04", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Changes", "metric": "Manual SO item changes rate", "value": "11.2", "unit": "% of sales orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Order desk edits after creation: mostly quantity and requested delivery date, some price"}, {"metric_id": "M-05", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Compliance", "metric": "No-Touch-Order rate", "value": "57.8", "unit": "%", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Orders delivered on time, right quantity, no changes"}, {"metric_id": "M-06", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Customer Satisfaction", "metric": "Return rate", "value": "1.1", "unit": "% of cases", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": ""}, {"metric_id": "M-07", "source": "Signavio Process Intelligence (standard O2C metric)", "analysis_objective": "Predictability", "metric": "Late payment rate", "value": "9.4", "unit": "% of invoices", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Chains short-pay and dispute; see M-12"}, {"metric_id": "M-08", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Sales orders with manual discount RA01 > 0%", "value": "766", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Roughly 15 a week, as sales estimated"}, {"metric_id": "M-09", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Sales orders with manual discount RA01 between 10% and 15%", "value": "412", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000; net value USD 1.93M", "plain": "Sales manager believes these all came to her. Approval block Z1 was set on 0 of them (see M-10)"}, {"metric_id": "M-10", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Compliance", "metric": "Sales orders with approval block Z1 set", "value": "131", "unit": "orders", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "All 131 had RA01 > 15%. Matches the 15% trigger in the system, not the 10% rule sales describes. 2 to 3 a week, as she said"}, {"metric_id": "M-11", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines with both promotion (K005) and volume (K029) discount applied", "value": "1340", "unit": "order lines", "period": "2025-09-01 to 2026-08-31", "scope": "Customer groups 01 Chains; combined discount avg 15.8%; net value USD 4.1M", "plain": "Stacking that sales says never happens"}, {"metric_id": "M-12", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Predictability", "metric": "Short-pays referencing a promotion price", "value": "58", "unit": "disputes", "period": "2025-09-01 to 2026-08-31", "scope": "Chains", "plain": "Most cite a promo price on lines where the promo had expired or was not stacked as the buyer expected"}, {"metric_id": "M-13", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines with free goods (NA00) quantity added by the system", "value": "2210", "unit": "order lines", "period": "2025-09-01 to 2026-08-31", "scope": "96 customers across all customer groups; 100% material group CLASSIC; 22,100 free cases", "plain": "Nobody in sales knows this rule exists. Matches the warehouse reports of extra cases"}, {"metric_id": "M-14", "source": "Signavio Process Intelligence (consultant-defined drill-down)", "analysis_objective": "Changes", "metric": "Order lines priced at fallback because the negotiated price (PR00) had expired", "value": "318", "unit": "order lines", "period": "2025-08-01 to 2026-08-31", "scope": "Northgate Grocers; 2 materials", "plain": "Silent expiry on 31 Jul 2025; price rose from negotiated to list minus 8% with no warning to anyone"}, {"metric_id": "M-15", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Throughput", "metric": "Sales documents created", "value": "15640", "unit": "documents", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Same population as M-01"}, {"metric_id": "M-16", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Customizing configuration", "metric": "Sales document type usage (cross-sales area)", "value": "OR 14,905; ZMKT 612; RE 123; ZSMP 0", "unit": "documents by type", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Standard order OR dominates; ZMKT is the marketplace type; RE returns; ZSMP (samples) unused in 12 months although sales says samples go through a separate type"}, {"metric_id": "M-17", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Exceptions", "metric": "Missing fields in incomplete sales document items", "value": "388", "unit": "items", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Most missing field: requested delivery date on distributor portal orders"}, {"metric_id": "M-18", "source": "Signavio Process Insights discovery edition (standard indicator)", "analysis_objective": "Backlog", "metric": "Rejected sales document items", "value": "1204", "unit": "items", "period": "2025-09-01 to 2026-08-31", "scope": "Sales org 1000", "plain": "Lines rejected after creation, mostly out-of-stock substitutions"}], "readiness_check_summary.csv": [{"section": "Simplification items", "item": "S4TWL - Pricing data model simplification (KONV replaced by PRCD_ELEMENTS)", "relevance": "Relevant", "value": "Mandatory before conversion", "plain": "Technical: the table that stores order prices changes shape in S/4HANA. Custom code that reads it must be adapted."}, {"section": "Simplification items", "item": "S4TWL - SD Rebate processing replaced by Settlement Management", "relevance": "Not relevant", "value": "No active rebate agreements found", "plain": "Halo does not use rebates in ECC"}, {"section": "Simplification items", "item": "S4TWL - Credit Management (FI-AR-CR) replaced by SAP Credit Management (FIN-FSCM-CR)", "relevance": "Relevant", "value": "Mandatory", "plain": "Belongs to step 3 Check customer credit, not this node"}, {"section": "Custom code", "item": "User exit MV45AFZZ / include ZZ_DISCOUNT_BLOCK", "relevance": "Relevant", "value": "1 object; 3 findings (KONV field access)", "plain": "The code that sets approval block Z1 when RA01 > 15%. Must be adapted for the new pricing table. Last changed 2019-03-04 by MARCOF"}, {"section": "Custom code", "item": "Workflow ZDISC_APPR", "relevance": "Relevant", "value": "1 object; 0 findings", "plain": "Discount approval workflow to the sales manager's worklist"}, {"section": "Transaction usage", "item": "VA01 Create sales order", "relevance": "Used", "value": "4,470 executions / 12 months; 9 users", "plain": "Manual order entry by the order desk (the rest arrive automatically)"}, {"section": "Transaction usage", "item": "VA02 Change sales order", "relevance": "Used", "value": "6,120 executions / 12 months; 14 users", "plain": "Order desk and reps editing orders; includes manual discounts"}, {"section": "Transaction usage", "item": "VK11/VK12 Create/change condition records", "relevance": "Used", "value": "1,180 executions / 12 months; 3 users", "plain": "Order desk keying negotiated prices and marketing keying promotions"}, {"section": "Transaction usage", "item": "V.14 Sales orders blocked for delivery", "relevance": "Used", "value": "96 executions / 12 months; 1 user", "plain": "Occasional check of blocked orders"}, {"section": "Transaction usage", "item": "SBWP Business workplace (approval worklist)", "relevance": "Used", "value": "318 executions / 12 months; 2 users", "plain": "Sales manager and her deputy releasing discount approvals"}, {"section": "Transaction usage", "item": "VK13 Display condition record", "relevance": "Used", "value": "52 executions / 12 months; 2 users", "plain": "Almost nobody looks up what prices are on file; they use spreadsheets instead"}, {"section": "Business process analytics", "item": "Open sales order items older than 90 days", "relevance": "Backlog", "value": "214 items", "plain": "Old backlog to close before conversion"}, {"section": "Add-ons", "item": "Third-party add-ons in SD", "relevance": "None", "value": "", "plain": ""}, {"section": "Data volume", "item": "Table PRCD/KONV (pricing conditions)", "relevance": "Large", "value": "41 GB; 6.2M condition lines", "plain": "Consider archiving before conversion"}]}, "sources": [{"file": "pricing_procedure_ZHALO01.csv", "what": "The calculation steps the system runs on every sales order line, in order", "source": "T683S (pricing procedure steps), T685 (condition types)"}, {"file": "condition_records.csv", "what": "The actual rates on file: who gets what discount, valid from/to, who created it", "source": "KONP / A-tables (condition records)"}, {"file": "process_mining_o2c_metrics.csv", "what": "Measured facts about how orders actually behave over 12 months: standard order-to-cash metrics plus drill-downs the consultant defined for this node", "source": "SAP Signavio Process Intelligence, O2C accelerator on ECC (event log from VBAK/VBAP/CDHDR/KONV)"}, {"file": "readiness_check_summary.csv", "what": "What the conversion scan says about this area: what changes in S/4HANA, custom code that needs work, which transactions people actually use and how often", "source": "SAP Readiness Check for S/4HANA conversion"}, {"file": "order_controls.csv", "what": "Non-pricing switches on the pricing step: approval block, manual limits, free goods", "source": "T685 upper/lower limits, user exit MV45AFZZ, KONP free goods (NA00)"}]}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const M = D.model, OUT = D.output, CHAT = D.chat, T = D.transcript;
+  const $ = (s, r=document) => r.querySelector(s);
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  const VERDICT = { none: '', not_discussed: 'Not discussed', match: 'Match', contradiction: 'Contradiction', gap_no_data: 'Gap: missing data', gap_no_explanation: 'Gap: missing reason', resolved: 'Resolved', follow_up: 'Follow-up open' };
+  const NEEDS = new Set(['contradiction', 'gap_no_data', 'gap_no_explanation', 'not_discussed']);
+  const OTHER_PROCS = [{ name: 'Procure-to-Pay', steps: 6 }, { name: 'Record-to-Report', steps: 5 }, { name: 'Plan-to-Produce', steps: 6 }, { name: 'Hire-to-Retire', steps: 5 }];
+  const NODE = M.steps.find(s => s.id === M.node_step_id);
+  const total = M.node_fields.length;
+  const interviewee = M.stakeholders.find(p => p.interviewed);
+  const num = id => M.node_fields.findIndex(f => f.id === id) + 1;
+
+  const state = { synthesized: false, working: false, view: 'map', scope: null, open: new Set(), selected: null, log: [],
+    items: Object.fromEntries(M.node_fields.map(f => [f.id, { verdict: 'none', out: null, decision: null }])) };
+  const outFor = id => OUT.fields.find(f => f.field_id === id);
+  const tsFor = quote => { const i = T.indexOf(quote.slice(0, 40)); if (i < 0) return null; const m = T.slice(0, i).match(/\[(\d\d:\d\d)\](?![\s\S]*\[\d\d:\d\d\])/); return m ? m[1] : null; };
+  const explained = () => Object.values(state.items).filter(i => i.verdict === 'match' || i.verdict === 'resolved').length;
+  const needs = () => Object.values(state.items).filter(i => NEEDS.has(i.verdict) || i.verdict === 'follow_up').length;
+  const statusPill = (lg) => { const n = explained(), c = lg ? 'pill lg ' : 'pill '; if (!state.synthesized) return `<span class="${c}plain">Not started</span>`; if (n === total) return `<span class="${c}match">Ready for review · ${total} of ${total}</span>`; return `<span class="${c}review">In review · ${n} of ${total} explained</span>`; };
+
+  $('#proj-name').textContent = M.client.name;
+  $('#map-eyebrow').textContent = `${M.client.name} · ${M.client.project}`;
+
+  function renderMap() {
+    const procs = $('#procs'); procs.innerHTML = '';
+    const o2c = el('button', 'proc scoped', `<span class="eyebrow">In scope</span><span class="name">${esc(M.process.name)}</span><span class="foot"><span>${M.steps.length} steps</span><span class="num">${state.synthesized ? '1 in review' : '0 in review'}</span></span>`);
+    o2c.addEventListener('click', () => $('#flow').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    procs.appendChild(o2c);
+    OTHER_PROCS.forEach(p => procs.appendChild(el('div', 'proc', `<span class="eyebrow">Not in scope</span><span class="name">${p.name}</span><span class="foot"><span>${p.steps} steps</span><span>—</span></span>`)));
+    $('#flow-title').textContent = `${M.process.name} · Standard sale to a retailer`;
+    $('#flow-sub').textContent = `Process owner: ${M.process.process_owner}`;
+    const flow = $('#flow'); flow.innerHTML = '';
+    M.steps.forEach((s, i) => {
+      const cur = s.id === M.node_step_id;
+      const b = el('button', 'step' + (cur ? ' current' : ''), `<div class="box"><span class="n">STEP ${i + 1}</span><span class="name">${esc(s.name)}</span></div>${cur ? statusPill(false) : '<span class="pill plain">Not started</span>'}`);
+      b.title = s.plain; b.addEventListener('click', () => { if (cur) showStep(); }); flow.appendChild(b);
+    });
+  }
+
+  function renderStrip() {
+    const strip = $('#strip'); strip.innerHTML = '';
+    const back = el('button', 'chip scoped', esc(M.process.name)); back.addEventListener('click', showMap); strip.appendChild(back);
+    OTHER_PROCS.forEach(p => strip.appendChild(el('span', 'chip', p.name)));
+    strip.appendChild(el('span', 'sep', '›'));
+    M.steps.forEach((s, i) => { const c = el('button', 'chip' + (s.id === M.node_step_id ? ' active' : ''), `<span class="n">${i + 1}</span>${esc(s.name)}`); c.addEventListener('click', showMap); strip.appendChild(c); });
+    const b = el('button', 'btn secondary small back', '← Map'); b.addEventListener('click', showMap); strip.appendChild(b);
+  }
+  function renderHead() {
+    $('#step-title').textContent = NODE.name; $('#step-sub').textContent = NODE.focus || '';
+    $('#step-status').innerHTML = statusPill(true);
+    const people = $('#people'); people.innerHTML = '<span class="lbl">People</span>';
+    M.stakeholders.filter(p => p.added).forEach(p => {
+      const ini = p.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+      const b = el('button', 'person' + (p.interviewed ? ' interviewed' : ''), `<span class="avatar">${ini}</span>${esc(p.name.split(' ')[0])}<span class="role">${esc(p.role)}</span>`);
+      b.addEventListener('click', e => { e.stopPropagation(); const open = b.querySelector('.pop'); document.querySelectorAll('.pop').forEach(x => x.remove()); if (open) return; b.appendChild(el('div', 'pop', `<b>${esc(p.name)}</b><span class="r">${esc(p.role)} · ${esc(p.side)}</span><p>${esc(p.note)}</p>${p.interviewed ? '<div class="iv"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Interview · 18 Sep · 50 min</div>' : ''}`)); });
+      people.appendChild(b);
+    });
+    const add = el('button', 'person add', '+ Add stakeholder'); add.title = 'Add a person from the client side or the project team'; people.appendChild(add);
+    $('#c-items').textContent = total; $('#c-src').textContent = D.sources.length + (state.synthesized ? 1 : 0); $('#c-log').textContent = state.log.length;
+    const h = $('#hint');
+    if (!state.synthesized) { h.style.display = ''; h.innerHTML = `<span>The six items below come from the system extract. <b>No interview has been checked against them yet.</b> Drop a transcript in the agent panel to start.</span><button class="btn small">Open agent</button>`; h.querySelector('button').addEventListener('click', openAgent); }
+    else h.style.display = 'none';
+  }
+  document.addEventListener('click', () => document.querySelectorAll('.pop').forEach(x => x.remove()));
+
+  function renderItems() {
+    const wrap = $('#items'); wrap.innerHTML = '';
+    M.node_fields.forEach((f, idx) => {
+      const st = state.items[f.id];
+      const it = el('div', 'item' + (state.open.has(f.id) ? ' open' : '') + (state.selected === f.id ? ' selected' : '')); it.dataset.id = f.id;
+      const row = el('div', 'row', `<span class="id">${idx + 1}</span><span class="label">${esc(f.label)}<span class="plain">${esc(f.plain)}</span></span><span>${st.verdict === 'none' ? '<span class="none">Awaiting interview</span>' : `<span class="pill ${st.verdict}">${VERDICT[st.verdict]}</span>`}</span><span class="chev">›</span>`);
+      row.addEventListener('click', () => { state.open.has(f.id) ? state.open.delete(f.id) : state.open.add(f.id); state.selected = f.id; setScope(f.id); renderItems(); tour.emit('open-' + (idx + 1)); });
+      it.appendChild(row); it.appendChild(renderDetail(f, st)); wrap.appendChild(it);
+    });
+    renderBanner();
+  }
+
+  function evidenceSide(title, who, items, missing) {
+    const s = el('div', 'side'); s.innerHTML = `<h4>${title}${who ? `<span class="who">${esc(who)}</span>` : ''}</h4>`;
+    if (missing) { s.appendChild(el('div', 'missing' + (missing.neutral ? ' neutral' : ''), `<b>${esc(missing.title)}</b>${esc(missing.text)}`)); return s; }
+    const ev = el('div', 'ev'); items.forEach(x => ev.appendChild(x)); s.appendChild(ev); return s;
+  }
+  const srcLink = ref => { const a = el('a', null, esc(ref.split('#')[1] || ref)); a.href = '#'; a.title = ref; a.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); showTab('sources'); }); return a; };
+
+  function renderDetail(f, st) {
+    const d = el('div', 'detail'); const o = st.out;
+    // evidence pair
+    const pair = el('div', 'pair');
+    if (!o) {
+      const sys = f.source_rows.slice(0, 2).map(r => { const e = el('div', 'e', esc(f.plain)); e.appendChild(srcLink(r)); return e; }).slice(0, 1);
+      pair.appendChild(evidenceSide('What the system shows', null, sys));
+      pair.appendChild(evidenceSide('What the client said', null, [], { neutral: true, title: 'No interview yet', text: 'Drop a transcript in the agent panel and this side fills in.' }));
+      d.appendChild(pair); return d;
+    }
+    const sysItems = (o.system_evidence || []).map(x => { const e = el('div', 'e', esc(x.text)); e.appendChild(srcLink(x.source)); return e; });
+    const cliItems = (o.quotes || []).map(q => { const ts = tsFor(q.text); return el('div', 'q', `“${esc(q.text)}”<div class="by">${esc(q.speaker)}, ${esc(interviewee.role)} · 18 Sep${ts ? ' · ' + ts : ''}</div>`); });
+    const sysMissing = o.missing_side === 'system' ? { title: 'Nothing in the system does this', text: o.missing_note } : null;
+    const cliMissing = o.missing_side === 'client' ? { title: o.state === 'not_discussed' ? 'Not discussed' : 'No one explained this', text: o.missing_note, neutral: o.state === 'not_discussed' } : null;
+    pair.appendChild(evidenceSide('What the system shows', null, sysItems, sysMissing));
+    pair.appendChild(evidenceSide('What the client said', o.quotes.length && !cliMissing ? interviewee.name : null, cliItems, cliMissing));
+    if (cliMissing && o.quotes.length) { const side = pair.lastChild; const ev = el('div', 'ev'); ev.style.marginTop = '10px'; cliItems.forEach(x => ev.appendChild(x)); side.appendChild(el('div', 'eyebrow', 'Closest thing said')); side.lastChild.style.margin = '12px 0 6px'; side.appendChild(ev); }
+    d.appendChild(pair);
+
+    // verdict row
+    const vr = el('div', 'verdict-row');
+    const a = el('div', 'agentsays', `<div class="top"><span class="pill ${o.state}">${VERDICT[o.state]}</span><span class="c">agent · confidence ${Math.round(o.confidence * 100)}%</span></div><p>${esc(o.conflict_summary || o.reasoning)}</p>`);
+    const askBtn = el('button', 'btn secondary small ask'); askBtn.dataset.ask = f.id; askBtn.textContent = ( o.state === 'match' ? 'Ask the agent' : 'Ask the agent why');
+    askBtn.addEventListener('click', e => { e.stopPropagation(); openAgent(); state.selected = f.id; setScope(f.id); renderItems(); agentSay(`<b>${num(f.id)} · ${esc(f.label)}</b><br>${esc(o.reasoning)}${o.follow_up_question ? `<br><br>To close it: ${esc(o.follow_up_question)} Ask <b>${esc(o.ask_who)}</b>.` : ''}`, promptChips(f.id)); tour.emit('asked'); });
+    a.appendChild(askBtn); vr.appendChild(a);
+
+    const j = el('div', 'judge'); j.innerHTML = '<h4>Your judgment</h4>';
+    if (st.decision) {
+      j.appendChild(el('div', 'decided', `<b>${esc(st.decision.choice)}</b><div style="margin-top:4px">${esc(st.decision.reason)}</div>${st.decision.followUp ? `<div style="margin-top:4px">Follow-up: ${esc(st.decision.followUp)} <b>→ ${esc(st.decision.askWho)}</b></div>` : ''}<div class="who">Priya Raman · ${st.decision.when}</div>`));
+      const undo = el('button', 'btn secondary small', 'Edit'); undo.style.marginTop = '10px';
+      undo.addEventListener('click', e => { e.stopPropagation(); st.decision = null; st.verdict = o.state; state.log = state.log.filter(l => l.id !== f.id); refresh(); });
+      j.appendChild(undo); vr.appendChild(j); d.appendChild(vr); return d;
+    }
+    const todo = o.state === 'match' ? 'Nothing to decide. Confirm it, or add a note for the process owner.' : o.state === 'not_discussed' ? 'Decide from the data, or queue it for the next interview.' : `Decide which side is right, or send it to <b>${esc(o.ask_who)}</b>.`;
+    const choices = o.state === 'match' ? ['Confirmed, keep as is'] : o.state === 'not_discussed' ? ['Decide from the data', 'Needs follow-up'] : ['Trust the client account', 'Trust the system', 'Needs follow-up'];
+    const form = el('div', null, `<div class="todo">${todo}</div><div class="field"><label>Decision</label><select>${choices.map(c => `<option>${c}</option>`).join('')}</select></div><div class="field"><label>My reason</label><textarea placeholder="In your own words: what is true here, and why."></textarea></div><div class="field fu" style="display:none"><label>Follow-up question, and who owes the answer</label><input value="${esc(o.follow_up_question || '')}"><input value="${esc(o.ask_who || '')}"></div><div class="field-row"><button class="btn small">Save</button></div>`);
+    const sel = form.querySelector('select'), ta = form.querySelector('textarea'), fu = form.querySelector('.fu');
+    sel.addEventListener('change', () => fu.style.display = sel.value === 'Needs follow-up' ? '' : 'none');
+    form.querySelector('button').addEventListener('click', e => {
+      e.stopPropagation();
+      if (!ta.value.trim()) { ta.focus(); ta.style.borderColor = 'var(--contra-line)'; return; }
+      const followUp = sel.value === 'Needs follow-up'; const inputs = fu.querySelectorAll('input');
+      st.decision = { choice: sel.value, reason: ta.value.trim(), followUp: followUp ? inputs[0].value : null, askWho: followUp ? inputs[1].value : null, when: nowStr() };
+      st.verdict = followUp ? 'follow_up' : 'resolved';
+      state.log.unshift({ id: f.id, label: f.label, ...st.decision, from: VERDICT[o.state] });
+      agentSay(followUp ? `Logged. Item ${num(f.id)} stays open until ${esc(inputs[1].value)} answers.` : `Logged your reason on item ${num(f.id)}. Step 2 is ${explained()} of ${total} explained.`);
+      refresh(); tour.emit('saved');
+    });
+    j.appendChild(form); vr.appendChild(j); d.appendChild(vr); return d;
+  }
+
+  function renderBanner() {
+    const b = $('#banner'); b.className = 'banner'; if (!state.synthesized) return;
+    const n = explained(), open = Object.entries(state.items).filter(([, i]) => i.verdict === 'follow_up');
+    if (n === total) { b.classList.add('show'); b.innerHTML = `<b>Ready for process owner review.</b> All ${total} items have a confirmed reason. The decision log is the record.`; }
+    else { b.classList.add('show', 'open-items'); b.innerHTML = `<b>${n} of ${total} explained.</b> ${needs()} still need you${open.length ? `, ${open.length} waiting on ${[...new Set(open.map(([id]) => state.items[id].decision.askWho))].join(', ')}` : ''}.`; }
+  }
+  function renderLog() { const l = $('#log'); l.innerHTML = ''; if (!state.log.length) { l.innerHTML = '<div class="empty">No decisions yet. Reasons you save on an item appear here.</div>'; return; } state.log.forEach(e => l.appendChild(el('div', 'entry', `<span class="when">${esc(e.when)}</span><div class="what"><b>${num(e.id)} · ${esc(e.label)}</b> <span class="pill ${e.followUp ? 'follow_up' : 'resolved'}" style="margin-left:6px">${e.followUp ? 'Follow-up open' : 'Resolved'}</span><p>${esc(e.choice)}, was ${esc(e.from)}. ${esc(e.reason)}${e.followUp ? ` Follow-up for ${esc(e.askWho)}: ${esc(e.followUp)}` : ''}</p></div>`))); }
+  function renderSources() {
+    const s = $('#sources'); s.innerHTML = '';
+    if (state.synthesized) s.appendChild(el('div', 'source', `<div class="name"><span class="pill match plain">Interview</span>01-sales-manager.md</div><p>18 Sep, Dana Ruiz, Head of Retail Sales. 50 minutes, transcribed. Synthesized against Step 2.</p>`));
+    D.sources.forEach(src => s.appendChild(el('div', 'source', `<div class="name">${esc(src.file)}</div><p>${esc(src.what)}</p><p class="mono" style="margin-top:8px">${esc(src.source)}</p>`)));
+  }
+  function showTab(name) { document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.tab === name)); document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name)); }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+  function refresh() { renderHead(); renderItems(); renderLog(); renderSources(); renderMap(); updateEdge(); }
+  function showStep() { state.view = 'step'; $('#map').style.display = 'none'; $('#step').style.display = 'block'; refresh(); tour.emit('step-open'); }
+  function showMap() { state.view = 'map'; $('#step').style.display = 'none'; $('#map').style.display = 'block'; state.selected = null; setScope(null); refresh(); }
+
+  // ---- agent
+  const thread = $('#thread'), agent = $('#agent'), edge = $('#edge');
+  const scrollThread = () => { thread.scrollTop = thread.scrollHeight; };
+  function agentSay(html, extra) { const m = el('div', 'msg', `<div class="who">Agent</div>${html}`); if (extra) m.appendChild(extra); thread.appendChild(m); scrollThread(); return m; }
+  function userSay(text) { thread.appendChild(el('div', 'msg user', esc(text))); scrollThread(); }
+  function setDot(mode, label) { $('#dot').className = 'dot ' + mode; $('#edge-dot').className = 'dot ' + mode; $('#agent-state').textContent = label; }
+  function updateEdge() { const b = $('#edge-badge'); const n = state.synthesized ? needs() : 0; b.hidden = !n; b.textContent = n; }
+  function openAgent() { agent.classList.remove('closed'); edge.classList.remove('show'); }
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function synthesize() {
+    if (state.synthesized || state.working) return;
+    state.working = true; $('#synth').disabled = true; setDot('working', 'working'); tour.emit('started');
+    const run = el('div', 'run', `<div class="title"><span class="dot working"></span>Checking Step 2 against Dana's interview<span class="sh"></span></div><ol>${CHAT.working_lines.map(l => `<li>${esc(l)}</li>`).join('')}</ol>`);
+    thread.appendChild(run); scrollThread();
+    const lis = run.querySelectorAll('li');
+    for (let i = 0; i < lis.length; i++) { lis[i].classList.add('on'); await sleep(900); lis[i].classList.remove('on'); lis[i].classList.add('ok'); }
+    run.querySelector('.title').classList.add('done'); run.querySelector('.title .dot').className = 'dot ready';
+    state.synthesized = true; $('#drop').classList.add('done'); $('#synth').textContent = 'Synthesized';
+    for (const f of M.node_fields) { const o = outFor(f.id); state.items[f.id].out = o; state.items[f.id].verdict = o.state; if (state.view === 'step') { renderHead(); renderItems(); } renderMap(); await sleep(260); }
+    state.working = false; setDot('ready', 'ready'); updateEdge(); renderSources(); renderHead();
+    const counts = ['match', 'contradiction', 'gap_no_data', 'gap_no_explanation', 'not_discussed'].map(s => [s, OUT.fields.filter(f => f.state === s).length]).filter(([, n]) => n);
+    const grid = el('div', 'verdicts');
+    M.node_fields.forEach((f, i) => { const o = outFor(f.id); grid.appendChild(el('span', 'vid', String(i + 1))); grid.appendChild(el('span', null, `<span class="pill ${o.state}">${VERDICT[o.state]}</span>`)); const b = el('button', 'vname', esc(f.label)); b.addEventListener('click', () => { if (state.view !== 'step') showStep(); state.open.add(f.id); state.selected = f.id; setScope(f.id); renderItems(); document.querySelector(`.item[data-id="${f.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }); grid.appendChild(b); });
+    await typeSay(`Checked all ${total} items. ${counts.map(([s, n]) => `${n} ${VERDICT[s].toLowerCase()}`).join(', ')}. <b>${needs()} need your judgment.</b>`, grid);
+    tour.emit('synthesized');
+  }
+  async function typeSay(html, extra) {
+    const m = el('div', 'msg', '<div class="who">Agent</div><span class="tw"></span>'); thread.appendChild(m);
+    const span = m.querySelector('.tw'); const words = html.split(' ');
+    for (let i = 0; i < words.length; i++) { span.innerHTML = words.slice(0, i + 1).join(' '); scrollThread(); await sleep(55); }
+    if (extra) m.appendChild(extra); scrollThread();
+  }
+  function promptChips(id) {
+    const wrap = el('div', 'prompts');
+    (CHAT.prompts[id] || []).forEach(t => { const b = el('button', null, esc(t)); b.addEventListener('click', () => { wrap.remove(); ask(t); tour.emit('prompted'); }); wrap.appendChild(b); });
+    return wrap;
+  }
+  $('#synth').addEventListener('click', synthesize);
+  const drop = $('#drop');
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); if (ev === 'drop') synthesize(); }));
+
+  function setScope(id) { state.scope = id; const s = $('#scope'); if (!id) { s.className = 'scope'; s.innerHTML = ''; return; } const f = M.node_fields.find(x => x.id === id); s.className = 'scope show'; s.innerHTML = `About <b>${num(id)} · ${esc(f.label)}</b><button class="x" aria-label="Clear">×</button>`; s.querySelector('.x').addEventListener('click', () => { state.selected = null; setScope(null); renderItems(); }); }
+  function answerFor(text) {
+    const t = text.toLowerCase();
+    if (!state.synthesized) return 'I haven’t read an interview yet. Drop the transcript first.';
+    if (state.scope) { const hit = (CHAT.items[state.scope] || []).find(a => a.keys.some(k => t.includes(k))); if (hit) return hit.answer; }
+    if (/need|open|left|judg/.test(t)) return `${needs()} items need you: ${Object.entries(state.items).filter(([, i]) => NEEDS.has(i.verdict)).map(([id]) => `${num(id)} (${VERDICT[state.items[id].verdict]})`).join(', ')}.`;
+    return state.scope ? CHAT.generic[1] : CHAT.generic[0];
+  }
+  function ask(text) {
+    userSay(text); const ans = answerFor(text);
+    setTimeout(() => {
+      let extra = null;
+      if (/draft/i.test(text) && state.scope && /^draft (reason|follow-up)/i.test(ans)) {
+        extra = el('div', 'use'); const b = el('button', 'btn secondary small', 'Use as my reason');
+        b.addEventListener('click', () => { if (!state.open.has(state.scope)) { state.open.add(state.scope); renderItems(); } const ta = document.querySelector(`.item[data-id="${state.scope}"] textarea`); if (ta) { ta.value = ans.replace(/^Draft [^:]+:\s*/i, '').replace(/^“|”$/g, ''); ta.focus(); } });
+        extra.appendChild(b);
+      }
+      agentSay(esc(ans).replace(/\n/g, '<br>'), extra);
+    }, 450);
+  }
+  $('#form').addEventListener('submit', e => { e.preventDefault(); const v = $('#q').value.trim(); if (!v) return; $('#q').value = ''; ask(v); });
+  $('#agent-close').addEventListener('click', () => { agent.classList.add('closed'); edge.classList.add('show'); });
+  edge.addEventListener('click', openAgent);
+  const nowStr = () => { const d = new Date(); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' + d.toTimeString().slice(0, 5); };
+
+  // ---- walkthrough
+  const tour = (() => {
+    const veil = $('#tour-veil'), spot = $('#tour-spot'), card = $('#tour-card');
+    const steps = [
+      { key: 'Locate', target: () => $('.step.current'), text: 'Open Step 2.', on: 'step-open' },
+      { key: 'Start with the interview', target: () => $('#drop'), text: 'Add the interview.', on: 'started', pre: () => openAgent() },
+      { key: 'The agent works', target: () => $('#thread .run'), text: 'Checking the interview against the six items.', on: 'synthesized', wait: 700 },
+      { key: 'Verdicts', target: () => $('#items'), text: 'Every item has a verdict. Four need you.', next: true, pre: () => document.querySelector('.stage').scrollTo({ top: 0 }) },
+      { key: 'A match', target: () => $('.item[data-id="F1"] .row'), text: 'Open item 1, a match.', on: 'open-1' },
+      { key: 'A gap', target: () => $('.item[data-id="F3"] .row'), text: 'Open item 3, a gap.', on: 'open-3', pre: () => { state.open.delete('F1'); renderItems(); } },
+      { key: 'Ask why', target: () => $('button[data-ask="F3"]'), text: 'Ask why.', on: 'asked', pre: () => document.querySelector('.item[data-id="F3"]')?.scrollIntoView({ block: 'start', behavior: 'smooth' }) },
+      { key: 'Dig in', target: () => $('#thread .prompts'), text: 'Pick a question.', on: 'prompted', wait: 300 },
+      { key: 'Your judgment', target: () => $('.item[data-id="F3"] .judge'), text: 'Record your decision and save.', on: 'saved', wait: 900 },
+      { key: 'Done', target: () => $('#step-status'), text: 'Three of six explained. Keep going.', next: true, wait: 300, last: true }
+    ];
+    let i = -1, active = false, current = null, raf = null;
+    const place = () => {
+      const t = current?.target?.(); if (!t) return;
+      const r = t.getBoundingClientRect(); const pad = 8;
+      spot.style.left = (r.left - pad) + 'px'; spot.style.top = (r.top - pad) + 'px'; spot.style.width = (r.width + pad * 2) + 'px'; spot.style.height = (r.height + pad * 2) + 'px';
+      const cw = card.offsetWidth || 220, ch = card.offsetHeight || 60, g = 12; let left, top;
+      if (r.right + g + cw < innerWidth - 8) { left = r.right + g; top = r.top; }
+      else if (r.left - g - cw > 8) { left = r.left - g - cw; top = r.top; }
+      else if (r.bottom + g + ch < innerHeight - 8) { left = r.left; top = r.bottom + g; }
+      else { left = r.left; top = r.top - g - ch; }
+      left = Math.min(Math.max(8, left), innerWidth - cw - 8); top = Math.min(Math.max(8, top), innerHeight - ch - 8);
+      card.style.left = left + 'px'; card.style.top = top + 'px';
+    };
+    const tick = () => { if (active) { place(); raf = requestAnimationFrame(tick); } };
+    const clear = () => { document.querySelectorAll('.tour-target').forEach(x => x.classList.remove('tour-target')); };
+    const show = () => {
+      current = steps[i]; clear(); current.pre?.();
+      setTimeout(() => {
+        const t = current.target(); if (!t) { return next(); }
+        t.classList.add('tour-target'); t.closest('.agent')?.classList.add('tour-target'); t.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        card.querySelector('.k').textContent = `${i + 1}/${steps.length}`; card.querySelector('p').textContent = current.text;
+        card.querySelector('.next').hidden = !current.next; card.querySelector('.next').textContent = current.last ? 'Finish' : 'Next';
+        veil.classList.add('on'); spot.classList.add('on'); card.classList.add('on'); place();
+      }, current.wait || 60);
+    };
+    const next = () => { i++; if (i >= steps.length) return stop(); show(); };
+    const stop = () => { active = false; i = -1; current = null; clear(); veil.classList.remove('on'); spot.classList.remove('on'); card.classList.remove('on'); cancelAnimationFrame(raf); };
+    const start = () => { stop(); active = true; i = -1; next(); tick(); };
+    card.querySelector('.skip').textContent = 'Skip'; card.querySelector('.skip').addEventListener('click', stop);
+    card.querySelector('.next').addEventListener('click', next);
+    veil.addEventListener('click', e => e.stopPropagation());
+    return { start, stop, emit: ev => { if (active && current && current.on === ev) next(); } };
+  })();
+  $('#tour-restart').addEventListener('click', () => { location.reload(); });
+
+  agentSay(`Step 2 has ${total} configuration items from the system extract and no interview evidence yet. Drop a transcript above and I'll check each item against what the client said and what the data shows.`);
+  renderStrip(); refresh();
+  setTimeout(() => tour.start(), 600);
+})();
+</script>

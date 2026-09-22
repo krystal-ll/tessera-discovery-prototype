@@ -1,0 +1,13 @@
+record_id,condition_type,key_type,key,rate,unit,valid_from,valid_to,created_by,created_on,last_changed_by,last_changed_on,plain
+0000411203,K007,Customer group,01 Chains,-8.00,%,2011-06-01,9999-12-31,JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20,"Automatic 8% for every chain customer"
+0000411204,K007,Customer group,02 Distributors,0.00,%,2011-06-01,9999-12-31,JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20,"No percentage for distributors; they buy on price list 02"
+0000411205,K007,Customer group,03 Marketplace,0.00,%,2018-02-12,9999-12-31,LPARK,2018-02-12,LPARK,2018-02-12,"No percentage for marketplace; price list 03"
+0000587731,PR00,Customer/Material,100031 FreshMart / HB-CL-330 Classic Cola 330ml x24,14.40,USD/case,2025-10-01,2026-09-30,LNGUYEN,2025-09-28,LNGUYEN,2025-09-28,"Negotiated FreshMart price for Classic Cola, expires 30 Sep 2026"
+0000587732,PR00,Customer/Material,100031 FreshMart / HB-CI-330 Citrus 330ml x24,15.10,USD/case,2025-10-01,2026-09-30,LNGUYEN,2025-09-28,LNGUYEN,2025-09-28,"Negotiated FreshMart price for Citrus, expires 30 Sep 2026"
+0000587790,PR00,Customer/Material,100044 Northgate / HB-CL-330 Classic Cola 330ml x24,14.60,USD/case,2024-08-01,2025-07-31,LNGUYEN,2024-07-25,LNGUYEN,2024-07-25,"Northgate negotiated price EXPIRED 31 Jul 2025; line now falls back to list minus 8%"
+0000602118,K005,Customer/Material group,100044 Northgate / CITRUS,-12.00,%,2026-06-15,2026-07-31,SAMIR,2026-06-10,SAMIR,2026-06-10,"Northgate summer promo on Citrus line"
+0000602119,K005,Customer/Material group,100031 FreshMart / CITRUS,-10.00,%,2026-06-15,2026-07-31,SAMIR,2026-06-10,SAMIR,2026-06-10,"FreshMart summer promo on Citrus line"
+0000398002,K029,Scale (quantity),>= 500 cases,-3.00,%,2011-06-01,9999-12-31,JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20,"Volume discount tier 1"
+0000398003,K029,Scale (quantity),>= 1000 cases,-4.50,%,2011-06-01,9999-12-31,JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20,"Volume discount tier 2"
+0000398004,K029,Scale (quantity),>= 2500 cases,-6.00,%,2011-06-01,9999-12-31,JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20,"Volume discount tier 3"
+0000455610,NA00,Material group,CLASSIC (all customer groups),10 + 1,cases,2016-04-02,9999-12-31,MBRANDT,2016-04-02,MBRANDT,2016-04-02,"Free goods: for every 10 cases of any Classic-range product add 1 free case. No end date. Creator left the company in 2020."

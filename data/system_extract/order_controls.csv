@@ -1,0 +1,8 @@
+control_id,area,object,setting,value,plain,created_by,created_on,last_changed_by,last_changed_on
+C-01,Manual discount,Condition type RA01,Upper limit,20.00 %,"Hard cap: a rep cannot enter more than 20% manual discount",JHOFFMAN,2011-05-20,MARCOF,2019-03-04
+C-02,Manual discount,Condition type RA01 / customer group 03 Marketplace,Upper limit,0.00 %,"Manual discount not possible on marketplace orders",LPARK,2018-02-12,LPARK,2018-02-12
+C-03,Approval,User exit MV45AFZZ / block Z1 'Discount approval',Trigger,RA01 > 15.00 %,"Order gets block Z1 and lands in the sales manager's worklist only if manual discount exceeds 15%",MARCOF,2019-03-04,MARCOF,2019-03-04
+C-04,Approval,Workflow ZDISC_APPR,Approver,Role: Head of Retail Sales,"Sales manager releases block Z1 from worklist",MARCOF,2019-03-04,MARCOF,2019-03-04
+C-05,Promotion vs volume,Condition exclusion group,Exclusion between K005 and K029,not maintained,"Nothing prevents promotion and volume discounts applying together on the same line",,,,
+C-06,Free goods,Condition type NA00,Active in ZHALO01,yes (step 60),"Free goods determination runs on every order line",JHOFFMAN,2011-05-20,JHOFFMAN,2011-05-20
+C-07,Price validity,Condition type PR00,Expiry warning,none,"No warning when a negotiated price expires; line silently falls back to list minus group discount",,,,

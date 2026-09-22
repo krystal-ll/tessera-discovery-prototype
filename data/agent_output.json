@@ -1,0 +1,208 @@
+{
+  "interview_id": "01-sales-manager",
+  "step_id": "S02",
+  "fields": [
+    {
+      "field_id": "F1",
+      "state": "match",
+      "confidence": 0.95,
+      "quotes": [
+        {
+          "speaker": "Dana Ruiz",
+          "text": "All the chains get eight percent off list, automatically. The rep does not do anything, it is just on the account."
+        },
+        {
+          "speaker": "Dana Ruiz",
+          "text": "Every chain, yes. Distributors are different, they buy on a different price list, no percentage."
+        }
+      ],
+      "reasoning": "An automatic 8% for every chain customer, with distributors on a separate price list, is exactly what is configured.",
+      "conflict_summary": null,
+      "follow_up_question": null,
+      "ask_who": null,
+      "system_evidence": [
+        {
+          "text": "Every order from a supermarket chain gets 8% off list price automatically, before anyone touches it. The rule has been in place since June 2011 and has never changed.",
+          "source": "condition_records.csv#0000411203"
+        },
+        {
+          "text": "71% of orders are created with no person involved, and the 8% applied on all of them in the last 12 months.",
+          "source": "process_mining_o2c_metrics.csv#M-02"
+        }
+      ],
+      "missing_side": null,
+      "missing_note": null
+    },
+    {
+      "field_id": "F2",
+      "state": "contradiction",
+      "confidence": 0.9,
+      "quotes": [
+        {
+          "speaker": "Dana Ruiz",
+          "text": "The rep can knock off up to ten percent on their own. Anything above ten comes to me. I get a notification, I look at it, I approve or I do not. That is the rule and the reps know it."
+        },
+        {
+          "speaker": "Dana Ruiz",
+          "text": "They should not be able to. I think the system stops them somewhere, but I could not tell you the number. Nobody has tried thirty."
+        }
+      ],
+      "reasoning": "She believes approval starts above 10%. The system only routes an order to her above 15%, so discounts between 10% and 15% go through with no approval at all. The 20% hard cap she is unsure about does exist.",
+      "conflict_summary": "Sales believes any discount above 10% needs her approval; the system only asks her above 15%, so 10% to 15% discounts pass unseen.",
+      "follow_up_question": "Was the approval threshold meant to be 10%? Pull the last quarter's orders with manual discounts between 10% and 15% to see how much margin went through without sign-off.",
+      "ask_who": "Dana Ruiz (Head of Retail Sales) and the finance controller who set the 2019 rule",
+      "system_evidence": [
+        {
+          "text": "A rep can enter a manual discount up to 20%. The order only goes to the sales manager for approval when the discount is above 15%. Both settings were last changed on 4 Mar 2019 by Marco Ferreira.",
+          "source": "order_controls.csv#C-03"
+        },
+        {
+          "text": "412 orders in the last 12 months carried a discount between 10% and 15%, worth USD 1.93M. None of them were sent for approval.",
+          "source": "process_mining_o2c_metrics.csv#M-09"
+        },
+        {
+          "text": "131 orders were above 15% and all of them were blocked and released from the manager's worklist.",
+          "source": "process_mining_o2c_metrics.csv#M-10"
+        }
+      ],
+      "missing_side": null,
+      "missing_note": null
+    },
+    {
+      "field_id": "F3",
+      "state": "gap_no_data",
+      "confidence": 0.85,
+      "quotes": [
+        {
+          "speaker": "Dana Ruiz",
+          "text": "No. One or the other. We never stack a promo on top of the volume discount, the promo replaces it. That is a rule from finance, it has been like that as long as I have been here."
+        },
+        {
+          "speaker": "Dana Ruiz",
+          "text": "I assume the system does it. The reps do not touch it. I have never had to check."
+        }
+      ],
+      "reasoning": "She describes a firm rule that promotion and volume discounts never combine. Nothing in the configuration enforces it: both discount types are active with no exclusion, so a line that qualifies for both gets both.",
+      "conflict_summary": "Sales says promo and volume discounts never stack; nothing in the system prevents it, so customers who qualify for both are getting both.",
+      "follow_up_question": "Check recent Northgate promo orders: did lines carry both the promotion and the volume discount? Does finance want the exclusion enforced in S/4HANA?",
+      "ask_who": "Finance controller, then Dana Ruiz",
+      "system_evidence": [
+        {
+          "text": "Nothing in the system stops a promotion discount and a volume discount from applying to the same line. No exclusion rule exists between the two.",
+          "source": "order_controls.csv#C-05"
+        },
+        {
+          "text": "1,340 chain order lines received both discounts together in the last 12 months, averaging 15.8% off, worth USD 4.1M.",
+          "source": "process_mining_o2c_metrics.csv#M-11"
+        },
+        {
+          "text": "58 short-payments in the year cited a promotion price, several from buyers who expected the combined amount.",
+          "source": "process_mining_o2c_metrics.csv#M-12"
+        }
+      ],
+      "missing_side": "system",
+      "missing_note": "Nothing in the system produces the rule she describes."
+    },
+    {
+      "field_id": "F4",
+      "state": "gap_no_explanation",
+      "confidence": 0.75,
+      "quotes": [
+        {
+          "speaker": "Dana Ruiz",
+          "text": "Free cases, no, we do not do that on chain orders. Not that I know of."
+        },
+        {
+          "speaker": "Dana Ruiz",
+          "text": "Every so often the warehouse tells me an order shipped with more cases than we quoted. Like the customer ordered fifty cases of Classic Cola and fifty-five went out. The rep says they did not add anything, the warehouse says the system had it on the pick list."
+        },
+        {
+          "speaker": "Dana Ruiz",
+          "text": "Always the Classic range, I think. Never the new stuff."
+        }
+      ],
+      "reasoning": "She says Halo does not give free cases on chain orders. A buy-10-get-1 free goods rule on the Classic range has been active for every customer group since 2016, created by someone who has left. Fifty cases ordered and fifty-five shipped is exactly 10+1. Nobody in the interview knows the rule exists, so it is unexplained rather than confirmed.",
+      "conflict_summary": "A 2016 free-goods rule adds one free case per ten on the Classic range for every customer; nobody knows it exists, and it matches the mystery extra cases the warehouse reports.",
+      "follow_up_question": "Was the Classic 10+1 offer meant to be permanent and for all customers? Who owns it now, and should it survive the migration?",
+      "ask_who": "Finance controller and marketing (promotions owner)",
+      "system_evidence": [
+        {
+          "text": "For every 10 cases of any Classic-range product, the system adds 1 free case, for every customer. The rule was created on 2 Apr 2016 by a user who left in 2020, with no end date.",
+          "source": "condition_records.csv#0000455610"
+        },
+        {
+          "text": "2,210 order lines had free cases added in the last 12 months: 22,100 free cases across 96 customers, all on the Classic range.",
+          "source": "process_mining_o2c_metrics.csv#M-13"
+        }
+      ],
+      "missing_side": "client",
+      "missing_note": "Nobody in the interview explained this rule, or knew it existed."
+    },
+    {
+      "field_id": "F5",
+      "state": "not_discussed",
+      "confidence": 0.95,
+      "quotes": [],
+      "reasoning": "How long negotiated chain prices stay valid, and what happens on expiry, was in the consultant's question guide but the session never got to it. Two Northgate prices expired in July 2025 and fell back to list minus 8% with no warning.",
+      "conflict_summary": null,
+      "follow_up_question": null,
+      "ask_who": null,
+      "system_evidence": [
+        {
+          "text": "A negotiated chain price stays valid for 12 months. When it expires the line silently falls back to list price minus 8%, with no warning to anyone.",
+          "source": "order_controls.csv#C-07"
+        },
+        {
+          "text": "Two Northgate prices expired on 31 Jul 2025 and were never renewed. 318 lines since then have been billed at the fallback price.",
+          "source": "process_mining_o2c_metrics.csv#M-14"
+        }
+      ],
+      "missing_side": "client",
+      "missing_note": "This item was not discussed. It was on the question guide; the session ran out of time."
+    },
+    {
+      "field_id": "F6",
+      "state": "match",
+      "confidence": 0.95,
+      "quotes": [
+        {
+          "speaker": "Dana Ruiz",
+          "text": "No. Marketplace is fixed price. The price is the price, we do not negotiate with an algorithm."
+        }
+      ],
+      "reasoning": "No manual discounts on marketplace orders matches the 0% upper limit configured for that customer group.",
+      "conflict_summary": null,
+      "follow_up_question": null,
+      "ask_who": null,
+      "system_evidence": [
+        {
+          "text": "Manual discounts are not possible on marketplace orders: the limit for that customer group is 0%, set in Feb 2018.",
+          "source": "order_controls.csv#C-02"
+        }
+      ],
+      "missing_side": null,
+      "missing_note": null
+    }
+  ],
+  "unmapped_claims": [
+    {
+      "speaker": "Dana Ruiz",
+      "text": "2019, I think. It used to be looser and we bled margin on a couple of listings, so finance and my predecessor tightened it. I inherited it.",
+      "note": "Gives the business reason and date for the approval rule. Useful context for F2 but not a field value."
+    },
+    {
+      "speaker": "Dana Ruiz",
+      "text": "Samples go through marketing on a separate order type, that is not sales. Free cases, no, we do not do that on chain orders. Not that I know of.",
+      "note": "Samples are a separate order type. She also says there are no free cases on chain orders, which contradicts the free-goods rule under F4 without her knowing it."
+    },
+    {
+      "speaker": "Dana Ruiz",
+      "text": "The KAMs keep their own spreadsheets of what they agreed with each buyer. The order desk works off those. If the two disagree, the spreadsheet wins and the order desk fixes the system.",
+      "note": "Negotiated prices live in spreadsheets outside the system. Relevant to F5 (price validity) and to data migration scope; raise with the order desk."
+    }
+  ],
+  "_meta": {
+    "model": "hand-authored fallback",
+    "generated_by": "written by hand to the same schema; replace by running agent/synthesize.py"
+  }
+}

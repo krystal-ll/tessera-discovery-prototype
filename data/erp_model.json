@@ -1,0 +1,238 @@
+{
+  "client": {
+    "name": "Halo Beverages",
+    "profile": "Mid-size sparkling drinks brand. ~600 employees, USD 220M revenue. Sells to supermarket chains (FreshMart, Northgate Grocers), convenience-store distributors (QuickStop Distribution), and an online marketplace. SAP ECC live since 2011.",
+    "project": "ECC to S/4HANA migration, discovery phase"
+  },
+  "process": {
+    "id": "O2C",
+    "name": "Order-to-Cash",
+    "scope": "Retail sales, North America",
+    "process_owner": "VP Sales Operations",
+    "status": "In discovery"
+  },
+  "steps": [
+    {
+      "id": "S01",
+      "name": "Receive order",
+      "lane": "Order desk",
+      "plain": "Orders arrive by EDI from chains, by portal from distributors, by feed from the marketplace."
+    },
+    {
+      "id": "S02",
+      "name": "Price the order",
+      "lane": "Sales rep / Sales manager",
+      "plain": "The system prices each line, applies discounts, and decides whether someone has to approve.",
+      "focus": "Discounts and approvals"
+    },
+    {
+      "id": "S03",
+      "name": "Check customer credit",
+      "lane": "Credit team",
+      "plain": "Is the customer allowed to buy this much on account?"
+    },
+    {
+      "id": "S04",
+      "name": "Confirm delivery date and stock",
+      "lane": "Order desk / Planning",
+      "plain": "Can we ship what they asked for, when they asked for it?"
+    },
+    {
+      "id": "S05",
+      "name": "Pick, pack and ship",
+      "lane": "Warehouse",
+      "plain": "Goods leave the warehouse."
+    },
+    {
+      "id": "S06",
+      "name": "Invoice the customer",
+      "lane": "Billing",
+      "plain": "The invoice is created and sent."
+    },
+    {
+      "id": "S07",
+      "name": "Collect payment and handle deductions",
+      "lane": "Accounts receivable",
+      "plain": "Payment comes in, short-pays and chargebacks are resolved."
+    }
+  ],
+  "node_step_id": "S02",
+  "node_fields": [
+    {
+      "id": "F1",
+      "label": "Automatic trade discount for supermarket chains",
+      "system_value": "8% off list price, applied automatically to every order from customer group 'Chains'",
+      "plain": "Every chain order gets 8% off before anyone touches it.",
+      "sap_note": "Pricing procedure ZHALO01, condition type K007 (customer group discount), record for customer group 01 Chains = 8%",
+      "source_rows": [
+        "condition_records.csv#0000411203",
+        "process_mining_o2c_metrics.csv#M-02"
+      ]
+    },
+    {
+      "id": "F2",
+      "label": "Manual discount that triggers manager approval",
+      "system_value": "Reps can enter a manual discount up to 20%. Approval workflow to the sales manager triggers only when the manual discount exceeds 15%.",
+      "plain": "A rep can give up to 15% extra without anyone being asked. Between 15% and 20% the order waits for the sales manager.",
+      "sap_note": "Condition type RA01 (manual % discount), upper limit 20%. Order block 'Z1 discount approval' set by user exit when RA01 > 15%; released via workflow ZDISC_APPR.",
+      "source_rows": [
+        "order_controls.csv#C-01",
+        "order_controls.csv#C-03",
+        "order_controls.csv#C-04",
+        "process_mining_o2c_metrics.csv#M-09",
+        "process_mining_o2c_metrics.csv#M-10",
+        "readiness_check_summary.csv#MV45AFZZ"
+      ]
+    },
+    {
+      "id": "F3",
+      "label": "Stacking a promotion discount on top of the volume discount",
+      "system_value": "No exclusion configured. Promotion discount (up to 12%) and volume discount (3% to 6%) both apply on the same line when both are valid.",
+      "plain": "If a product is on promotion and the order is large, the customer gets both discounts added together.",
+      "sap_note": "Condition types K005 (promotion) and K029 (volume scale) both active in ZHALO01, no condition exclusion group defined",
+      "source_rows": [
+        "order_controls.csv#C-05",
+        "condition_records.csv#0000602118",
+        "condition_records.csv#0000398003",
+        "process_mining_o2c_metrics.csv#M-11",
+        "process_mining_o2c_metrics.csv#M-12"
+      ]
+    },
+    {
+      "id": "F4",
+      "label": "Free goods on the Classic range",
+      "system_value": "Buy 10 cases of any Classic-range product, get 1 case free. Active since 2016-04-02, created by user MBRANDT (left the company in 2020). Applies to all customer groups.",
+      "plain": "The system adds a free case for every 10 cases of Classic ordered, for every customer, and has done since 2016.",
+      "sap_note": "Free goods condition NA00, inclusive, 10 + 1, material group CLASSIC, no validity end date",
+      "source_rows": [
+        "condition_records.csv#0000455610",
+        "order_controls.csv#C-06",
+        "process_mining_o2c_metrics.csv#M-13"
+      ]
+    },
+    {
+      "id": "F5",
+      "label": "How long a negotiated chain price list stays valid",
+      "system_value": "Chain price lists are valid 12 months from creation. After expiry the line falls back to list price minus the 8% trade discount.",
+      "plain": "A negotiated price for a chain quietly expires after a year unless someone renews it.",
+      "sap_note": "Condition type PR00 records per customer / material with validity period 12 months, no expiry warning configured",
+      "source_rows": [
+        "condition_records.csv#0000587731",
+        "condition_records.csv#0000587790",
+        "order_controls.csv#C-07",
+        "process_mining_o2c_metrics.csv#M-14"
+      ]
+    },
+    {
+      "id": "F6",
+      "label": "Discounts on marketplace orders",
+      "system_value": "Manual discounts not allowed for customer group 'Marketplace'. Upper limit 0%.",
+      "plain": "Nobody can discount a marketplace order. The price is the price.",
+      "sap_note": "RA01 upper limit 0% for customer group 03 Marketplace via condition record on customer group",
+      "source_rows": [
+        "order_controls.csv#C-02",
+        "condition_records.csv#0000411205"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "S01",
+      "to": "S02",
+      "carries": "order lines with customer, products, quantities"
+    },
+    {
+      "from": "S02",
+      "to": "S03",
+      "carries": "net order value after discounts (credit exposure)"
+    },
+    {
+      "from": "S02",
+      "to": "S05",
+      "carries": "free-goods quantities added to the pick list"
+    },
+    {
+      "from": "S02",
+      "to": "S06",
+      "carries": "final line prices and discounts printed on the invoice"
+    },
+    {
+      "from": "S03",
+      "to": "S04",
+      "carries": "released order"
+    },
+    {
+      "from": "S04",
+      "to": "S05",
+      "carries": "confirmed quantities and dates"
+    },
+    {
+      "from": "S05",
+      "to": "S06",
+      "carries": "shipped quantities"
+    },
+    {
+      "from": "S06",
+      "to": "S07",
+      "carries": "invoice amount; disputes over promo pricing arrive here as short-pays"
+    }
+  ],
+  "node": {
+    "step_id": "S02",
+    "why_this_node": "Pricing is where the client's commercial rules live. It feeds credit exposure, the pick list (free goods), the invoice, and most short-pay disputes.",
+    "system_extract_files": [
+      "data/system_extract/pricing_procedure_ZHALO01.csv",
+      "data/system_extract/condition_records.csv",
+      "data/system_extract/order_controls.csv",
+      "data/system_extract/process_mining_o2c_metrics.csv",
+      "data/system_extract/readiness_check_summary.csv"
+    ]
+  },
+  "stakeholders": [
+    {
+      "id": "dana",
+      "name": "Dana Ruiz",
+      "role": "Head of Retail Sales",
+      "side": "Halo Beverages",
+      "note": "Interviewed 18 Sep. Owns the discount rule as sales applies it.",
+      "interviewed": true,
+      "added": true
+    },
+    {
+      "id": "marco",
+      "name": "Marco Ferreira",
+      "role": "Finance Controller",
+      "side": "Halo Beverages",
+      "note": "Owns discount policy. Set the 2019 approval rule.",
+      "interviewed": false,
+      "added": false
+    },
+    {
+      "id": "lena",
+      "name": "Lena Park",
+      "role": "Order Desk Lead",
+      "side": "Halo Beverages",
+      "note": "Keys negotiated prices and promotions into the system.",
+      "interviewed": false,
+      "added": false
+    },
+    {
+      "id": "sam",
+      "name": "Sam Okafor",
+      "role": "Marketing, Promotions",
+      "side": "Halo Beverages",
+      "note": "Owns promotions and free-goods offers.",
+      "interviewed": false,
+      "added": false
+    },
+    {
+      "id": "priya",
+      "name": "Priya Raman",
+      "role": "SD Consultant",
+      "side": "Consulting team",
+      "note": "Leads the Order-to-Cash workstream.",
+      "interviewed": false,
+      "added": false
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+step,counter,condition_type,description,manual,statistical,exclusion_group,plain
+10,0,PR00,Price (list or negotiated),,,,"Base price: negotiated customer/product price if one exists, else list price"
+20,0,K007,Customer group discount %,,,,"Automatic discount by customer group (Chains 8%)"
+30,0,K005,Promotion discount %,,,,"Time-boxed promotion on specific products"
+40,0,K029,Volume scale discount %,,,,"Discount by order quantity, 3% to 6%"
+50,0,RA01,Manual discount %,X,,,"Typed in by the rep, capped by upper limit on the condition type"
+60,0,NA00,Free goods,,X,,"Statistical line: system adds free quantity per free-goods condition record"
+100,0,,Net price,,,,"Subtotal after all discounts"
+110,0,MWST,Sales tax,,,,""
